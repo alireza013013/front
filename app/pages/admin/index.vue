@@ -2,13 +2,13 @@
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex align-center justify-space-between mb-4">
       <span class="text-h4 font-weight-bold text-start text-grey700">
-        Payment Summary
+        Payment Summary Test Name
       </span>
       <div class="d-flex align-center ga-2">
         <v-btn
           variant="plain"
           max-width="40"
-          @click="showSearchModal = true"
+          @click="openSearchModal"
         >
           <v-icon
             size="36"
@@ -86,6 +86,10 @@ const { paymentSummary, getPaymentSummary, loadingPaymentSummary: loading } = us
 
 const showSearchModal = ref(false)
 const DEFAULT_START_DATE = dayjs().startOf('month').format('YYYY-MM-DD')
+
+const openSearchModal = ()=>{
+showSearchModal.value = true
+}
 
 const DEFAULT_END_DATE = dayjs().endOf('month').format('YYYY-MM-DD')
 const paymentSummaryGetParams = reactive<PaymentSummaryGetParams>({
