@@ -13,7 +13,7 @@
           variant="outlined"
           @click="clearFilter"
         >
-          Clear Filter
+          Clear Filterfffdfdfeefdsvcsvd
         </v-btn>
 
         <v-menu
