@@ -128,7 +128,7 @@
 
 <script setup>
 import { useNuxtApp } from '#app'
-import { useDisplay } from 'vuetify/lib/composables/display'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps({
   facilities: {

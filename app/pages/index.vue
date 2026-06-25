@@ -207,7 +207,7 @@
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify/lib/framework.mjs'
+import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 // Data

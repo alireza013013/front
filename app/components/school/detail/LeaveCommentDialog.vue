@@ -219,7 +219,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNuxtApp } from '#imports'
-import { useDisplay } from 'vuetify/lib/composables/display'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps({
   modelValue: {

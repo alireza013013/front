@@ -188,7 +188,7 @@
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify/lib/composables/display'
+import { useDisplay } from 'vuetify'
 import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({

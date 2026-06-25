@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch, computed } from 'vue'
-import { useDisplay } from 'vuetify/lib/composables/display'
+import { useDisplay } from 'vuetify'
 
 interface Opration {
   icon: string
