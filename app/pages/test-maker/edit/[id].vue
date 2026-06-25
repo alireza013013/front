@@ -463,11 +463,11 @@
                 autocomplete="off"
                 @click:clear="handleClearTopic"
               >
-                <template #item="{ item, props }">
+                <template #item="{ internalItem, props }">
                   <v-list-item
                     v-bind="props"
-                    :title="item.raw.title"
-                    :class="{ topic_season: item.raw.season }"
+                    :title="internalItem.raw.title"
+                    :class="{ topic_season: internalItem.raw.season }"
                   />
                 </template>
               </v-autocomplete>

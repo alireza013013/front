@@ -29,10 +29,12 @@
         return-object
         @update:model-value="changeSelectCategory"
       >
-        <template #item="{ props, item }">
+        <template #item="{ props, internalItem }">
           <v-list-item v-bind="props">
             <template #title>
-              <span class="text-h5 font-weight-bold">{{ item.title }}</span>
+              <span class="text-h5 font-weight-bold">
+                {{ internalItem.title }}
+              </span>
             </template>
           </v-list-item>
         </template>
