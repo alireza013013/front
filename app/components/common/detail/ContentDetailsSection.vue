@@ -12,9 +12,22 @@
         {{ contentData?.first_name }} {{ contentData?.last_name }}
       </p>
     </div>
-    <span class="text-h5 d-flex align-center color-link ga-1">
-      <v-icon color="#1a73e8">md:notifications_outlined</v-icon>
-      follow
+    <span class="text-h5 d-flex align-center color-link ga-1 cursor-pointer">
+      <v-progress-circular
+        v-if="loadingFollow"
+        color="#1a73e8"
+        size="20"
+        indeterminate
+        :width="2"
+      />
+      <div
+        v-else
+        class="text-h5 d-flex align-center color-link ga-1"
+        @click="startFollow"
+      >
+        <v-icon color="#1a73e8">md:notifications_outlined</v-icon>
+        follow
+      </div>
     </span>
   </div>
 
@@ -114,16 +127,22 @@ interface IContentDetailsSection {
   lesson_title: string
   edu_month_title: string
   edu_year: string
+  ownerIdentity: string
 }
 
-defineProps<{
+const props = defineProps<{
   contentData: IContentDetailsSection
 }>()
 
 const { $dayjs } = useNuxtApp()
 const { mdAndDown } = useDisplay()
+const { follow, loadingFollow } = useConnection()
 
 const seeCompleteDescription = ref(false)
+
+const startFollow = async () => {
+  await follow(props.contentData.ownerIdentity)
+}
 </script>
 
 <style scoped>

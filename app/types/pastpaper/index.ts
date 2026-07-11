@@ -44,6 +44,7 @@ export interface PastPaperDTO {
   test_type_title?: string
   up_date: string
   edu_month_title: string
+  ownerIdentity: string
 }
 
 export interface ContentItemDTO {
