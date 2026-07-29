@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  AppError,
 } from '@/types'
 
 const loadingFollow = ref(false)
@@ -10,23 +9,7 @@ const loadingUnfollow = ref(false)
 
 export const useConnection = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-
-  const showResponseError = (response: ApiResult<unknown>) => {
-    if (response.errors && response.errors.length > 0) {
-      $toast.error(response.errors[0].message || '')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const follow = async (id: string) => {
     loadingFollow.value = true
@@ -43,19 +26,15 @@ export const useConnection = () => {
         $toast.success(`You are now following this user.`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingFollow.value = false
@@ -77,19 +56,15 @@ export const useConnection = () => {
         $toast.success(`You have unfollowed this user.`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingUnfollow.value = false
