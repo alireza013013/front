@@ -3,7 +3,7 @@
     v-model="drawerModel"
     :temporary="mdAndDown"
     expand-on-hover
-    :class="`d-block bg-primary-gray-800 navigation-height-top`"
+    :class="`d-block bg-grey800 navigation-height-top`"
   >
     <v-list
       v-model:opened="openedGroups"
