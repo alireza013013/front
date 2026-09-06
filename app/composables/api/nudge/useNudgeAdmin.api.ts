@@ -173,6 +173,8 @@ export const useNudgeAdmin = () => {
   return {
     data,
     getData,
+    pageCount,
+    totalCount,
     loadingGetData,
     getItemById,
     loadingGetItemById,
