@@ -66,15 +66,16 @@
       <admin-nudge-email-modal-add @add-item-success-full="addItemSuccessFull" />
     </admin-common-modal>
 
-    <!-- <admin-common-modal
+    <admin-common-modal
       v-model:show-dialog="showDetailModal"
       title="Edit"
+      :max-width="600"
     >
-      <admin-tags-modals-detail
+      <admin-nudge-email-modal-detail
         :id="selectedItemIdForDetail"
         @edit-item-success-full="editItemSuccessFull"
       />
-    </admin-common-modal> -->
+    </admin-common-modal>
   </div>
 </template>
 
@@ -197,10 +198,10 @@ const openDetailModal = (item: AdminNudgeTemplateDTO) => {
   showDetailModal.value = true
 }
 
-// const editItemSuccessFull = async () => {
-//   showDetailModal.value = false
-//   await fetchData()
-// }
+const editItemSuccessFull = async () => {
+  showDetailModal.value = false
+  await fetchData()
+}
 
 const refreshData = async () => {
   await fetchData()
