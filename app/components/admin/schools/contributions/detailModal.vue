@@ -348,7 +348,7 @@ const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
   },
   {
     key: 'tags',
-    label: 'Tags :',
+    label: 'Facilities :',
     full: true,
     type: 'tags',
   },
@@ -396,7 +396,7 @@ const oldDataFields: FieldConfig<AdminSchoolContributionOldDataDTO>[] = [
   { key: 'description', label: 'Description :', full: true },
   {
     key: 'tags',
-    label: 'Tags :',
+    label: 'Facilities :',
     full: true,
     type: 'tags',
   },
