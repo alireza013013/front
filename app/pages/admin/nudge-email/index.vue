@@ -58,12 +58,13 @@
       @confirm="confirmDelete"
     />
 
-    <!-- <admin-common-modal
+    <admin-common-modal
       v-model:show-dialog="showAddModal"
       title="Add"
+      :max-width="600"
     >
-      <admin-tags-modals-add @add-item-success-full="addItemSuccessFull" />
-    </admin-common-modal> -->
+      <admin-nudge-email-modal-add @add-item-success-full="addItemSuccessFull" />
+    </admin-common-modal>
 
     <!-- <admin-common-modal
       v-model:show-dialog="showDetailModal"
@@ -174,10 +175,10 @@ onMounted(async () => {
   await fetchData()
 })
 
-// const addItemSuccessFull = async () => {
-//   showAddModal.value = false
-//   await fetchData()
-// }
+const addItemSuccessFull = async () => {
+  showAddModal.value = false
+  await fetchData()
+}
 
 const openModalDelete = (item: AdminNudgeTemplateDTO) => {
   selectedItemIdForDelete.value = item.id.toString()
