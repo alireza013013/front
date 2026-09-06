@@ -38,6 +38,24 @@
         </span>
 
         <div
+          v-else-if="field.type === 'tags'"
+          class="d-flex flex-wrap ga-2 w-100"
+        >
+          <div
+            v-for="(tag, index) in field.value"
+            :key="index"
+            class="bg-primary-gray-800 text-white rounded-lg pa-3 d-flex align-center justify-center"
+          >
+            <v-icon
+              size="20"
+              color="white"
+            >
+              md:{{ tag.icon }}
+            </v-icon>
+          </div>
+        </div>
+
+        <div
           v-else-if="field.type === 'boards'"
           class="d-flex flex-wrap ga-2 w-100"
         >
@@ -332,7 +350,7 @@ const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
     key: 'tags',
     label: 'Tags :',
     full: true,
-    formatter: v => (v as number[]).join(', '),
+    type: 'tags',
   },
   {
     key: 'boards',
