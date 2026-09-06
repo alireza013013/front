@@ -1,7 +1,7 @@
 <template>
   <nuxt-link
     :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-    class="w-100 rounded-lg d-flex align-center justify-space-between flex-wrap pa-2 ga-2 mt-2 subject-directory-alert"
+    class="w-100 rounded-lg d-flex align-center justify-space-between flex-wrap pa-2 ga-2 mt-2 border border-grey300 subject-directory-alert"
   >
     <div class="d-flex align-center ga-2">
       <v-avatar
@@ -21,6 +21,7 @@
       </div>
     </div>
     <v-btn
+      tag="span"
       class="bg-white"
       flat
       width="120"
@@ -43,7 +44,6 @@ defineProps({
 
 <style scoped>
 .subject-directory-alert {
-  background-color: rgba(var(--v-theme-info),0.15);
-  border : 1px solid rgb(var(--v-theme-grey300))
+  background-color: rgba(var(--v-theme-info), 0.15);
 }
 </style>
