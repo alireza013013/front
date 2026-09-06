@@ -49,7 +49,6 @@
       </div>
       <div class="d-flex flex-column align-start justify-start ">
         <span class="text-subtitle-1 font-weight-bold text-grey700">Turn your expertise into reputation and income</span>
-        <!-- <span class="text-subtitle-2 font-weight-medium text-grey400">Publish educational content to boost your score and earn from sales.</span> -->
       </div>
     </div>
   </div>
@@ -103,20 +102,6 @@ const addOptions = computed<AddOption[]>(() => [
     typeFile: 'PDF · DOCX',
     disabled: !canAddEducationalContent.value,
   },
-  // {
-  //   path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.VIDEO}`,
-  //   title: 'Video',
-  //   iconMd: 'md:videocam',
-  //   typeFile: 'MP4',
-  //   disabled: !canAddEducationalContent.value,
-  // },
-  // {
-  //   path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.PRESENTATION}`,
-  //   title: 'Presentation',
-  //   iconMd: 'md:slideshow',
-  //   typeFile: 'PPTX',
-  //   disabled: !canAddEducationalContent.value,
-  // },
   {
     path: '/school/add',
     title: 'School',
@@ -124,13 +109,6 @@ const addOptions = computed<AddOption[]>(() => [
     typeFile: 'INFO',
     disabled: false,
   },
-  // {
-  //   path: '/user/question/create',
-  //   title: 'Q&A',
-  //   icon: 'icon-q-a',
-  //   typeFile: 'TEXT',
-  //   disabled: false,
-  // },
   {
     path: '/user/blogs/create',
     title: 'Blogs',
