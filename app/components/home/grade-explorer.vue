@@ -209,10 +209,7 @@
 </template>
 
 <script setup>
-import { useSearchServiceCounts } from '@/composables/useSearchServiceCounts'
-
 const { data: boardList, getData: getBoards } = useBoard()
-const { fetchServiceCounts } = useSearchServiceCounts()
 
 const categorySlider = ref(null)
 
@@ -225,17 +222,10 @@ const categories = ref([
     icon: 'icon-paper',
   },
   {
-    type: 'study-materials',
-    key: 'study-materials',
-    stat: '--',
-    title: 'Study Materials',
-    icon: 'icon-study-materials',
-  },
-  {
     type: 'quizhub',
     key: 'exams',
     stat: '--',
-    title: 'Exam Hub',
+    title: 'QuizHub',
     icon: 'icon-exam',
   },
   {
@@ -244,6 +234,13 @@ const categories = ref([
     stat: '--',
     title: 'Tutorial',
     icon: 'icon-tutorial',
+  },
+  {
+    type: 'multimedia',
+    key: 'files',
+    stat: '--',
+    title: 'Multimedia',
+    icon: 'icon-multimedia',
   },
   {
     type: 'teacher',
@@ -266,7 +263,6 @@ const gradeLoader = ref(false)
 const selectedBoard = ref(null)
 const selectedGrade = ref(null)
 const showBoardHint = ref(false)
-let categoryCountRequestId = 0
 
 const categoryLink = (category) => {
   return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
@@ -325,18 +321,34 @@ const fetchCategoryCounts = async () => {
       return
     }
 
-    const requestId = ++categoryCountRequestId
-    const counts = await fetchServiceCounts({
-      section: selectedBoard.value.code,
-      base: selectedGrade.value,
-    })
+    const params = new URLSearchParams()
+    params.append('type', 'test')
+    params.append('perpage', '1')
+    params.append('section', selectedBoard.value.code)
+    params.append('base', selectedGrade.value)
+    const requestUrl = `/api/v1/search?${params.toString()}`
+    const response = await useApiService.get(requestUrl, undefined, { public: true })
+    if (
+      response
+      && response.status === 1
+      && response.data
+      && response.data.types_stats
+    ) {
+      categories.value.find((cat, _i) => cat.key == 'papers').stat
+        = parseInt(response.data.types_stats.papers) || 0
 
-    if (requestId !== categoryCountRequestId) return
+      categories.value.find((cat, _i) => cat.key == 'files').stat
+        = parseInt(response.data.types_stats.learnfiles) || 0
 
-    categories.value.forEach((category) => {
-      const count = counts[category.type]
-      if (count !== undefined) category.stat = count
-    })
+      categories.value.find((cat, _i) => cat.key == 'exams').stat
+        = parseInt(response.data.types_stats.exams) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'questions').stat
+        = parseInt(response.data.types_stats.question) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'tutorial').stat
+        = parseInt(response.data.types_stats.tutorials) || 0
+    }
   }
   catch (error) {
     console.error('Error fetching category counts:', error)
@@ -396,10 +408,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-@use 'sass:map';
-@use 'vuetify/settings' as vuetify;
-
+<style scoped>
 .board-hint {
   position: absolute;
   left: 0;
@@ -486,8 +495,8 @@ onMounted(() => {
 .stat-icon {
   font-size: 2.3rem;
 }
-.icon-study-materials {
-  color: rgb(var(--v-theme-greenLight700));
+.icon-multimedia {
+  color: #02b719;
 }
 .icon-teacher{
   color : #7f56d9
@@ -497,6 +506,9 @@ onMounted(() => {
 }
 .icon-exam {
   color: #7c4dff;
+}
+.icon-q-a {
+  color: #fdb022;
 }
 .icon-tutorial {
   color: #2e90fa;
@@ -591,7 +603,7 @@ onMounted(() => {
   flex-grow: 1;
 }
 
-@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+@media (min-width: 600px) {
   .ex-category__card {
     background: linear-gradient(
       90deg,
@@ -627,7 +639,7 @@ onMounted(() => {
     width: 450px;
   }
 }
-@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+@media (min-width: 960px) {
   .ex-category__card--title {
     font-size: 30px;
     font-weight: 700;
