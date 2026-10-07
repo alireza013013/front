@@ -90,6 +90,31 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
   const getFilter = (key: SearchFilterKey) =>
     filters.value.find(filter => filter.key === key)
 
+  const getQueryValue = (key: SearchFilterKey) => {
+    if (key === 'type') return activeService.value
+
+    const value = route.query[key]
+    const normalizedValue = Array.isArray(value) ? value[0] : value
+
+    return normalizedValue == null || normalizedValue === ''
+      ? null
+      : String(normalizedValue)
+  }
+
+  const getOptionValue = (filter: SearchFilterState, option: SearchFilterOption) => {
+    if (filter.key === 'section') return option.code ?? option.id
+    return option.id
+  }
+
+  const findSelectedOptionFromQuery = (filter: SearchFilterState) => {
+    const queryValue = getQueryValue(filter.key)
+    if (!queryValue) return null
+
+    return filter.options.find(option =>
+      String(getOptionValue(filter, option)) === queryValue,
+    ) || null
+  }
+
   const getConditionalFilters = (service: SearchServiceId) =>
     SEARCH_FILTERS_BY_SERVICE[service] || []
 
@@ -275,7 +300,9 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
 
     try {
       if (key === 'section') {
-        await getBoards()
+        if (!boards.value.length) {
+          await getBoards()
+        }
         filter.options = sortByListOrder(boards.value.map(toSearchOption))
       }
 
@@ -397,14 +424,26 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
     updateRouteQuery()
   }
 
+  const hydrateFiltersFromRoute = async () => {
+    activeService.value = normalizeSearchService(route.query.type)
+    applyFilterDefinitions()
+
+    for (const filter of filters.value) {
+      await loadFilterOptions(filter.key)
+
+      const selected = findSelectedOptionFromQuery(filter)
+      if (!selected) continue
+
+      filter.selected = selected
+      filter.disabled = false
+      selections[filter.key] = selected
+    }
+  }
+
   applyFilterDefinitions()
 
   onMounted(async () => {
-    await Promise.all(
-      filters.value
-        .filter(filter => !filter.disabled || filter.staticOptions)
-        .map(filter => loadFilterOptions(filter.key)),
-    )
+    await hydrateFiltersFromRoute()
   })
 
   watch(activeService, (service) => {
