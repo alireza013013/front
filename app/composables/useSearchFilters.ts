@@ -99,6 +99,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
       {
         key: 'section',
         title: 'Board',
+        icon: 'md:school_outlined',
       },
       {
         key: 'base',
@@ -124,6 +125,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
         definitions.push({
           key: 'topic',
           title: 'Topic',
+          icon: 'md:sell_outlined',
           dependsOn: [{ key: 'lesson', sourceKey: 'id' }],
           disabledUntilReady: true,
         })
@@ -133,6 +135,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
         definitions.push({
           key: 'edu_year',
           title: 'Year',
+          icon: 'md:calendar_today_outlined',
           staticOptions: Array.from({ length: 14 }, (_, index) => 2013 + index)
             .reverse()
             .map(year => ({ id: year, title: `${year}` })),

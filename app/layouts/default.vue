@@ -47,8 +47,8 @@ const duration = 10000
 const route = useRoute()
 const { isOnline } = useNetwork()
 
-const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher']
-const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher']
+const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher', '/search']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher', 'search']
 
 const showPostSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)

@@ -67,6 +67,7 @@ export interface SearchFilterDependency {
 export interface SearchFilterDefinition {
   key: SearchFilterKey
   title: string
+  icon?: string
   dependsOn?: SearchFilterDependency[]
   staticOptions?: SearchFilterOption[]
   disabledUntilReady?: boolean
