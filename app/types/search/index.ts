@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { SearchParameters } from '@/composables/useApiService'
 
 export type SearchServiceId
   = | 'paper'
@@ -99,4 +100,72 @@ export interface SearchFilterResult {
   selectFilter: (key: SearchFilterKey, option: SearchFilterOption | null) => Promise<void>
   loadFilterOptions: (key: SearchFilterKey) => Promise<SearchFilterOption[]>
   resetFilters: () => Promise<void>
+}
+
+export interface SearchRequestOptions {
+  public?: boolean
+}
+
+export interface SearchListDTO {
+  num: number | string
+  list: SearchResourceItem[]
+}
+
+export interface SearchResourceItem {
+  id: number | string
+  title?: string | null
+  title_url?: string | null
+  description?: string | null
+  summary?: string | null
+  lesson_pic?: string | null
+  avatar?: string | null
+  first_name?: string | null
+  last_name?: string | null
+  username?: string | null
+  section_title?: string | null
+  base_title?: string | null
+  lesson_title?: string | null
+  test_type_title?: string | null
+  azmoon_type_title?: string | null
+  is_paper?: boolean | null
+  [key: string]: unknown
+}
+
+export type SearchQueryValue = string | number | boolean | null | undefined | string[] | number[]
+export type SearchQuery = Record<string, SearchQueryValue>
+
+export interface SearchRequestParams extends SearchParameters {
+  page: number
+  perpage: number
+  noTypesStats: number
+  type: LegacySearchType
+  is_paper?: boolean
+  title?: SearchQueryValue
+  section?: SearchQueryValue
+  base?: SearchQueryValue
+  lesson?: SearchQueryValue
+  test_type?: SearchQueryValue
+  variant?: SearchQueryValue
+  edu_year?: SearchQueryValue
+  edu_month?: SearchQueryValue
+  topic?: SearchQueryValue
+  exam_type?: SearchQueryValue
+  content_type?: SearchQueryValue
+}
+
+export interface SearchResultsOptions {
+  immediate?: boolean
+  perPage?: number
+}
+
+export interface SearchResultsResult {
+  data: Ref<SearchResourceItem[]>
+  totalDataFound: Ref<number | string>
+  isInitialLoading: Ref<boolean>
+  isPaginationLoading: Ref<boolean>
+  isAllDataLoaded: Ref<boolean>
+  currentPage: Ref<number>
+  fetchInitialResults: () => Promise<void>
+  reloadResults: (query?: SearchQuery) => Promise<void>
+  loadNextPage: () => Promise<void>
 }

@@ -1,5 +1,7 @@
 import type {
   LegacySearchType,
+  SearchQuery,
+  SearchRequestParams,
   SearchServiceId,
   SearchTypeAlias,
 } from '@/types/search'
@@ -45,4 +47,42 @@ export const normalizeSearchService = (type: unknown): SearchServiceId => {
 export const getLegacySearchType = (type: unknown): LegacySearchType => {
   const key = String(type ?? '')
   return isSearchTypeAlias(key) ? LEGACY_TYPE_BY_SEARCH_SERVICE[key] : 'test'
+}
+
+export const buildSearchParams = (query: SearchQuery, page: number, perpage: number): SearchRequestParams => {
+  const frontendType = normalizeSearchService(query.type)
+  const params: SearchRequestParams = {
+    page,
+    perpage,
+    noTypesStats: 1,
+    title: query.title,
+    section: query.section,
+    base: query.base,
+    lesson: query.lesson,
+    type: getLegacySearchType(frontendType),
+  }
+
+  if (frontendType === 'paper') {
+    params.is_paper = true
+    params.test_type = query.test_type
+    params.variant = query.variant
+    params.edu_year = query.edu_year
+    params.edu_month = query.edu_month
+  }
+  else if (frontendType === 'study-materials') {
+    params.is_paper = false
+    params.test_type = query.test_type
+    params.topic = query.topic
+  }
+  else if (frontendType === 'quizhub') {
+    params.exam_type = query.exam_type
+    params.topic = query.topic
+    params.edu_year = query.edu_year
+    params.edu_month = query.edu_month
+  }
+  else if (frontendType === 'tutorial') {
+    params.topic = query.topic
+  }
+
+  return params
 }
