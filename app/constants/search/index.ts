@@ -33,14 +33,6 @@ export const SEARCH_SERVICE_OPTIONS = [
     isPaper: null,
   },
   {
-    id: 'forum',
-    legacyApiType: 'question',
-    title: 'Forum',
-    shortTitle: 'Forum',
-    icon: 'stat-icon icon-q-a',
-    isPaper: null,
-  },
-  {
     id: 'tutorial',
     legacyApiType: 'dars',
     title: 'Tutorial',

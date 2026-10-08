@@ -57,6 +57,13 @@
           cols="12"
           md="3"
         >
+          <div class="d-md-none mb-3">
+            <search-services-tabs
+              :active-service="activeService"
+              @change="setService"
+            />
+          </div>
+
           <search-filter-panel
             :filters="filters"
             @select-filter="selectFilter"
@@ -68,6 +75,13 @@
           cols="12"
           md="9"
         >
+          <div class="d-none d-md-flex mb-4">
+            <search-services-tabs
+              :active-service="activeService"
+              @change="setService"
+            />
+          </div>
+
           <v-sheet
             rounded="lg"
             border
@@ -87,9 +101,11 @@
 const keyword = ref('')
 
 const {
+  activeService,
   filters,
   selectFilter,
   resetFilters,
+  setService,
 } = useSearchFilters()
 
 useHead({

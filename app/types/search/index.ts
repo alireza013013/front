@@ -19,6 +19,10 @@ export type LegacySearchType
 
 export type SearchTypeAlias = SearchServiceId | LegacySearchType
 
+export type SearchCountService = 'paper' | 'study-materials' | 'quizhub' | 'tutorial'
+
+export type SearchServiceCounts = Partial<Record<SearchCountService, number>>
+
 export type SearchFilterKey
   = | 'section'
     | 'base'

@@ -235,8 +235,22 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
 
   const applyFilterDefinitions = () => {
     const previousSelections = { ...selections }
+    const previousFilters = new Map(
+      filters.value.map(filter => [`${filter.key}:${filter.title}`, filter]),
+    )
     const definitions = getFilterDefinitions(activeService.value)
-    const nextFilters = definitions.map(makeFilter)
+    const nextFilters = definitions.map((definition) => {
+      const nextFilter = makeFilter(definition)
+      const previousFilter = previousFilters.get(`${definition.key}:${definition.title}`)
+
+      if (!previousFilter) return nextFilter
+
+      return {
+        ...nextFilter,
+        loading: previousFilter.loading,
+        options: previousFilter.options,
+      }
+    })
     const nextKeys = new Set(definitions.map(definition => definition.key))
 
     QUERY_FILTER_KEYS.forEach((key) => {
@@ -388,11 +402,21 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
 
     activeService.value = service
     applyFilterDefinitions()
-    await Promise.all(
-      filters.value
-        .filter(filter => BASE_FILTER_KEYS.includes(filter.key) || filter.staticOptions)
-        .map(filter => loadFilterOptions(filter.key)),
-    )
+
+    for (const filter of filters.value) {
+      if (filter.staticOptions) {
+        loadStaticOptions(filter)
+        continue
+      }
+
+      if (!isFilterReady(filter)) continue
+      filter.disabled = false
+
+      if (!filter.options.length) {
+        await loadFilterOptions(filter.key)
+      }
+    }
+
     updateRouteQuery()
   }
 
@@ -426,6 +450,16 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
 
   const hydrateFiltersFromRoute = async () => {
     activeService.value = normalizeSearchService(route.query.type)
+
+    if (!route.query.type && syncRouteQuery) {
+      await router.replace({
+        query: {
+          ...route.query,
+          type: activeService.value,
+        },
+      })
+    }
+
     applyFilterDefinitions()
 
     for (const filter of filters.value) {
