@@ -131,6 +131,18 @@ export interface SearchResourceItem {
   [key: string]: unknown
 }
 
+export interface SearchCardItem extends SearchResourceItem {
+  q_file?: boolean | string | null
+  a_file?: boolean | string | null
+  q_file_word?: boolean | string | null
+  referee_score?: number | string | null
+  ref_score?: number | string | null
+  tests_num?: number | string | null
+  views?: number | string | null
+  subdate?: string | null
+  level?: number | string | null
+}
+
 export type SearchQueryValue = string | number | boolean | null | undefined | string[] | number[]
 export type SearchQuery = Record<string, SearchQueryValue>
 
@@ -151,21 +163,4 @@ export interface SearchRequestParams extends SearchParameters {
   topic?: SearchQueryValue
   exam_type?: SearchQueryValue
   content_type?: SearchQueryValue
-}
-
-export interface SearchResultsOptions {
-  immediate?: boolean
-  perPage?: number
-}
-
-export interface SearchResultsResult {
-  data: Ref<SearchResourceItem[]>
-  totalDataFound: Ref<number | string>
-  isInitialLoading: Ref<boolean>
-  isPaginationLoading: Ref<boolean>
-  isAllDataLoaded: Ref<boolean>
-  currentPage: Ref<number>
-  fetchInitialResults: () => Promise<void>
-  reloadResults: (query?: SearchQuery) => Promise<void>
-  loadNextPage: () => Promise<void>
 }

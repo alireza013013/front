@@ -217,7 +217,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
     return definitions
   }
 
-  const updateRouteQuery = () => {
+  const updateRouteQuery = async () => {
     if (!syncRouteQuery) return
 
     const query = Object.fromEntries(
@@ -230,7 +230,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
       if (filter.selected) query[filter.key] = String(filter.selected.code ?? filter.selected.id)
     })
 
-    router.replace({ query })
+    await router.replace({ query })
   }
 
   const applyFilterDefinitions = () => {
@@ -393,16 +393,7 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
     }
   }
 
-  const setService = async (service: SearchServiceId) => {
-    Object.keys(selections).forEach((key) => {
-      if (!BASE_FILTER_KEYS.includes(key as SearchFilterKey)) {
-        selections[key as SearchFilterKey] = undefined
-      }
-    })
-
-    activeService.value = service
-    applyFilterDefinitions()
-
+  const loadReadyFilters = async () => {
     for (const filter of filters.value) {
       if (filter.staticOptions) {
         loadStaticOptions(filter)
@@ -416,8 +407,20 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
         await loadFilterOptions(filter.key)
       }
     }
+  }
 
-    updateRouteQuery()
+  const setService = async (service: SearchServiceId) => {
+    Object.keys(selections).forEach((key) => {
+      if (!BASE_FILTER_KEYS.includes(key as SearchFilterKey)) {
+        selections[key as SearchFilterKey] = undefined
+      }
+    })
+
+    activeService.value = service
+    applyFilterDefinitions()
+    await updateRouteQuery()
+
+    loadReadyFilters().catch(console.error)
   }
 
   const selectFilter = async (key: SearchFilterKey, option: SearchFilterOption | null) => {
@@ -434,8 +437,8 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
     else selections[key] = undefined
 
     resetDependents(key)
-    await loadReadyChildren(key)
-    updateRouteQuery()
+    await updateRouteQuery()
+    loadReadyChildren(key).catch(console.error)
   }
 
   const resetFilters = async () => {
@@ -444,8 +447,8 @@ export const useSearchFilters = (options: SearchFilterOptions = {}): SearchFilte
     })
     activeService.value = DEFAULT_SEARCH_SERVICE.id
     applyFilterDefinitions()
-    await loadFilterOptions('section')
-    updateRouteQuery()
+    await updateRouteQuery()
+    loadFilterOptions('section').catch(console.error)
   }
 
   const hydrateFiltersFromRoute = async () => {
