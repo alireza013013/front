@@ -3,15 +3,15 @@
     <div
       v-for="service in services"
       :key="service.id"
-      class="rounded-lg cursor-pointer d-flex justify-start align-center px-1 py-2 ga-2 service-div"
+      class="rounded-lg cursor-pointer d-flex justify-start align-center px-2 py-2 ga-2 service-div"
       :class="`
        ${activeService === service.id ? 'bg-grey700 flex-row w-100 w-sm-25' : 'bg-white flex-column flex-sm-row width-service'}
       `"
       @click="selectService(service.id)"
     >
       <span
-        class="d-flex align-center justify-center text-h3"
-        :class="activeService === service.id ? 'text-white' : 'text-grey700'"
+        class="d-flex align-center justify-center"
+        :class="activeService === service.id ? 'text-white text-h3' : 'text-grey700 text-h4 text-sm-h3'"
         aria-hidden="true"
       >
         <span :class="service.icon" />
