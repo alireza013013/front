@@ -155,6 +155,29 @@ const openMobileDialog = () => {
 .main-sheet-filter{
   border : 1px solid rgb(var(--v-theme-grey200))
 }
+
+@media (min-width: 960px) {
+  .main-sheet-filter {
+    max-height: calc(100dvh - 74px);
+    overflow-y: auto;
+    scrollbar-color: rgb(var(--v-theme-grey300)) transparent;
+    scrollbar-width: thin;
+  }
+
+  .main-sheet-filter::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .main-sheet-filter::-webkit-scrollbar-thumb {
+    background: rgb(var(--v-theme-grey300));
+    border-radius: 999px;
+  }
+
+  .main-sheet-filter::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
 .mobile-filter-item {
   width: 180px;
 }

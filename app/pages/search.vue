@@ -2,6 +2,7 @@
   <v-container class="margin-top-handle">
     <v-row
       align="center"
+      class="bg-white py-2 container-title-input"
     >
       <v-col
         cols="12"
@@ -53,6 +54,7 @@
       <v-col
         cols="12"
         md="3"
+        class="container-filter-service bg-white"
       >
         <div class="d-md-none mb-1">
           <search-services-tabs
@@ -73,7 +75,7 @@
         md="9"
         class="px-0 px-sm-3"
       >
-        <div class="d-none d-md-flex mb-4">
+        <div class="d-none d-md-flex mb-4 py-2 bg-white container-service">
           <search-services-tabs
             :active-service="activeService"
             @change="handleServiceChange"
@@ -359,5 +361,21 @@ useHead({
 
 :deep(.custom-search-text-field .v-field__outline__end) {
   border-radius: 0 4px 4px 0 !important;
+}
+
+.container-filter-service{
+  position: sticky;
+  top: 64px;
+  z-index : 3;
+}
+.container-service{
+  position: sticky;
+  top: 64px;
+  z-index: 2;
+}
+@media (max-width: 600px) {
+  .container-filter-service{
+    top: 54px;
+  }
 }
 </style>
