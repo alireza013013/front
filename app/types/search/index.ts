@@ -169,3 +169,11 @@ export interface SearchRequestParams extends SearchParameters {
   exam_type?: SearchQueryValue
   content_type?: SearchQueryValue
 }
+export interface HomeStatsDTO {
+  paper?: number
+  studyMaterials?: number
+  exam?: number
+  tutorial?: number
+  teacher?: number
+  school?: number
+}

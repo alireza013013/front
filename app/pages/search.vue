@@ -56,7 +56,7 @@
         md="3"
         class="container-filter-service bg-white"
       >
-        <div class="d-md-none mb-1">
+        <div class="d-flex d-md-none mb-1">
           <search-services-tabs
             :active-service="activeService"
             :service-counts="serviceCounts"

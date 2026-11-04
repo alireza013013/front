@@ -20,7 +20,7 @@
         <lazy-home-post-container v-if="showPostSlider" />
       <!-- End post container -->
       </main>
-      <lazy-common-footer />
+      <lazy-common-footer v-if="!isSearchExperience" />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />
       <!-- <client-only>
@@ -37,10 +37,11 @@ let animationFrame = null
 let startTime = null
 const duration = 10000
 const route = useRoute()
+const isSearchExperience = computed(() => route.meta.searchExperience === true)
 const { isOnline } = useNetwork()
 
-const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher', '/search']
-const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher', 'search']
+const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher']
 
 // A page can also opt out with definePageMeta({ hidePostSlider: true }), e.g. pages with dynamic paths.
 const showPostSlider = computed(() => {

@@ -2,11 +2,11 @@ import type {
   ApiResult,
 } from '@/types'
 import type { SearchParameters } from '@/composables/useApiService'
-import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO } from '@/types/search'
+import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO, HomeStatsDTO } from '@/types/search'
 
 // gama-api's search through the new backend, which caches it (Redis and Cloudflare). It is the same for every
 // visitor, so no token or cookie is sent: that keeps one cached copy valid for everyone.
-// const publicRequest = { public: true, credentials: 'omit' } as const
+const publicRequest = { public: true, credentials: 'omit' } as const
 
 export const useSearchApi = () => {
   const data = ref<SearchResourceItem[]>([])
@@ -95,6 +95,9 @@ export const useSearchApi = () => {
     }
   }
 
+  const getHomeStats = (params: Pick<SearchParameters, 'section' | 'base'>) =>
+    useApiService.get<ApiResult<HomeStatsDTO>>('/api/v2/search/homestats', params, publicRequest)
+
   return {
     data,
     totalCount,
@@ -103,5 +106,6 @@ export const useSearchApi = () => {
     getData,
     getTypesStats,
     resetData,
+    getHomeStats,
   }
 }
