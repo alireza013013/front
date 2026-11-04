@@ -22,7 +22,7 @@
       <div class="d-flex align-center flex-wrap ga-2 mt-2">
         <div
           :class="[
-            filter.selected ? 'bg-white text-grey700' : 'bg-grey700 text-white',
+            filter.selected ? 'bg-surface text-grey700' : 'bg-grey700 text-surface',
             filter.disabled ? 'opacity-50' : 'cursor-pointer',
             'text-h6 font-weight-bold button-filter rounded-lg d-flex justify-center align-center px-1',
           ]"
@@ -36,7 +36,7 @@
           v-for="option in filter.options"
           :key="option.id"
           :class="[
-            filter.selected?.id === option.id ? 'bg-grey700 text-white' : 'bg-white text-grey700',
+            filter.selected?.id === option.id ? 'bg-grey700 text-surface' : 'bg-surface text-grey700',
             filter.disabled ? 'opacity-50' : 'cursor-pointer',
             'text-h6 font-weight-bold button-filter rounded-lg d-flex justify-center align-center px-1',
           ]"

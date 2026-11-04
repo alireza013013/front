@@ -1,8 +1,8 @@
 <template>
-  <v-container class="margin-top-handle">
+  <v-container class="margin-top-handle py-0 py-sm-2">
     <v-row
       align="center"
-      class="bg-white py-2 container-title-input"
+      class=" py-2 container-title-input d-none d-sm-flex"
     >
       <v-col
         cols="12"
@@ -50,11 +50,14 @@
       </v-col>
     </v-row>
 
-    <v-row align="start">
+    <v-row
+      align="start"
+      class="mt-0"
+    >
       <v-col
         cols="12"
         md="3"
-        class="container-filter-service bg-white"
+        class="container-filter-service"
       >
         <div class="d-flex d-md-none mb-1">
           <search-services-tabs
@@ -71,15 +74,46 @@
           :results-loading="isInitialLoading"
           @select-filter="handleFilterChange"
           @reset="handleFiltersReset"
-        />
+        >
+          <template #mobile-search>
+            <v-text-field
+              v-model="keyword"
+              label="Search anything...."
+              variant="outlined"
+              color="primary"
+              density="compact"
+              hide-details
+              class="custom-search-text-field w-100"
+              @update:model-value="handleKeywordInput"
+              @keydown.enter="searchByKeyword"
+            >
+              <template #append>
+                <v-btn
+                  icon
+                  color="primary"
+                  width="50"
+                  class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
+                  flat
+                  @click="searchByKeyword"
+                >
+                  <v-icon
+                    size="x-large"
+                    icon="md:search"
+                    color="grey800"
+                  />
+                </v-btn>
+              </template>
+            </v-text-field>
+          </template>
+        </search-filter-panel>
       </v-col>
 
       <v-col
         cols="12"
         md="9"
-        class="px-0 px-sm-3"
+        class="px-0 px-sm-3 py-0"
       >
-        <div class="d-none d-md-flex mb-4 py-2 bg-white container-service">
+        <div class="d-none d-md-flex mb-4 py-2 bg-surface container-service">
           <search-services-tabs
             :active-service="activeService"
             :service-counts="serviceCounts"
@@ -481,9 +515,14 @@ const { metadata } = useSearchMetadata({
   top: 64px;
   z-index: 2;
 }
+@media (max-width: 960px) {
+  .container-filter-service{
+    top: -4px;
+  }
+}
 @media (max-width: 600px) {
   .container-filter-service{
-    top: 54px;
+    top: -10px;
   }
 }
 </style>

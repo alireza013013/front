@@ -2,18 +2,18 @@
   <nuxt-link
     v-if="directoryLink"
     :to="directoryLink"
-    class="w-100 rounded-lg d-flex align-center justify-space-between flex-wrap pa-2 ga-2 mt-2 border border-grey300 subject-directory-alert"
+    class="w-100 rounded-lg d-flex align-center justify-space-between flex-wrap pa-2 ga-2 mt-2 border-thin border-opacity-100 border-grey300 bg-surface elevation-1"
   >
     <div class="d-flex align-center ga-2">
       <v-avatar
         size="40"
-        color="info"
+        color="grey700"
         rounded="lg"
       >
         <v-icon color="white">md:newsstand</v-icon>
       </v-avatar>
       <div class="d-flex flex-column align-start">
-        <span class="text-h5 font-weight-bold text-grey700">
+        <span class="text-h5 text-md-h4 font-weight-bold text-grey700">
           {{ contentData?.lesson_title }} Subject directory
         </span>
         <span class="text-h6 font-weight-medium text-grey500">
@@ -23,13 +23,12 @@
     </div>
     <v-btn
       tag="span"
-      class="bg-white"
+      class="bg-primary"
       flat
-      width="120"
-      density="compact"
+      width="140"
       rounded="lg"
     >
-      <span class="text-h6 font-weight-medium text-grey500">
+      <span class="text-h5 font-weight-bold text-grey800">
         Open directory
         <v-icon>md:arrow_right_alt</v-icon>
       </span>
@@ -56,9 +55,3 @@ const directoryLink = computed(() => {
   }
 })
 </script>
-
-<style scoped>
-.subject-directory-alert {
-  background-color: rgba(var(--v-theme-info), 0.15);
-}
-</style>

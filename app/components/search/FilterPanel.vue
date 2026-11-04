@@ -1,9 +1,9 @@
 <template>
   <v-sheet
     rounded="lg"
-    class="py-4 px-2 bg-white elevation-1 main-sheet-filter"
+    class="py-1 py-sm-4 px-2 bg-surface elevation-1 main-sheet-filter"
   >
-    <div class="d-flex align-center justify-space-between mb-4">
+    <div class="d-none d-md-flex align-center justify-space-between mb-4">
       <button
         type="button"
         class="d-flex align-center ga-2 pa-0 bg-transparent border-0 text-left"
@@ -49,6 +49,28 @@
     </div>
 
     <div class="mobile-filter-scroller d-flex d-md-none ga-2 overflow-x-auto pb-1">
+      <v-btn
+        variant="text"
+        :ripple="false"
+        height="52"
+        max-width="100"
+        class="mobile-filter-item main-filter-button-mobile bg-surface elevation-1 position-sticky left-0 text-none justify-space-between align-center px-2 text-grey700"
+        @click="openMobileDialog"
+      >
+        <div class="d-flex align-center justify-start ga-1">
+          <div class="search-filter-icon-space d-flex align-center justify-center flex-shrink-0">
+            <v-icon
+              icon="md:tune"
+              size="22"
+              color="grey700"
+            />
+          </div>
+          <span class="d-flex flex-column align-start justify-center flex-grow-1 min-width-0 overflow-hidden text-h6 text-grey700 font-weight-bold">
+            Filter
+          </span>
+        </div>
+      </v-btn>
+
       <div
         v-for="filter in visibleFilters"
         :key="filter.key"
@@ -69,7 +91,7 @@
     >
       <v-card class="bg-grey25">
         <v-toolbar
-          color="white"
+          color="surface"
           density="comfortable"
           flat
         >
@@ -96,6 +118,10 @@
         </v-toolbar>
 
         <v-card-text class="pa-4">
+          <div class="d-sm-none mb-4">
+            <slot name="mobile-search" />
+          </div>
+
           <div class="d-flex flex-column ga-3">
             <template
               v-for="filter in visibleFilters"
@@ -116,7 +142,7 @@
           </div>
         </v-card-text>
 
-        <v-card-actions class="pa-4 bg-white">
+        <v-card-actions class="pa-4 bg-surface">
           <v-btn
             block
             color="primary"
@@ -185,6 +211,10 @@ const openMobileDialog = () => {
   border : 1px solid rgb(var(--v-theme-grey200))
 }
 
+.search-filter-icon-space {
+  width: 28px;
+  height: 28px;
+}
 @media (min-width: 960px) {
   .main-sheet-filter {
     max-height: calc(100dvh - 74px);
@@ -227,5 +257,8 @@ const openMobileDialog = () => {
 
 .mobile-filter-scroller::-webkit-scrollbar-track {
   background: transparent;
+}
+.main-filter-button-mobile{
+  z-index : 2;
 }
 </style>
