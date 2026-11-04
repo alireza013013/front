@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column pa-4 rounded-lg bg-grey700">
+  <div class="w-100 d-flex flex-column pa-4 rounded-lg bg-inverseSurface">
     <div class="w-100 d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
       <div class="d-flex align-center ga-2">
         <v-skeleton-loader

@@ -133,7 +133,7 @@
             undone.</span>
           <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
             <v-btn
-              color="black"
+              color="grey900"
               flat
               variant="text"
               rounded="lg"

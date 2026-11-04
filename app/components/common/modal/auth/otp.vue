@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
   >
     <span
       class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-start"
@@ -22,7 +22,7 @@
     <span
       class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-center cursor-pointer"
       @click="checkEmail"
-    >Your email is incorrect? <span class="text-primary font-weight-bold">Recheck it.
+    >Your email is incorrect? <span class="text-primaryStrong font-weight-bold">Recheck it.
     </span>
     </span>
     <v-divider
@@ -38,7 +38,7 @@
 
       <v-btn
         variant="text"
-        color="primary"
+        color="primaryStrong"
         class="text-h6 font-weight-bold"
         :disabled="!canResendCode || isProcessing"
         :loading="resendLoading"

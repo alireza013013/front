@@ -3,7 +3,7 @@
     <v-alert
       v-if="currentPlanId !== null && currentPlanTitle"
       type="info"
-      color="primary"
+      color="primaryStrong"
       density="compact"
       variant="tonal"
       class="mb-4"
@@ -21,13 +21,13 @@
       />
       <div
         v-else
-        class="btn-filter-container d-flex align-center justify-start ga-1 bg-grey100 pa-1 rounded-pill overflow-x-auto overflow-y-hidden "
+        class="btn-filter-container d-flex align-center justify-start ga-1 bg-grey50 pa-1 rounded-pill overflow-x-auto overflow-y-hidden "
       >
         <v-btn
           v-for="item in billingInterval"
           :key="item"
           rounded="pill"
-          :color="item == intervalSelect ? `white`:`transparent`"
+          :color="item == intervalSelect ? `surface`:`transparent`"
           flat
           height="36"
           :class="`${item == intervalSelect ? `elevation-2` : ``}`"
@@ -61,7 +61,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"
@@ -79,7 +79,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"
@@ -114,7 +114,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"
@@ -132,7 +132,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"

@@ -4,6 +4,18 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { defineNuxtConfig } from 'nuxt/config'
 import glsl from 'vite-plugin-glsl'
 
+// How long Cloudflare keeps each page. Pages render the same for everyone (the auth token lives in localStorage), so
+// one cached copy can serve every visitor; Cloudflare's gamatrain.com cache rule skips dark-theme visitors and never
+// stores 4xx/5xx. Only Cloudflare reads this header: browsers and Vercel still revalidate on every request. A route
+// without it isn't cached. Each Cloudflare miss is a Vercel render, and most traffic is crawlers on content pages.
+const edgeCache = seconds => ({
+  headers: { 'Cloudflare-CDN-Cache-Control': `public, max-age=${seconds}, stale-while-revalidate=604800` },
+})
+const contentPage = edgeCache(86400)
+const sitePage = edgeCache(14400)
+const listPage = edgeCache(7200)
+const notEdgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'no-store' } }
+
 export default defineNuxtConfig({
   runtimeConfig: {
     serverApiKey: process.env.SERVER_API_KEY, // Main Endpoint security
@@ -30,6 +42,8 @@ export default defineNuxtConfig({
       BaseUrl2: process.env.NUXT_BASE_URL2,
       gamaedtechWalletAddress: process.env.NUXT_GAMAEDTECH_WALLET_ADDRESS,
       aiModelName: process.env.NUXT_PUBLIC_AI_MODEL_NAME,
+      // Shows the light/dark switch in the header (always on in development).
+      themeSwitch: process.env.NUXT_PUBLIC_THEME_SWITCH === 'true',
     },
   },
 
@@ -77,6 +91,21 @@ export default defineNuxtConfig({
 
   // Development modules
   devtools: { enabled: true },
+
+  hooks: {
+    // The Solana wallet code (plugins/solana.client.ts) loads only on /get-token and /governance, yet every page
+    // prefetched it (~114 KB) and on a slow phone that competed with the page's own CSS. Don't prefetch it.
+    'build:manifest'(manifest) {
+      const seen = new Set()
+      const skipPrefetch = (key) => {
+        if (seen.has(key) || !manifest[key]) return
+        seen.add(key)
+        manifest[key].prefetch = false
+        manifest[key].imports?.forEach(skipPrefetch)
+      }
+      Object.keys(manifest).filter(key => /solana|wallet-adapter/.test(key)).forEach(skipPrefetch)
+    },
+  },
 
   // Global page headers
   app: {
@@ -135,7 +164,8 @@ export default defineNuxtConfig({
   },
 
   // Global CSS
-  css: ['@/assets/scss/app.scss', '@/assets/css/gama6/styles.css'],
+  // Icon fonts: modules/iconSubset.ts cuts both icon sets down to the icons the code uses in production builds.
+  css: ['@/assets/scss/app.scss', '@/assets/css/gama6/styles.css', '@/assets/css/material-symbols-full.css'],
 
   experimental: {
     payloadExtraction: false,
@@ -238,10 +268,33 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/test-maker/**': { ssr: false, prerender: true },
+    // Rendered in the browser only, so a `noindex` meta tag never reaches a crawler: send it as a header.
+    '/test-maker/**': { ssr: false, prerender: true, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
+    '/school/**': contentPage,
+    '/paper/**': contentPage,
+    '/qa/**': contentPage,
+    '/test/**': contentPage,
+    '/exam/**': contentPage,
+    '/tutorial/**': contentPage,
+    '/multimedia/**': contentPage,
+    '/post/**': contentPage,
+    '/': sitePage,
+    '/about-us': sitePage,
+    '/faq': sitePage,
+    '/services': sitePage,
+    '/contact-us': sitePage,
+    '/leader-board': sitePage,
+    '/governance': sitePage,
+    '/search': listPage,
+    '/school': listPage,
+    '/post': listPage,
+    // A form and exam sessions under the content paths.
+    '/school/add/**': notEdgeCached,
+    '/exam/start/**': notEdgeCached,
+    '/exam/participants/**': notEdgeCached,
   },
   // Development server configuration
   devServer: {
@@ -266,14 +319,18 @@ export default defineNuxtConfig({
 
             if (/\/node_modules\/(?:vue|vue-router|@vue)\//.test(normalizedId))
               return 'vendor'
-            if (normalizedId.includes('/node_modules/vuetify/'))
+            // Only Vuetify's shared core (framework, composables, utilities, base styles). Its components and
+            // their CSS stay with the pages that use them: with every component in this chunk, each page
+            // loaded all of them (387 KB JS) and a 502 KB render-blocking vuetify.css.
+            if (normalizedId.includes('/node_modules/vuetify/') && !/\/vuetify\/lib\/(?:components|labs)\//.test(normalizedId))
               return 'vuetify'
             if (/\/node_modules\/(?:vue-chartjs|chart\.js)\//.test(normalizedId))
               return 'charts'
             if (normalizedId.includes('/node_modules/@ckeditor/ckeditor5-vue/'))
               return 'ckeditor'
-            if (normalizedId.includes('/node_modules/pdfjs-dist/'))
-              return 'pdfjs'
+            // No manual chunk for pdfjs-dist: it's only imported by the lazy PdfPreviewDialog, so Rollup
+            // already keeps it out of the shared bundle. A 'pdfjs' manual chunk pulled shared helpers
+            // (ufo) into it, which made every page download the whole PDF library and its worker.
           },
         },
       },

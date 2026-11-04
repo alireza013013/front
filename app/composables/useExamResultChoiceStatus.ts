@@ -43,7 +43,7 @@ export const useExamResultChoiceStatus = () => {
     userAnswer: string | number | null | undefined,
   ) => {
     const normalizedUserAnswer = normalizeChoice(userAnswer)
-    if (!normalizedUserAnswer || normalizedUserAnswer === '0') return 'grey300'
+    if (!normalizedUserAnswer || normalizedUserAnswer === '0') return 'grey500'
 
     return normalizedUserAnswer === normalizeChoice(trueAnswer) ? 'success' : 'lightError'
   }

@@ -271,9 +271,16 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <!--
+    School photos are cropped to 4:3 (the shape the school page shows them in) at up to 1600x1200.
+    The cropper's default is a fixed 400x150 strip, which made every photo a thin, low-resolution banner.
+  -->
   <cropper-dialog
     v-model="showCropperDialog"
     :file-url="cropFileUrl"
+    :stencil-props="{ aspectRatio: 4 / 3, resizable: true, movable: true }"
+    :canvas="{ maxWidth: 1600, maxHeight: 1200 }"
+    :quality="0.85"
     @cropped-data="croppedData"
   />
   <modals-photo-source-selector

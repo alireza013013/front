@@ -1,66 +1,73 @@
 <template>
-  <div>
-    <div class="mb-4">
-      Description
+  <section
+    class="detail-section"
+    aria-labelledby="about-title"
+  >
+    <div class="section-head">
+      <h2
+        id="about-title"
+        class="section-title"
+      >
+        About
+      </h2>
+      <v-btn
+        v-if="!isEditing"
+        variant="text"
+        color="info"
+        size="small"
+        class="text-none gtext-t5 px-2 section-action"
+        @click="startEdit"
+      >
+        {{ description ? 'Edit' : 'Add description' }}
+      </v-btn>
     </div>
-    <h1 class="text-h6 text-md-h5">
-      <div class="d-flex align-center flex-wrap">
-        <div
-          v-if="!generalDataEditMode.description"
-          class="d-flex align-center"
+    <form
+      v-if="isEditing"
+      class="description-form"
+      @submit.prevent="handleUpdate"
+    >
+      <v-textarea
+        v-model="form.description"
+        variant="outlined"
+        label="Describe the school: its history, programs, what makes it different"
+        :rules="[(v) => !!v?.trim() || 'Description is required']"
+        auto-grow
+        rows="4"
+        autofocus
+        hide-details="auto"
+      />
+      <div class="form-buttons">
+        <v-btn
+          type="submit"
+          :loading="decSubmitLoader"
+          color="primary"
+          variant="flat"
+          class="text-none gtext-t5"
         >
-          <div>
-            {{ contentData.description || defaultDescription }}
-          </div>
-          <v-btn
-            class="ml-4"
-            icon
-            color="blue-grey"
-            variant="text"
-            @click="handleEdit"
-          >
-            <v-icon size="large">
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </div>
-        <div class="w-70 w-md-100">
-          <v-textarea
-            v-if="generalDataEditMode.description"
-            v-model="form.description"
-            variant="outlined"
-            label="Description"
-            :rules="[(v) => !!v || 'Description is required']"
-          >
-            <template #append-inner>
-              <v-btn
-                :loading="decSubmitLoader"
-                color="success"
-                variant="flat"
-                size="x-small"
-                icon
-                @click="handleUpdate"
-              >
-                <v-icon size="large">
-                  mdi-check
-                </v-icon>
-              </v-btn>
-            </template>
-          </v-textarea>
-        </div>
+          Submit
+        </v-btn>
+        <v-btn
+          variant="text"
+          class="text-none gtext-t5"
+          @click="cancel"
+        >
+          Cancel
+        </v-btn>
       </div>
-      <span v-show="contentData.school_type_title">
-        ,
-        {{ contentData.school_type_title }}
-      </span>
-      <span v-show="contentData.section_title">
-        , {{ contentData.section_title }}
-      </span>
-      <span v-show="contentData.area_title">
-        , {{ contentData.area_title }}
-      </span>
-    </h1>
-  </div>
+    </form>
+    <p
+      v-else-if="description"
+      class="description"
+    >
+      {{ description }}
+    </p>
+    <p
+      v-else
+      class="section-empty"
+    >
+      No description yet.
+    </p>
+  </section>
 </template>
 
 <script setup>
@@ -73,90 +80,42 @@ const props = defineProps({
 })
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const contentData = ref(props.content)
+const { requireSignIn } = useContributeGate()
 
-function generateDefaultDescription(data) {
-  try {
-    const name = data?.name || ''
-    const city = data?.cityTitle || ''
-    const state = data?.stateTitle || ''
-    const country = data?.countryTitle || ''
-    const location = [city, state, country].filter(Boolean).join(', ')
-
-    const facilities = Array.isArray(data?.tags)
-      ? data.tags
-          .map(t => (typeof t === 'string' ? t : t?.title || t?.name))
-          .filter(t => typeof t === 'string' && t.trim().length > 0)
-          .join(', ')
-      : ''
-
-    const phone = data?.phoneNumber || ''
-    const site = data?.webSite || ''
-
-    const parts = []
-    parts.push(`Discover ${name} in ${location}`)
-    if (facilities) {
-      parts.push(`— offering ${facilities} for students`)
-    }
-
-    const contactBits = []
-    if (phone) contactBits.push(`Call ${phone}`)
-    if (site) contactBits.push(`visit ${site}`)
-    if (contactBits.length > 0) {
-      parts.push(`. ${contactBits.join(' or ')}`)
-    }
-
-    let sentence = parts.join('')
-    if (!sentence.endsWith('.')) sentence = `${sentence}.`
-    return sentence
-  }
-  catch {
-    return 'Discover this school.'
-  }
-}
-
-const defaultDescription = computed(() =>
-  generateDefaultDescription(contentData.value),
-)
+const description = computed(() => props.content.description?.trim() || '')
 const decSubmitLoader = ref(false)
-const generalDataEditMode = reactive({
-  description: false,
-})
+const isEditing = ref(false)
 const form = reactive({
   description: '',
 })
-function handleEdit() {
-  form.description
-    = contentData.value.description || defaultDescription.value || ''
-  generalDataEditMode.description = true
+
+function startEdit() {
+  if (!requireSignIn()) return
+  form.description = description.value
+  isEditing.value = true
 }
-function isRequired(value) {
-  try {
-    return !!value.trim()
-  }
-  catch {
-    return false
-  }
+
+function cancel() {
+  isEditing.value = false
+  emit('edit', '')
 }
+
 function handleUpdate() {
-  let formData = {}
-  if (!isRequired(form.description)) {
+  const value = form.description?.trim()
+  if (!value) {
     nuxtApp.$toast?.error('Please enter a valid Description')
     return
   }
-  generalDataEditMode.description = false
-  formData = { description: form.description ?? null }
   decSubmitLoader.value = true
   useApiService
-    .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
-    .then(async (response) => {
+    .post(`/api/v2/schools/${route.params.id}/contributions`, { description: value })
+    .then((response) => {
       if (response.succeeded) {
         nuxtApp.$toast?.success(
-          'Your contribution has been successfully submitted',
+          'Thank you! Your contribution has been submitted and is pending review.',
         )
-        const newDescription = response?.data?.description ?? form.description
-        contentData.value.description = newDescription
-        emit('update', newDescription)
+        isEditing.value = false
+        emit('update', response?.data?.description ?? value)
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)
@@ -169,7 +128,6 @@ function handleUpdate() {
       else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      form.description = null
       decSubmitLoader.value = false
     })
 }
@@ -177,7 +135,31 @@ function handleUpdate() {
 watch(
   () => form.description,
   (val) => {
-    if (generalDataEditMode.description) emit('edit', val ?? '')
+    if (isEditing.value) emit('edit', val ?? '')
   },
 )
+
+defineExpose({ startEdit })
 </script>
+
+<style scoped>
+.description {
+  margin: 0;
+  max-width: 68ch;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgb(var(--v-theme-grey700));
+  white-space: pre-line;
+}
+
+.description-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 4px;
+}
+</style>

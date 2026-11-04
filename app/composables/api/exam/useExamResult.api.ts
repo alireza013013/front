@@ -3,7 +3,8 @@ import type {
   ExamResultDTO,
   GetDataParamsExamResult,
   ResponseListDTO,
-  ExamResultDetailDTO,
+  ExamResultResponseDTO,
+  ExamAnalyzeDetailResponseDTO,
 } from '@/types'
 
 export const useExamResult = () => {
@@ -14,6 +15,7 @@ export const useExamResult = () => {
   const pageCount = ref(0)
   const loadingGetData = ref(true)
   const loadingGetItemById = ref(false)
+  const loadingGetAnalyzeResultExam = ref(false)
 
   const getData = async (params: GetDataParamsExamResult) => {
     const { page, pageSize, section, base, lesson } = params
@@ -61,10 +63,10 @@ export const useExamResult = () => {
     loadingGetItemById.value = true
 
     try {
-      const response = await useApiService.get<ApiResult<ExamResultDetailDTO>>(
-        `/api/v1/exams/result/${id}`,
+      const response = await useApiService.get<ApiResult<ExamResultResponseDTO>>(
+        `/api/v2/exams/${id}/result`,
       )
-      if (response.data == null || response.status != 1) {
+      if (response.data == null || !response.succeeded) {
         handleApiResponseError(response)
       }
 
@@ -73,10 +75,36 @@ export const useExamResult = () => {
     catch (err: unknown) {
       handleApiCatchError(err)
 
-      return createApiFailure<ExamResultDetailDTO>(err)
+      return createApiFailure<ExamResultResponseDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
+    }
+  }
+
+  const getAnalyzeResultExam = async (id: string | number) => {
+    loadingGetAnalyzeResultExam.value = true
+
+    try {
+      const response = await useApiService.post<ApiResult<ExamAnalyzeDetailResponseDTO>>(
+        `/api/v2/exams/${id}/analysis`,
+      )
+      if (response.data == null || !response.succeeded) {
+        // A refused charge is answered with the payment modal, not an error toast.
+        const isPaymentRefusal = !!response.data?.upgradeSuggestions?.length
+          || response.errors?.[0]?.message === 'InsufficientBalance'
+        handleApiResponseError(response, undefined, !isPaymentRefusal)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<ExamAnalyzeDetailResponseDTO>(err)
+    }
+    finally {
+      loadingGetAnalyzeResultExam.value = false
     }
   }
 
@@ -88,5 +116,7 @@ export const useExamResult = () => {
     pageCount,
     getItemById,
     loadingGetItemById,
+    getAnalyzeResultExam,
+    loadingGetAnalyzeResultExam,
   }
 }

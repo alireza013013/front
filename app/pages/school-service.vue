@@ -319,7 +319,7 @@ export default {
     padding: 1.6rem 2.4rem 1.6rem 2.4rem;
 
     > h1 {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       text-align: center;
     }
   }
@@ -335,7 +335,7 @@ export default {
 }
 
 #service-informed-choices {
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   height: 66rem;
   padding-top: 1.8rem;
   padding-bottom: 1.8rem;
@@ -372,7 +372,7 @@ export default {
 
 #service-friendly-interface {
   height: 60rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding-top: 4.8rem;
   padding-bottom: 4.8rem;
 
@@ -407,7 +407,7 @@ export default {
 
 #service-real-reviews {
   height: 64rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding-top: 4.8rem;
   padding-bottom: 4.8rem;
 
@@ -443,7 +443,7 @@ export default {
 
 #service-personalized {
   height: 60rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding-top: 4.8rem;
   padding-bottom: 4.8rem;
 
@@ -461,7 +461,7 @@ export default {
 
 #service-education-future {
   height: 8rem;
-  background: #ffb600;
+  background: rgb(var(--v-theme-primary));
   text-align: center;
   padding: 0;
 
@@ -485,7 +485,7 @@ export default {
   }
 
   #service-informed-choices {
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     height: 51.6rem;
     padding-top: 4.8rem;
     padding-bottom: 4.8rem;
@@ -541,7 +541,7 @@ export default {
 
   #service-education-future {
     height: 8rem;
-    background: #ffb600;
+    background: rgb(var(--v-theme-primary));
     text-align: center;
     padding: 0;
 
@@ -573,7 +573,7 @@ export default {
       padding: 2.5rem 4.8rem 2.5rem 4.8rem;
 
       > h1 {
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         text-align: center;
       }
     }
@@ -585,7 +585,7 @@ export default {
   }
 
   #service-informed-choices {
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     height: 46rem;
     padding-top: 10rem;
     padding-bottom: 10rem;
@@ -595,7 +595,7 @@ export default {
     }
 
     .describe {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       font-size: 1.8rem;
       font-style: normal;
       font-weight: 500;
@@ -624,7 +624,7 @@ export default {
 
   #service-friendly-interface {
     height: 46rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding-top: 10rem;
     padding-bottom: 10rem;
 
@@ -651,7 +651,7 @@ export default {
 
   #service-real-reviews {
     height: 46rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding-top: 10rem;
     padding-bottom: 10rem;
 
@@ -678,7 +678,7 @@ export default {
 
   #service-personalized {
     height: 46rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding-top: 10rem;
     padding-bottom: 10rem;
 
@@ -692,7 +692,7 @@ export default {
 
   #service-education-future {
     height: 10rem;
-    background: #ffb600;
+    background: rgb(var(--v-theme-primary));
     text-align: center;
 
     .col-12 {

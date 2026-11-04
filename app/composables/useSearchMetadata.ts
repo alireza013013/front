@@ -3,6 +3,7 @@ import type { SearchFilterKey, SearchFilterState, SearchResourceItem, SearchServ
 import dayjs from 'dayjs'
 import { SEARCH_MONTHS_BY_LEVEL, SEARCH_SERVICE_TITLE_SUFFIXES } from '@/constants'
 import { getLegacySearchType } from '@/utils/searchServices'
+import { canonicalSearchUrl } from '@/utils/canonicalListUrl'
 
 interface SearchMetadataOptions {
   activeService: Ref<SearchServiceId>
@@ -137,8 +138,10 @@ export const useSearchMetadata = ({
     return { title, description }
   })
 
+  const host = useRequestURL().host
   useHead(() => ({
     title: metadata.value.title,
+    link: [{ rel: 'canonical', href: canonicalSearchUrl(host, route.query) }],
     meta: [
       {
         key: 'apple-mobile-web-app-title',

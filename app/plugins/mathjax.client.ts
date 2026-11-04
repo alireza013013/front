@@ -106,11 +106,10 @@ async function typesetMathInElement(element: HTMLElement) {
   }
 }
 
+// MathJax loads on first use ($ensureMathJaxReady / $renderMathInElement), not at app start:
+// most pages (schools, the home page) have no math, and it's ~85 KB of script for nothing there.
+// Code that typesets must await $ensureMathJaxReady() before touching window.MathJax.
 export default defineNuxtPlugin(() => {
-  if (import.meta.client) {
-    initializeMathJax().catch(err => console.error('MathJax Error:', err))
-  }
-
   return {
     provide: {
       renderMathInElement: typesetMathInElement,

@@ -4,6 +4,10 @@ import type {
 import type { SearchParameters } from '@/composables/useApiService'
 import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO } from '@/types/search'
 
+// gama-api's search through the new backend, which caches it (Redis and Cloudflare). It is the same for every
+// visitor, so no token or cookie is sent: that keeps one cached copy valid for everyone.
+// const publicRequest = { public: true, credentials: 'omit' } as const
+
 export const useSearchApi = () => {
   const data = ref<SearchResourceItem[]>([])
   const totalCount = ref<number | string>(0)

@@ -63,7 +63,7 @@
             color="primary"
             rounded="lg"
             size="32"
-            class="text-grey800 text-h6 font-weight-bold"
+            class="text-h6 font-weight-bold"
           >
             {{ index + 1 }}
           </v-avatar>
@@ -132,12 +132,12 @@
             @click="openCrashReportModal"
           >
             <v-icon
-              color="grey800"
+              color="on-primary"
               size="20"
             >
               md:bug_report
             </v-icon>
-            <span class="text-grey800 text-h6 font-weight-bold">
+            <span class="text-h6 font-weight-bold">
               Crash report
             </span>
           </v-btn>
@@ -191,7 +191,7 @@ const guideItems = [
   },
   {
     label: 'No answer',
-    class: 'border-grey200',
+    class: 'border-grey300',
     icon: '',
     iconColor: 'grey500',
   },

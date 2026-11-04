@@ -2,7 +2,7 @@ import type { ExamExportFileType } from '@/types'
 
 export interface ExamExportFormat {
   fileType: ExamExportFileType
-  /** The format's name on buttons and in the comparison table. */
+  /** The format's name on the download rows. */
   label: string
   /** The extension shown on the file icon. */
   badge: string

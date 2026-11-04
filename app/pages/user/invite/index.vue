@@ -38,7 +38,7 @@
         color="primary"
         rounded="pill"
         flat
-        class="text-h5 font-weight-bold text-grey900 mt-2"
+        class="text-h5 font-weight-bold mt-2"
       >
         Message support
       </v-btn>

@@ -7,6 +7,9 @@ interface RecaptchaContext {
 }
 
 const recaptcha = ref<RecaptchaContext>()
+// One shared load for the whole app: forms call initCaptcha() when someone starts filling them in,
+// and getToken() waits for it, so reCAPTCHA (~350 KB) never loads for visitors who only read.
+let loadingCaptcha: Promise<void> | null = null
 
 export const useRecaptcha = () => {
   // Get site key from runtime config or environment
@@ -78,8 +81,10 @@ export const useRecaptcha = () => {
     })
   }
 
-  const initCaptcha = () => {
-    loadRecaptchaScript()
+  const initCaptcha = (): Promise<void> => {
+    if (import.meta.server) return Promise.resolve()
+    if (loadingCaptcha) return loadingCaptcha
+    const loading = loadRecaptchaScript()
       .then((grecaptcha: RecaptchaContext) => {
         setTimeout(() => {
           const badge = document.querySelector(
@@ -134,10 +139,15 @@ export const useRecaptcha = () => {
       })
       .catch((error: Error) => {
         console.error('Error loading reCAPTCHA:', error)
+        // Let the next attempt try again (e.g. a blocked or flaky network).
+        loadingCaptcha = null
       })
+    loadingCaptcha = loading
+    return loading
   }
 
   const getToken = async (action: string = 'submit'): Promise<string> => {
+    if (import.meta.client && !recaptcha.value) await initCaptcha()
     return new Promise((resolve, reject) => {
       if (import.meta.server) {
         reject(new Error('reCAPTCHA can only be used on client side'))

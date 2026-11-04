@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
   >
     <v-form v-model="isFormValid">
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
@@ -15,10 +15,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey300"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="[email, required]"
         />
@@ -35,7 +35,7 @@
         <template #label>
           <span class="text-h6 text-grey700">
             <span class="font-weight-bold">I agree</span>
-            <span class="font-weight-bold text-primary"> terms and conditions</span>
+            <span class="font-weight-bold text-primaryStrong"> terms and conditions</span>
           </span>
         </template>
       </v-checkbox>
@@ -49,7 +49,7 @@
     <span
       class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-center cursor-pointer"
       @click="emit('openLogin')"
-    >Already registered? <span class="text-primary font-weight-bold">login now
+    >Already registered? <span class="text-primaryStrong font-weight-bold">login now
     </span>
     </span>
     <v-divider
@@ -78,7 +78,7 @@
         rounded="pill"
         height="38"
         width="180"
-        class="text-h5 text-grey800 font-weight-medium"
+        class="text-h5 font-weight-medium"
         flat
         :disabled="!isFormValid"
         :loading="loadingRegister"

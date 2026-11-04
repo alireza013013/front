@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
   >
     <v-form v-model="isFormValid">
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
@@ -15,10 +15,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey300"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="[email, required]"
         />
@@ -34,14 +34,14 @@
       class="w-100 d-flex justify-center align-center ga-2 mt-4 text-h5 font-weight-medium text-grey700"
     >
       <span
-        class="text-primary font-weight-bold cursor-pointer"
+        class="text-primaryStrong font-weight-bold cursor-pointer"
         @click="emit('openLogin')"
       >
         login
       </span>
       <span>|</span>
       <span
-        class="text-primary font-weight-bold cursor-pointer"
+        class="text-primaryStrong font-weight-bold cursor-pointer"
         @click="emit('openRegister')"
       >
         register
@@ -73,7 +73,7 @@
         rounded="pill"
         height="38"
         width="180"
-        class="text-h5 text-grey800 font-weight-medium"
+        class="text-h5 font-weight-medium"
         flat
         :disabled="!isFormValid"
         :loading="loadingForgetPassword"

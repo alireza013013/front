@@ -84,4 +84,10 @@ onMounted(() => {
 .google-login-button {
   min-height: 44px;
 }
+
+/* Google's button is a light-scheme iframe. Under a dark color-scheme page the browser paints an
+   opaque white backdrop behind it; matching the scheme keeps the iframe transparent. */
+.google-login-button {
+  color-scheme: light;
+}
 </style>

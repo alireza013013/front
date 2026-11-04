@@ -23,7 +23,7 @@
       >
         <v-row>
           <lazy-widgets-breadcrumb
-            background-color="white"
+            background-color="transparent"
             :breads="breads"
           />
         </v-row>
@@ -124,13 +124,22 @@
         @click="showLessonTree = !showLessonTree"
       >
         <v-icon
-          color="black"
+          color="on-primary"
           size="24"
         >
           md:format_list_bulleted
         </v-icon>
       </v-btn>
-      <lazy-common-box-random-question :lesson="contentData.lesson" />
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
+        <lazy-common-practice-question
+          :lesson="contentData.lesson"
+          :topic="contentData.topic"
+          :subject="contentData.lesson_title?.trim()"
+        />
+      </v-col>
 
       <v-col cols="12">
         <lazy-common-related-content
@@ -334,12 +343,6 @@ const stripHtmlTags = (input: string, length = 1200) => {
     ? text.slice(0, length).trim() + '...'
     : text
 }
-
-defineOgImageComponent('TutorialDetail', {
-  title: contentData.value?.title,
-  views: contentData.value?.views,
-  up_date: contentData.value?.up_date,
-})
 
 const schema = computed(() => {
   if (!contentData.value) return null

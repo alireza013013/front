@@ -134,7 +134,7 @@ function formatTime(date: Date) {
                   size="40"
                   class="mr-3"
                 >
-                  <v-icon color="black">
+                  <v-icon color="on-primary">
                     md:smart_toy
                   </v-icon>
                 </v-avatar>
@@ -335,7 +335,7 @@ function formatTime(date: Date) {
                     :loading="loading"
                     @click="sendMessage"
                   >
-                    <v-icon color="black">
+                    <v-icon color="on-primary">
                       md:send
                     </v-icon>
                   </v-btn>

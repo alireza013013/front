@@ -44,7 +44,7 @@
           rounded="pill"
           width="250"
           height="40"
-          class="text-h5 font-weight-medium text-grey800"
+          class="text-h5 font-weight-medium"
           color="primary"
           :disabled="!isFormValid"
           @click="showConfrimDeleteModal = true"

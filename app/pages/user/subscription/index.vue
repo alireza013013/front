@@ -207,6 +207,13 @@
       />
     </div>
 
+    <!-- What used the allowance, and when. Also shown without an active subscription when there is past usage. -->
+    <user-subscription-usage-history
+      v-if="subscriptionLoaded"
+      :subscription="userSubscription"
+      class="mt-6"
+    />
+
     <!-- Independent of whether the user currently has an active subscription -
          a lapsed/cancelled subscriber can still have real history to see. -->
     <user-subscription-history-table
@@ -299,6 +306,9 @@ const {
   getData: getPlans,
 } = useSubscription()
 
+// Set once the first subscription load finishes, so the usage section mounts once, with the subscription it
+// measures "This billing period" from.
+const subscriptionLoaded = ref(false)
 const showCancelModal = ref(false)
 const showResumeModal = ref(false)
 const showChangePlanModal = ref(false)
@@ -560,6 +570,7 @@ const switchSuccessfully = async () => {
 
 onMounted(async () => {
   await getUserSubscription()
+  subscriptionLoaded.value = true
 
   if (!userSubscription.value) {
     await Promise.all([getPlans(), getUserSubscriptionHistory({ page: 1, pageSize: 1 })])

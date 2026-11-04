@@ -111,10 +111,6 @@ export interface SearchFilterResult {
   resetFilters: () => Promise<void>
 }
 
-export interface SearchRequestOptions {
-  public?: boolean
-}
-
 export interface SearchListDTO {
   num: number | string
   list: SearchResourceItem[]

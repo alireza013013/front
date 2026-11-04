@@ -25,7 +25,6 @@
                 <v-icon
                   size="60"
                   color="primary"
-                  class=""
                 >
                   mdi-alert
                 </v-icon>

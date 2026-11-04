@@ -1,83 +1,164 @@
 <template>
-  <div :class="`w-100 h-100 set-background ${props.class}`">
-    <Map
-      ref="mapRef"
-      :initial-center="map.center"
-      :highlight-location="map.latLng"
-      :show-highlight-location="true"
-      :initial-zoom="map.zoom"
-      :border-radius="6"
-      @click-on-map="openLocationDialog"
-    />
-  </div>
+  <section
+    class="detail-section"
+    aria-labelledby="location-title"
+  >
+    <div class="section-head">
+      <h2
+        id="location-title"
+        class="section-title"
+      >
+        Location
+      </h2>
+      <v-btn
+        variant="text"
+        color="info"
+        size="small"
+        class="text-none gtext-t5 px-2 section-action"
+        @click="openLocationDialog"
+      >
+        {{ hasLocation ? 'Edit location' : 'Add location' }}
+      </v-btn>
+    </div>
 
-  <SelectLocationDialog
-    v-model="showSelectLocationDialog"
-    :content-data="contentData"
-    :map="map"
-    :map-submit-loader="mapSubmitLoader"
-    @update="handleSelectLocationUpdate"
-  />
+    <div
+      v-if="hasLocation"
+      ref="frameRef"
+      class="map-frame"
+    >
+      <LazyMap
+        v-if="showMap"
+        ref="mapRef"
+        :initial-center="latLng"
+        :highlight-location="latLng"
+        :show-highlight-location="true"
+        :initial-zoom="15"
+        :border-radius="12"
+      />
+      <v-card
+        v-else
+        flat
+        rounded="0"
+        class="map-placeholder w-100 h-100 d-flex flex-column align-center justify-center ga-1 text-grey700 font-weight-bold"
+        @click="showMap = true"
+      >
+        <v-icon
+          size="28"
+          color="primary"
+          aria-hidden="true"
+        >
+          mdi-map-marker
+        </v-icon>
+        Show map
+      </v-card>
+    </div>
+    <p
+      v-else
+      class="section-empty"
+    >
+      The map location hasn't been added yet.
+    </p>
+
+    <LazySelectLocationDialog
+      v-if="dialogMounted"
+      v-model="showSelectLocationDialog"
+      :content-data="content"
+      :map="dialogMap"
+      :map-submit-loader="mapSubmitLoader"
+      @update="handleSelectLocationUpdate"
+    />
+  </section>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
-import SelectLocationDialog from '@/components/common/SelectLocationDialog.vue'
-import Map from '@/components/common/Map.client.vue'
-
 const props = defineProps({
-  class: {
-    type: String,
-    required: false,
-    default: '',
-  },
   content: {
     type: Object,
     required: true,
   },
 })
 const emit = defineEmits(['location-updated'])
+
+// Leaflet and its tiles are the heaviest thing on this page and used to be its LCP, so they load
+// only once the map is on screen and the visitor has scrolled or tapped (LCP stops counting then),
+// or when they ask for it.
+const LazyMap = defineAsyncComponent(() => import('@/components/common/Map.client.vue'))
+const LazySelectLocationDialog = defineAsyncComponent(() => import('@/components/common/SelectLocationDialog.vue'))
+
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const contentData = ref(props.content)
+const { requireSignIn } = useContributeGate()
+const frameRef = ref(null)
+const mapRef = ref(null)
+const showMap = ref(false)
+const dialogMounted = ref(false)
 const showSelectLocationDialog = ref(false)
 const mapSubmitLoader = ref(false)
-const mapMarkerData = ref({})
-const map = reactive({
+
+const hasLocation = computed(() => !!(props.content.latitude && props.content.longitude))
+const latLng = computed(() => [Number(props.content.latitude), Number(props.content.longitude)])
+const dialogMap = computed(() => ({
   url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  zoom: 6,
+  zoom: hasLocation.value ? 15 : 6,
   minZoom: 2,
-  center: [0, 0],
-  latLng: [0, 0],
-})
-const mapRef = ref(null)
+  center: hasLocation.value ? latLng.value : [0, 0],
+  latLng: hasLocation.value ? latLng.value : [0, 0],
+}))
+
+let observer = null
+let interacted = false
+let inView = false
+const interactionEvents = ['scroll', 'pointerdown', 'keydown', 'touchstart']
+
+function maybeShowMap() {
+  if (interacted && inView) {
+    showMap.value = true
+    cleanup()
+  }
+}
+
+function onInteraction() {
+  interacted = true
+  interactionEvents.forEach(name => window.removeEventListener(name, onInteraction))
+  maybeShowMap()
+}
+
+function cleanup() {
+  observer?.disconnect()
+  observer = null
+  interactionEvents.forEach(name => window.removeEventListener(name, onInteraction))
+}
+
+function watchVisibility() {
+  if (!frameRef.value || showMap.value) return
+  observer = new IntersectionObserver((entries) => {
+    inView = entries.some(entry => entry.isIntersecting)
+    maybeShowMap()
+  }, { rootMargin: '200px' })
+  observer.observe(frameRef.value)
+  interactionEvents.forEach(name => window.addEventListener(name, onInteraction, { passive: true }))
+}
+
+onMounted(watchVisibility)
+onBeforeUnmount(cleanup)
 
 function openLocationDialog() {
+  if (!requireSignIn()) return
+  dialogMounted.value = true
   showSelectLocationDialog.value = true
   setTimeout(() => {
-    // Implement with template refs if needed
     window.dispatchEvent(new Event('resize'))
   }, 500)
 }
-function handleSelectLocationUpdate(payload) {
-  mapMarkerData.value = payload
-  handleUpdate()
-}
-function handleUpdate() {
-  const formData = {
-    latitude: mapMarkerData.value.lat,
-    longitude: mapMarkerData.value.lng,
-  }
 
-  if (mapMarkerData.value?.countryId) {
-    formData.countryId = mapMarkerData.value.countryId
+function handleSelectLocationUpdate(payload) {
+  const formData = {
+    latitude: payload.lat,
+    longitude: payload.lng,
   }
-  if (mapMarkerData.value?.stateId) {
-    formData.stateId = mapMarkerData.value.stateId
-  }
-  if (mapMarkerData.value?.cityId) {
-    formData.cityId = mapMarkerData.value.cityId
-  }
+  if (payload?.countryId) formData.countryId = payload.countryId
+  if (payload?.stateId) formData.stateId = payload.stateId
+  if (payload?.cityId) formData.cityId = payload.cityId
 
   mapSubmitLoader.value = true
   useApiService
@@ -85,27 +166,20 @@ function handleUpdate() {
     .then(async (response) => {
       if (response.succeeded) {
         showSelectLocationDialog.value = false
-        nuxtApp.$toast?.success(
-          'Your contribution has been successfully submitted',
-        )
-        map.center = [mapMarkerData.value.lat, mapMarkerData.value.lng]
-        map.latLng = [mapMarkerData.value.lat, mapMarkerData.value.lng]
-        mapRef.value.setView(
-          mapMarkerData.value.lat,
-          mapMarkerData.value.lng,
-          map.zoom,
-        )
-        // Emit the updated location data
+        nuxtApp.$toast?.success('Thank you! Your contribution has been submitted and is pending review.')
         emit('location-updated', {
-          latitude: mapMarkerData.value.lat,
-          longitude: mapMarkerData.value.lng,
-          countryId: mapMarkerData.value?.countryId,
-          stateId: mapMarkerData.value?.stateId,
-          cityId: mapMarkerData.value?.cityId,
-          countryTitle: mapMarkerData.value?.countryTitle,
-          stateTitle: mapMarkerData.value?.stateTitle,
-          cityTitle: mapMarkerData.value?.cityTitle,
+          latitude: payload.lat,
+          longitude: payload.lng,
+          countryId: payload?.countryId,
+          stateId: payload?.stateId,
+          cityId: payload?.cityId,
+          countryTitle: payload?.countryTitle,
+          stateTitle: payload?.stateTitle,
+          cityTitle: payload?.cityTitle,
         })
+        await nextTick()
+        if (showMap.value) mapRef.value?.setView(payload.lat, payload.lng, 15)
+        else watchVisibility()
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)
@@ -122,82 +196,21 @@ function handleUpdate() {
     })
 }
 
-watch(
-  () => props.content,
-  (newContent) => {
-    contentData.value = newContent
-    if (newContent?.latitude && newContent?.longitude) {
-      map.center = [newContent.latitude, newContent.longitude]
-      map.latLng = [newContent.latitude, newContent.longitude]
-    }
-  },
-  { deep: true },
-)
-
-onMounted(() => {
-  if (contentData.value.latitude && contentData.value.longitude) {
-    map.center = [contentData.value.latitude, contentData.value.longitude]
-    map.latLng = [contentData.value.latitude, contentData.value.longitude]
-  }
-})
+defineExpose({ openLocationDialog })
 </script>
 
 <style scoped>
-.set-background {
-  background-color: #f2f4f7;
-  border-radius: 6px;
-}
-#schoolDetailsMap {
-  border-radius: 0.6rem;
-  height: 28.1rem !important;
-  max-height: 28.1rem;
-  width: 100%;
-}
-.center-image {
-  position: absolute;
-  top: 0;
-  left: 0 !important;
-  margin: auto;
-  z-index: 3;
-  right: 0 !important;
-  width: 70% !important;
-  max-height: 26.4rem;
+.map-frame {
+  height: 220px;
+  border-radius: 12px;
   overflow: hidden;
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
+  background: rgb(var(--v-theme-grey100));
 }
 
-.center-image.enter-img-holder,
-.center-image.position-relative {
-  border-right: 1px solid white;
-  border-left: 1px solid white;
-}
-
-.under-image-left,
-.under-image-right {
-  position: absolute;
-  top: 0;
-  max-height: 26.4rem;
-  width: 80% !important;
-}
-
-.under-image-left {
-  left: -32%;
-  z-index: 1;
-}
-
-.under-image-left.enter-img-holder p,
-.under-image-left.position-relative p {
-  max-width: 2rem;
-}
-
-.under-image-right {
-  right: -32%;
-  z-index: 2;
-}
-
-.under-image-right.enter-img-holder p,
-.under-image-right.position-relative p {
-  max-width: 2rem;
+.map-placeholder {
+  font-size: 14px;
+  background:
+    repeating-linear-gradient(45deg, rgba(var(--v-theme-grey300), 0.35) 0 10px, transparent 10px 20px),
+    rgb(var(--v-theme-grey100));
 }
 </style>

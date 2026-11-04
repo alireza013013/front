@@ -64,7 +64,10 @@
               </v-card>
             </v-container>
           </v-sheet>
-          <v-sheet class="section2" />
+          <v-sheet
+            class="section2"
+            color="transparent"
+          />
         </v-carousel-item>
       </v-carousel>
 

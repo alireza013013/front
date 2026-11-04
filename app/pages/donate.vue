@@ -39,7 +39,7 @@ useSeoMeta({
 }
 
 .wallet {
-  background: #f5f5f5;
+  background: rgb(var(--v-theme-grey100));
   padding: 12px;
   border-radius: 8px;
   margin: 12px 0;

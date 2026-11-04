@@ -17,6 +17,7 @@
           :stencil-props="stencilProps"
           image-restriction="stencil"
           :aspect-ratio="aspectRatio"
+          :canvas="canvas"
           @change="cropFile"
           @ready="imageLoad"
         />
@@ -26,7 +27,8 @@
         class="pa-0 d-flex align-center justify-center"
       >
         <v-btn
-          color="primary text-h5 font-weight-bold"
+          color="primary"
+          class="text-h5 font-weight-bold"
           width="150"
           rounded="xl"
           size="large"
@@ -65,6 +67,17 @@ const props = defineProps({
   aspectRatio: {
     type: Number,
     default: null,
+  },
+  // Output size limits for the cropped image, e.g. { maxWidth: 1600, maxHeight: 1200 }. Default: the
+  // cropper's own behavior.
+  canvas: {
+    type: Object,
+    default: undefined,
+  },
+  // WebP quality, 0-1. Default: the browser's own default.
+  quality: {
+    type: Number,
+    default: undefined,
   },
 })
 const emit = defineEmits(['update:modelValue', 'croppedData'])
@@ -110,7 +123,7 @@ const emitFile = () => {
   croppedCanvas.value.toBlob((blob) => {
     emit('croppedData', blob, croppedCanvas.value)
     cropFileLoading.value = false
-  }, 'image/webp')
+  }, 'image/webp', props.quality)
 }
 </script>
 

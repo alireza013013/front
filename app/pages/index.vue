@@ -83,7 +83,7 @@
           <v-img
             width="246"
             height="184"
-            class="mx-auto"
+            class="mx-auto illustration-stage"
             src="/images/school-service.webp"
           />
         </v-col>
@@ -301,11 +301,6 @@ useHead({
   padding-right: 0;
 }
 
-.theme--dark.v-input input,
-.theme--dark.v-input textarea {
-  color: #000 !important;
-}
-
 #ai-learn-banner {
   position: relative;
   max-width: 73rem;
@@ -313,8 +308,8 @@ useHead({
 
   .v-card {
     border-radius: 1rem;
-    background-color: #24292f;
-    color: #ffffff;
+    background-color: rgb(var(--v-theme-inverseSurfaceStrong));
+    color: rgb(var(--v-theme-white));
     text-align: center;
     margin: 100px auto 100px auto;
     padding: 2.4rem 0 2.4rem 0;
@@ -322,13 +317,13 @@ useHead({
     height: 17rem;
 
     .gama-text-h2 {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       text-align: center;
       margin-bottom: 1.6rem;
     }
 
     .gama-text-subtitle1 {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       width: 28.8rem;
       margin: auto;
     }
@@ -344,7 +339,7 @@ useHead({
 
     .gama-btn {
       margin-top: 1.5rem;
-      color: #24292f;
+      color: rgb(var(--v-theme-on-primary));
     }
   }
 
@@ -361,19 +356,24 @@ useHead({
   }
 }
 
+/* The sitting robot has a white floor patch baked in; on a dark page it reads as a stain. */
+.v-theme--dark #ai-learn-banner #img-bottom {
+  display: none;
+}
+
 #student-help-container {
   padding-top: 2.4rem;
   padding-bottom: 2.4rem;
-  background: #ffb600;
+  background: rgb(var(--v-theme-primary));
 
   .gama-text-h4 {
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     text-align: center;
   }
 
   .v-card {
     border-radius: 1rem;
-    background: rgba(36, 41, 47, 0.7);
+    background: rgba(var(--v-theme-inverseSurfaceStrong), 0.7);
     backdrop-filter: blur(0.46875rem);
     color: white;
     max-width: 35.3rem;
@@ -381,17 +381,17 @@ useHead({
     margin: auto;
 
     .v-card__title {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       padding-bottom: 0.8rem;
 
       .icon {
         font-size: 2.4rem;
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
       }
     }
 
     .v-card__text {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
     }
   }
 }
@@ -401,12 +401,12 @@ useHead({
   text-align: center;
 
   .gama-text-h4 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     margin-bottom: 2.4rem;
   }
 
   .gama-text-body1 {
-    color: #6e7781;
+    color: rgb(var(--v-theme-grey600));
     text-align: left;
   }
 
@@ -417,17 +417,17 @@ useHead({
 
 #earn-money-container {
   padding: 6.8rem 0 6.8rem 0;
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
 
   .v-btn {
     .v-btn__content {
       font-family: "Inter";
-      color: #24292f;
+      color: rgb(var(--v-theme-on-primary));
     }
   }
 
   .gama-text-h6 {
-    color: #f3f3fb;
+    color: rgb(var(--v-theme-white));
   }
 }
 
@@ -437,12 +437,12 @@ useHead({
     text-align: left;
 
     .gama-text-h4 {
-      color: #354053;
+      color: rgb(var(--v-theme-grey700));
       margin-bottom: 2.4rem;
     }
 
     .gama-text-body1 {
-      color: #6e7781;
+      color: rgb(var(--v-theme-grey600));
     }
 
     .v-btn {
@@ -456,7 +456,7 @@ useHead({
       height: 21.5rem;
 
       .gama-text-h2 {
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         text-align: center;
         margin-bottom: 1.6rem;
       }
@@ -473,7 +473,7 @@ useHead({
 
       .gama-btn {
         margin-top: 2.4rem;
-        color: #24292f;
+        color: rgb(var(--v-theme-on-primary));
       }
     }
 
@@ -510,7 +510,7 @@ useHead({
       height: 21.5rem;
 
       .gama-text-h2 {
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         text-align: center;
         margin-bottom: 1.6rem;
       }
@@ -527,7 +527,7 @@ useHead({
 
       .gama-btn {
         margin-top: 2.4rem;
-        color: #24292f;
+        color: rgb(var(--v-theme-on-primary));
       }
     }
 

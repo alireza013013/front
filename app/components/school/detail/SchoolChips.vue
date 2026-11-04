@@ -1,41 +1,28 @@
 <template>
-  <div class="d-flex">
-    <v-sheet class="chips-container">
-      <!-- School location chips::start -->
-      <v-chip
-        v-for="chip in locationChips"
-        :key="chip.key"
-        :class="chipClass"
-        :to="buildSchoolListUrl(chip.key, props.contentData)"
-      >
-        <div :class="chipContentClass">
-          <span class="badge-item">
-            <v-icon
-              v-show="chip.rank"
-              :color="chip.iconColor"
-              size="large"
-            >
-              md:workspace_premium
-            </v-icon>
-          </span>
-
-          <span v-show="chip.rank">#{{ chip.rank }}</span>
-          <span>{{ chip.title }}</span>
-        </div>
-      </v-chip>
-      <!-- School location chips::end -->
-
-      <!-- School filter chips::start -->
-      <v-chip
-        v-for="chip in filterChips"
-        :key="chip.title"
-        :to="chip.url"
-        :class="chipClass"
-      >
-        {{ chip.title }}
-      </v-chip>
-      <!-- School filter chips::end -->
-    </v-sheet>
+  <div
+    v-if="chips.length"
+    class="d-flex ga-2 overflow-x-auto school-chips"
+  >
+    <v-chip
+      v-for="chip in chips"
+      :key="chip.key"
+      :to="chip.to"
+      :color="chip.rank === 1 ? 'generalSearchSchool' : 'grey700'"
+      :variant="chip.rank === 1 ? 'tonal' : 'flat'"
+      :class="['flex-shrink-0 font-weight-medium gtext-t5', { 'bg-grey100': chip.rank !== 1 }]"
+    >
+      <template #prepend>
+        <v-icon
+          :color="chip.iconColor"
+          size="18"
+          class="mr-1"
+          aria-hidden="true"
+        >
+          md:workspace_premium
+        </v-icon>
+      </template>
+      {{ chip.label }}
+    </v-chip>
   </div>
 </template>
 
@@ -47,90 +34,28 @@ const props = defineProps({
   },
 })
 
-const chipClass = 'bg-grey100 text-grey600 mr-1 text-h6'
-const chipContentClass = 'd-flex ga-1'
-
-const locationChips = computed(() => [
-  {
-    key: 'country',
-    title: props.contentData.countryTitle,
-    rank: props.contentData.countryRank,
-    iconColor: '#FA0369',
-  },
-  {
-    key: 'state',
-    title: props.contentData.stateTitle,
-    rank: props.contentData.stateRank,
-    iconColor: '#FB6514',
-  },
-  {
-    key: 'city',
-    title: props.contentData.cityTitle,
-    rank: props.contentData.cityRank,
-    iconColor: '#4E5BA6',
-  },
-].filter(item => item.title))
-
-const filterChips = computed(() => [
-  {
-    title: props.contentData.schoolType?.name,
-  },
-  {
-    title: props.contentData.school_type_title,
-    url: `/school?school_type=${props.contentData.school_type}`,
-  },
-  {
-    title: props.contentData.section_title,
-    url: `/school?section=${props.contentData.section}`,
-  },
-  {
-    title: props.contentData.sex_title,
-    url: `/school?coed_status=${props.contentData.sex}`,
-  },
-].filter(item => item.title))
-
-function buildSchoolListUrl(type, data) {
-  const query = {}
-  if (data.countryId) query.country = data.countryId
-  if (type === 'state' || type === 'city') {
-    if (data.stateId) query.state = data.stateId
-  }
-  if (type === 'city') {
-    if (data.cityId) query.city = data.cityId
-  }
-  const params = new URLSearchParams(query).toString()
-  return `/school?${params}`
-}
+// "#2 in Vanuatu" - each links to the school list for that area. Areas without a rank are
+// already in the breadcrumb and the location line, so they don't get a chip.
+// The three medal colors are the ones this page has always used for country/state/city.
+const chips = computed(() => [
+  { key: 'country', title: props.contentData.countryTitle, rank: props.contentData.countryRank, iconColor: '#FA0369' },
+  { key: 'state', title: props.contentData.stateTitle, rank: props.contentData.stateRank, iconColor: '#FB6514' },
+  { key: 'city', title: props.contentData.cityTitle, rank: props.contentData.cityRank, iconColor: '#4E5BA6' },
+]
+  .filter(chip => chip.title && chip.rank)
+  .map(chip => ({
+    ...chip,
+    label: `#${chip.rank} in ${chip.title}`,
+    to: buildSchoolListUrl(chip.key, props.contentData),
+  })))
 </script>
 
 <style scoped>
-.chips-container {
-  white-space: nowrap;
-  overflow-x: auto;
-  padding-top: 0.4rem;
-  scrollbar-width: thin;
-  /* Firefox */
-  scrollbar-color: transparent transparent;
-  /* Firefox */
+.school-chips {
+  scrollbar-width: none;
 }
 
-.badge-item {
-  background-color: white;
-  z-index: 10;
-  border-radius: 10px;
-}
-
-/* Webkit (Chrome, Safari) */
-.chips-container::-webkit-scrollbar {
-  width: 5px;
-  /* Adjust width as needed */
-}
-
-.chips-container::-webkit-scrollbar-thumb {
-  background-color: transparent;
-}
-
-.chips-container::-webkit-scrollbar-track {
-  background-color: transparent;
+.school-chips::-webkit-scrollbar {
+  display: none;
 }
 </style>

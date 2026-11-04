@@ -1,308 +1,163 @@
 <template>
-  <div class="school-details-page">
+  <div class="school-page">
     <v-container
-      v-if="status !== 'pending' && contentData"
-      id="school-details"
+      v-if="contentData"
+      class="school-container"
     >
-      <v-row class="d-flex d-md-none">
-        <div class="top-slide-container">
-          <school-detail-school-map
-            :content="contentData"
-            :class="topSlideClass.map"
-            @location-updated="handleLocationUpdate"
-          />
-          <school-detail-school-tour
-            :class="topSlideClass.tour"
-            :content="contentData"
-          />
-          <school-detail-image-gallery
-            :content="contentData"
-            :class="topSlideClass.image"
-            :images="galleryImages"
-            @fetch="loadGalleryImages"
-          />
-        </div>
-      </v-row>
+      <!-- Mobile: header, media, contact/location/profile, details. Desktop: details left, contact sidebar right. -->
+      <div class="school-layout">
+        <school-detail-school-header
+          class="area-header"
+          :content="contentData"
+          :rating-data="ratingData"
+          @leave-comment="openCommentDialog"
+          @contribute="contribute"
+        />
 
-      <v-row class="d-none d-md-flex mt-15">
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <school-detail-image-gallery
+        <school-detail-school-media
+          ref="mediaRef"
+          v-model:images="galleryImages"
+          class="area-media"
+          :content="contentData"
+          :tour="tour"
+          :images-loaded="imagesLoaded"
+          @fetch-images="loadGalleryImages"
+          @fetch-tour="loadTourPanorama"
+        />
+
+        <aside class="area-side">
+          <school-detail-school-main-info
+            ref="contactRef"
             :content="contentData"
-            :images="galleryImages"
-            :class="topSlideClass.image"
-            @fetch="loadGalleryImages"
+            @update="applyUpdate"
+            @report="openReportDialog"
           />
-        </v-col>
-        <v-col
-          cols="12"
-          md="4"
-        >
           <school-detail-school-map
+            ref="mapRef"
             :content="contentData"
             @location-updated="handleLocationUpdate"
           />
-        </v-col>
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <school-detail-school-tour
+          <school-detail-profile-progress
             :content="contentData"
-            @fetch="loadTourPanorama"
+            :images-count="galleryImages.length"
+            :has-tour="!!tour"
+            :media-loaded="tourLoaded"
+            @contribute="contribute"
           />
-        </v-col>
-      </v-row>
+        </aside>
 
-      <!-- Data container -->
-      <v-row class="data-container">
-        <v-col cols="12">
-          <v-row class="mt-6 d-flex d-md-none justify-center">
-            <v-btn-toggle
-              v-model="slideToggler"
-              style="order: 2"
-              size="x-small"
-              rounded="xl"
-              color="white"
-              base-color="grey-lighten-3"
-              selected-class="bg-white"
-              active-class="bg-white"
-              class="school-head-toggle"
-              border
-              @update:model-value="changeSlide"
-            >
-              <v-btn
-                color="white"
-                size="x-small"
-                class="text-transform-none gtext-t5 text-white"
-                value="image"
-              >
-                <span class="text-black"> Image</span>
-              </v-btn>
-              <v-btn
-                color="white"
-                size="x-small"
-                class="text-transform-none gtext-t5 text-white"
-                value="map"
-              >
-                <span class="text-black"> Map</span>
-              </v-btn>
-              <v-btn
-                color="white"
-                size="x-small"
-                class="text-transform-none gtext-t5 text-white"
-                value="tour"
-              >
-                <span class="text-black"> Tour</span>
-              </v-btn>
-            </v-btn-toggle>
-          </v-row>
-          <v-row class="d-flex d-md-none">
-            <v-col
-              cols="6"
-              class="text-left d-block d-md-none"
-            >
-              <div class="text-start">
-                <div
-                  class="d-flex align-center ga-1 gama-text-body2 primary-gray-500 pt-1"
-                >
-                  <v-icon small>
-                    mdi-update
-                  </v-icon>
-                  {{ formatLocal(contentData.up_date, "YY/MM/DD") }}
-                </div>
-              </div>
-            </v-col>
-            <v-col
-              cols="6"
-              class="d-block d-md-none"
-            >
-              <div
-                class="d-flex justify-end align-center ga-1 rate-section gtext-t4 font-weight-semibold"
-              >
-                {{
-                  ratingData.averageRate
-                    ? ratingData.averageRate.toFixed(1)
-                    : "New"
-                }}
-                <v-icon
-                  size="20"
-                  color="primary"
-                >
-                  mdi-star
-                </v-icon>
-              </div>
-            </v-col>
-          </v-row>
-
-          <!-- General data section -->
-          <v-row>
-            <v-col
-              cols="11"
-              md="8"
-            >
-              <school-detail-school-title :content="contentData" />
-            </v-col>
-            <v-col
-              cols="1"
-              md="4"
-              class="align-self-center"
-            >
-              <div class="float-right d-flex align-center mt-1">
-                <span class="mr-3">
-                  <v-icon
-                    size="20"
-                    color="primary"
-                    plain
-                    class=""
-                    @click="reportDialog = true"
-                  >mdi-alert-circle-outline</v-icon>
-                </span>
-                <v-icon
-                  size="20"
-                  class="primary-gray-300"
-                >
-                  mdi-heart
-                </v-icon>
-
-                <div
-                  class="d-none d-md-block rate-section gtext-t4 font-weight-semibold ml-4"
-                >
-                  {{
-                    ratingData.averageRate
-                      ? ratingData.averageRate.toFixed(1)
-                      : "New"
-                  }}
-                  <v-icon
-                    size="20"
-                    color="primary"
-                  >
-                    mdi-star
-                  </v-icon>
-                </div>
-              </div>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              cols="12"
-              md="8"
-            >
-              <school-detail-school-chips
-                :content-data="contentData"
-                @on-chips-click="handleQueryParameters"
-              />
-              <school-detail-tuition-info :content-data="contentData" />
-              <school-detail-facilities
-                :facilities="contentData.tags"
-                @open-auth-dialog="openAuthDialog"
-                @facilities-updated="refreshSchoolData"
-              />
-              <school-detail-boards :school-boards="contentData.boards" />
-            </v-col>
-            <v-col
-              id="main-info-section"
-              cols="12"
-              md="4"
-            >
-              <school-detail-school-main-info :content="contentData" />
-            </v-col>
-          </v-row>
-
-          <!-- End general data section -->
-          <v-row class="mt-10">
-            <v-col cols="12">
-              <school-detail-school-description
-                :content="contentData"
-                @edit="handleDescriptionEdit"
-                @update="handleDescriptionUpdate"
-              />
-            </v-col>
-          </v-row>
-          <v-row
-            justify="center"
-            class="mt-10"
-          >
-            <v-col
-              cols="12"
-              md="8"
-              class="text-center"
-            >
-              <common-ad-banner
-                v-model="isAdsLoad"
-                adslot="9511163476"
-              />
-            </v-col>
-          </v-row>
-
+        <div class="area-main">
+          <school-detail-tuition-info
+            ref="tuitionRef"
+            :content-data="contentData"
+          />
+          <school-detail-facilities
+            ref="facilitiesRef"
+            :facilities="contentData.tags || []"
+          />
+          <school-detail-boards
+            ref="boardsRef"
+            :school-boards="contentData.boards || []"
+          />
+          <school-detail-school-description
+            ref="descriptionRef"
+            :content="contentData"
+            @edit="handleDescriptionEdit"
+            @update="handleDescriptionUpdate"
+          />
           <school-detail-users-score
             :rating-data="ratingData"
-            @leave-comment="showLeaveCommentDialog = true"
+            @leave-comment="openCommentDialog"
           />
           <school-detail-recent-comments
             :comment-list="commentList"
             @reaction-updated="refreshComments()"
           />
-          <school-detail-nearest-school
-            :lat="contentData.latitude"
-            :lng="contentData.longitude"
-          />
-        </v-col>
-      </v-row>
-      <!-- End data container -->
+        </div>
+      </div>
 
-      <school-detail-leave-comment-dialog
+      <div class="school-more">
+        <school-detail-nearest-school
+          :lat="contentData.latitude"
+          :lng="contentData.longitude"
+        />
+
+        <nav
+          v-if="exploreLinks.length"
+          class="explore"
+          aria-labelledby="explore-title"
+        >
+          <h2
+            id="explore-title"
+            class="section-title"
+          >
+            Browse more schools
+          </h2>
+          <div class="d-flex flex-wrap ga-2 mt-3">
+            <v-chip
+              v-for="link in exploreLinks"
+              :key="link.to"
+              :to="link.to"
+              append-icon="mdi-chevron-right"
+              variant="outlined"
+              color="grey800"
+              size="large"
+              class="font-weight-medium gtext-t5 explore-link"
+            >
+              {{ link.label }}
+            </v-chip>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Dialogs mount on first use, so their code (and reCAPTCHA) only loads for people who open them. -->
+      <lazy-school-detail-leave-comment-dialog
+        v-if="commentDialogMounted"
         v-model="showLeaveCommentDialog"
         :content-data="contentData"
         @submitted="handleCommentSubmitted"
       />
 
-      <school-detail-report-dialog
+      <lazy-school-detail-report-dialog
+        v-if="reportDialogMounted"
         v-model="reportDialog"
-        :school-id="$route.params.id"
+        :school-id="String(route.params.id)"
         @open-auth-dialog="openAuthDialog"
       />
     </v-container>
-    <div v-else />
-
-    <v-row
-      justify="center"
-      class="mt-10"
-    >
-      <v-col
-        cols="12"
-        md="8"
-        class="text-center"
-      >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
-        />
-      </v-col>
-    </v-row>
   </div>
 </template>
 
 <script setup>
+definePageMeta({
+  // The site-wide post slider has nothing to do with a school; nearby schools and area links replace it.
+  hidePostSlider: true,
+})
+
 const route = useRoute()
 const router = useRouter()
-const { formatLocal } = useDateTime()
-const tourPanoramas = ref([])
-const slideToggler = ref('map')
-const topSlideClass = reactive({
-  image: 'under-image-left',
-  map: 'center-image',
-  tour: 'under-image-right',
-})
+const config = useRuntimeConfig()
+const { requireSignIn } = useContributeGate()
+
 const showLeaveCommentDialog = ref(false)
-const commentList = ref([])
+const commentDialogMounted = ref(false)
 const reportDialog = ref(false)
+const reportDialogMounted = ref(false)
+const commentList = ref([])
 const contentData = ref(null)
 const ratingData = ref(null)
 const galleryImages = ref([])
-const isAdsLoad = ref(false)
+const imagesLoaded = ref(false)
+const tour = ref(null)
+const tourLoaded = ref(false)
+
+const mediaRef = ref(null)
+const contactRef = ref(null)
+const mapRef = ref(null)
+const tuitionRef = ref(null)
+const facilitiesRef = ref(null)
+const boardsRef = ref(null)
+const descriptionRef = ref(null)
 
 const breadcrumbSchema = computed(() => {
   if (!contentData.value?.name) return null
@@ -515,7 +370,7 @@ const fetchRatingData = async () => {
 
 const {
   data: contentDataRaw,
-  status,
+  status: _status,
   _refresh,
 } = await useAsyncData(() => `contentData-${route.params.id}`, () => fetchSchoolData(), {
   server: true,
@@ -540,7 +395,7 @@ const {
   data: ratingDataRaw,
   status: _ratingStatus,
   refresh: _refreshRating,
-} = await useAsyncData('ratingData', () => fetchRatingData(), {
+} = await useAsyncData(() => `ratingData-${route.params.id}`, () => fetchRatingData(), {
   server: true,
   lazy: false,
   immediate: true,
@@ -555,6 +410,20 @@ watch(
   },
   { immediate: true },
 )
+
+// The gallery, tour and nearby schools are fetched from the API right after load.
+const apiOrigin = (() => {
+  try {
+    return new URL(config.public.apiV2BaseUrl).origin
+  }
+  catch {
+    return null
+  }
+})()
+
+// The school's own photo is the biggest thing above the fold when it has one: start it early.
+const heroImage = computed(() =>
+  contentData.value?.defaultImageUri?.replace(/^http:\/\//, 'https://') || null)
 
 useHead(() => ({
   htmlAttrs: {
@@ -573,6 +442,8 @@ useHead(() => ({
       type: 'image/x-icon',
       href: '/favicon-dark.ico',
     },
+    ...(apiOrigin ? [{ rel: 'preconnect', href: apiOrigin, crossorigin: '' }] : []),
+    ...(heroImage.value ? [{ rel: 'preload', as: 'image', href: heroImage.value, fetchpriority: 'high' }] : []),
   ],
 }))
 const ogImage = contentData.value?.defaultImageUri
@@ -592,20 +463,6 @@ useSeoMeta({
   twitterImage: () => ogImage,
 })
 
-if (!ogImage) {
-  defineOgImageComponent('SchoolDetail', {
-    title: contentData.value?.name,
-    address:
-      contentData.value?.countryTitle
-      + ', '
-      + contentData.value?.stateTitle
-      + ', '
-      + contentData.value?.cityTitle,
-    phone: contentData.value?.phoneNumber,
-    email: contentData.value?.email,
-  })
-}
-
 watch(
   () => ratingDataRaw.value,
   (newData) => {
@@ -616,84 +473,109 @@ watch(
   { immediate: true },
 )
 
-function changeSlide() {
-  if (slideToggler.value == 'map') {
-    topSlideClass.image = 'under-image-left'
-    topSlideClass.map = 'center-image'
-    topSlideClass.tour = 'under-image-right'
-  }
-  else if (slideToggler.value == 'image') {
-    topSlideClass.image = 'center-image'
-    topSlideClass.map = 'under-image-right'
-    topSlideClass.tour = 'under-image-left'
-  }
-  else if (slideToggler.value == 'tour') {
-    topSlideClass.image = 'under-image-right'
-    topSlideClass.map = 'under-image-left'
-    topSlideClass.tour = 'center-image'
-  }
+// Opens the editor for one missing detail. Sections that edit in place are scrolled into view first.
+const contributeTargets = {
+  photo: { ref: mediaRef, open: el => el.startAddPhoto() },
+  tour: { ref: mediaRef, open: el => el.startAddTour() },
+  phone: { ref: contactRef, open: el => el.startEdit('phone') },
+  website: { ref: contactRef, open: el => el.startEdit('website') },
+  email: { ref: contactRef, open: el => el.startEdit('email') },
+  address: { ref: contactRef, open: el => el.startEdit('address') },
+  location: { ref: mapRef, open: el => el.openLocationDialog() },
+  tuition: { ref: tuitionRef, open: el => el.startEdit() },
+  facilities: { ref: facilitiesRef, open: el => el.openModal() },
+  boards: { ref: boardsRef, open: el => el.openModal() },
+  description: { ref: descriptionRef, open: el => el.startEdit() },
 }
+
+function contribute(key) {
+  const target = contributeTargets[key]
+  if (!target?.ref.value || !requireSignIn()) return
+  target.ref.value.$el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+  target.open(target.ref.value)
+}
+
+function applyUpdate(update) {
+  if (contentData.value) Object.assign(contentData.value, update)
+}
+
+function openCommentDialog() {
+  commentDialogMounted.value = true
+  showLeaveCommentDialog.value = true
+}
+
+function openReportDialog() {
+  reportDialogMounted.value = true
+  reportDialog.value = true
+}
+
 function openAuthDialog(val) {
   router.push({ query: { auth_form: val } })
 }
+
+const exploreLinks = computed(() => {
+  const school = contentData.value
+  if (!school) return []
+  return [
+    { scope: 'city', title: school.cityTitle },
+    { scope: 'state', title: school.stateTitle },
+    { scope: 'country', title: school.countryTitle },
+  ]
+    .filter(item => item.title)
+    .map(item => ({ label: `Schools in ${item.title}`, to: buildSchoolListUrl(item.scope, school) }))
+})
 
 function loadTourPanorama() {
   useApiService
     .get(`/api/v2/schools/${route.params.id}/images/Tour360`, undefined, { public: true })
     .then((response) => {
-      tourPanoramas.value = response.data
-      if (tourPanoramas.value.length >= 1) {
-        contentData.value.tour
-          = tourPanoramas.value[tourPanoramas.value.length - 1].fileUri
-      }
-      else {
-        contentData.value.tour = null
-      }
+      const panoramas = response.data || []
+      tour.value = panoramas.length ? panoramas[panoramas.length - 1].fileUri : null
     })
     .catch(() => {})
+    .finally(() => {
+      tourLoaded.value = true
+    })
 }
-function refreshSchoolData() {}
+
+// The photo list is fetched on the server too, so the gallery has its final shape in the first HTML
+// (no layout shift when more photos arrive). A failure just means "no gallery", never a broken page.
+const { data: galleryData, refresh: refreshGallery } = await useAsyncData(
+  () => `gallery-${route.params.id}`,
+  () => useApiService
+    .get(`/api/v2/schools/${route.params.id}/images/SimpleImage`, undefined, { public: true })
+    .catch(() => null),
+  { server: true, lazy: false, immediate: true },
+)
+
+watch(
+  () => galleryData.value,
+  (response) => {
+    galleryImages.value = [...(response?.data || [])].reverse()
+    imagesLoaded.value = true
+  },
+  { immediate: true },
+)
 
 function loadGalleryImages() {
-  useApiService
-    .get(`/api/v2/schools/${route.params.id}/images/SimpleImage`, undefined, { public: true })
-    .then((response) => {
-      galleryImages.value = [...response.data].reverse()
-    })
-    .catch(() => {})
+  refreshGallery()
 }
 
 function handleLocationUpdate(locationData) {
-  if (contentData.value) {
-    contentData.value = {
-      ...contentData.value,
-      latitude: locationData.latitude,
-      longitude: locationData.longitude,
-      countryId: locationData.countryId,
-      stateId: locationData.stateId,
-      cityId: locationData.cityId,
-      countryTitle: locationData.countryTitle,
-      stateTitle: locationData.stateTitle,
-      cityTitle: locationData.cityTitle,
-    }
-  }
+  applyUpdate({
+    latitude: locationData.latitude,
+    longitude: locationData.longitude,
+    countryId: locationData.countryId,
+    stateId: locationData.stateId,
+    cityId: locationData.cityId,
+    countryTitle: locationData.countryTitle,
+    stateTitle: locationData.stateTitle,
+    cityTitle: locationData.cityTitle,
+  })
 }
 
 function handleCommentSubmitted() {
-  // Refresh comments when a new comment is submitted
   refreshComments()
-}
-
-function handleQueryParameters(data) {
-  const _query = {}
-  if (data.countryId) _query.country = data.countryId
-  if (data.type === 'state' || data.type === 'city') {
-    if (data.stateId) _query.state = data.stateId
-  }
-  if (data.type === 'city') {
-    if (data.cityId) _query.city = data.cityId
-  }
-  router.push({ path: '/school', query: _query })
 }
 
 const { data: commentsData, refresh: refreshComments } = await useAsyncData(
@@ -709,7 +591,6 @@ const { data: commentsData, refresh: refreshComments } = await useAsyncData(
   },
 )
 
-// Watch for changes in comments data
 watch(
   () => commentsData.value,
   (newData) => {
@@ -722,115 +603,114 @@ watch(
 
 onMounted(() => {
   loadTourPanorama()
-  loadGalleryImages()
 })
 </script>
 
+<style>
+/* Shared look for the sections the detail components render; not scoped, so it reaches inside them. */
+.school-page .detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.school-page .section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.school-page .section-title {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: rgb(var(--v-theme-grey900));
+}
+
+.school-page .v-btn,
+.school-page .v-chip {
+  letter-spacing: normal;
+}
+
+.school-page .section-action {
+  flex-shrink: 0;
+  letter-spacing: normal;
+}
+
+.school-page .section-empty {
+  margin: 0;
+  font-size: 14px;
+  color: rgb(var(--v-theme-grey500));
+}
+</style>
+
 <style scoped>
-.school-head-toggle {
-  height: 28px !important;
+.school-container {
+  max-width: 1200px;
+  padding-top: 84px;
+  padding-bottom: 48px;
 }
 
-.top-slide-container {
-  position: absolute;
-  margin-top: 5.4rem;
-  margin-bottom: 2rem;
-  width: 100vw;
-  height: 26.4rem;
-  max-height: 26.4rem;
-  overflow: hidden;
-  z-index: 0;
+.school-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "header"
+    "media"
+    "side"
+    "main";
+  gap: 28px;
 }
 
-.position-relative {
-  position: relative;
+.area-header { grid-area: header; }
+.area-media { grid-area: media; }
+.area-main { grid-area: main; }
+.area-side { grid-area: side; }
+
+.area-main,
+.area-side {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-width: 0;
 }
 
-@media (max-width: 600px) {
-  .top-slide-container {
-    margin-top: 2.4rem;
-  }
-
-  .data-container {
-    margin-top: 27rem !important;
-  }
-}
-
-.data-container {
-  position: relative;
-  z-index: 1;
-  margin-top: 30rem;
-  background: #fff;
-  border-top-left-radius: 3.2rem;
-  border-top-right-radius: 3.2rem;
-}
-
-.center-image {
-  position: absolute;
-  top: 0;
-  left: 0 !important;
-  margin: auto;
-  z-index: 3;
-  right: 0 !important;
-  width: 70% !important;
-  max-height: 26.4rem;
-  overflow: hidden;
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.center-image.enter-img-holder,
-.center-image.position-relative {
-  border-right: 1px solid white;
-  border-left: 1px solid white;
-}
-
-.under-image-left,
-.under-image-right {
-  position: absolute;
-  top: 0;
-  max-height: 26.4rem;
-  width: 80% !important;
-}
-
-.under-image-left {
-  left: -32%;
-  z-index: 1;
-}
-
-.under-image-left.enter-img-holder p,
-.under-image-left.position-relative p {
-  max-width: 2rem;
-}
-
-.under-image-right {
-  right: -32%;
-  z-index: 2;
-}
-
-.under-image-right.enter-img-holder p,
-.under-image-right.position-relative p {
-  max-width: 2rem;
+.area-side {
+  gap: 20px;
 }
 
 @media (min-width: 960px) {
-  .data-container {
-    margin-top: 1rem;
+  .school-container {
+    padding-top: 96px;
   }
 
-  .chips-container {
-    white-space: normal;
-    width: 80%;
+  .school-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-areas:
+      "header header"
+      "media side"
+      "main side";
+    column-gap: 40px;
+    row-gap: 32px;
+  }
+
+  .area-side {
+    align-self: start;
+    position: sticky;
+    top: 84px;
   }
 }
 
-.enter-img-holder {
-  background: #f2f4f7;
-  height: 28.1rem;
-  width: 100%;
-  border-radius: 0.6rem;
+.school-more {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.explore-link {
+  border-color: rgb(var(--v-theme-grey200));
 }
 </style>

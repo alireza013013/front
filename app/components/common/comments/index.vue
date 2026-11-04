@@ -100,7 +100,7 @@
         </span>
       </div>
       <v-divider
-        color="black"
+        color="grey900"
         thickness="2"
         class="my-2 d-flex d-sm-none"
       />
@@ -127,7 +127,7 @@
         </template>
       </div>
       <div
-        :class="`send-message-div d-flex w-100 left-0 bottom-0 rounded-lg bg-white ${
+        :class="`send-message-div d-flex w-100 left-0 bottom-0 rounded-lg bg-surface ${
           isShowAllComments ? `open-send-message` : ``
         }`"
       >
@@ -149,7 +149,6 @@ interface IComment {
 }
 
 const props = defineProps<IComment>()
-const { initCaptcha } = useRecaptcha()
 const { data: comments, getData, totalCount, loadingGetData } = usePostComment()
 
 const { xs } = useDisplay()
@@ -166,7 +165,6 @@ const openComments = () => {
 
 onMounted(() => {
   getData(params)
-  initCaptcha()
 })
 
 // const sendCommentSuccessfull = (comment: CommentPostDTO) => {
@@ -275,7 +273,7 @@ const dislikeSuccessfull = (comment: CommentPostDTO) => {
     bottom: -800px;
     border: none;
     min-height: 80%;
-    background-color: rgb(var(--v-theme-white));
+    background-color: rgb(var(--v-theme-surface));
     padding-top: 24px;
     border-radius: 24px 24px 0 0;
     z-index: 1006;

@@ -249,6 +249,44 @@
     >
       Save Changes
     </v-btn>
+
+    <v-divider class="w-100" />
+
+    <!-- Plan edits reach only new subscribers; this pushes the saved features to current ones (needs 2FA). -->
+    <div class="w-100 d-flex flex-column align-center ga-1">
+      <span class="text-h6 text-grey500 text-center">
+        Changes reach new subscribers only. Added a feature? Give it to current subscribers too.
+      </span>
+      <v-btn
+        color="primary"
+        rounded="xl"
+        variant="outlined"
+        height="40"
+        class="text-h5"
+        :disabled="loadingGetFeatures || hasUnsavedChanges"
+        flat
+        @click="showSyncModal = true"
+      >
+        Apply to current subscribers
+      </v-btn>
+      <span
+        v-if="hasUnsavedChanges"
+        class="text-h6 text-warning"
+      >
+        Save your changes first.
+      </span>
+    </div>
+
+    <admin-common-modal
+      v-if="showSyncModal"
+      v-model:show-dialog="showSyncModal"
+      title="Sync subscribers"
+    >
+      <admin-subscription-plans-sync-features
+        :plan="plan"
+        @close="showSyncModal = false"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -300,6 +338,10 @@ const selectedFeatureIds = ref<number[]>([])
 const newDescription = ref('')
 const intervalLimits = reactive<IntervalLimitState>(createDefaultIntervalLimits())
 const isAddFormValid = ref(false)
+const showSyncModal = ref(false)
+// The sync applies the plan's saved features, so it's blocked while the list differs from what was loaded.
+const savedFeatureGroups = ref('')
+const hasUnsavedChanges = computed(() => JSON.stringify(selectedFeatureGroups.value) !== savedFeatureGroups.value)
 const editingIndex = ref<number | null>(null)
 const isEditing = computed(() => editingIndex.value !== null)
 
@@ -344,6 +386,7 @@ onMounted(async () => {
     limits: group.limits.map(limit => ({ ...limit })),
     description: group.description,
   }))
+  savedFeatureGroups.value = JSON.stringify(selectedFeatureGroups.value)
 })
 
 const resetAddForm = () => {

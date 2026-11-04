@@ -44,11 +44,11 @@
 
     <nuxt-link
       v-if="roles.includes('Teacher')"
-      class="dashboard-card w-100 bg-grey700 pa-4 d-flex align-center justify-space-between"
+      class="dashboard-card w-100 bg-inverseSurface pa-4 d-flex align-center justify-space-between"
       to="/user/commission"
     >
       <div>
-        <p class="text-h5 font-weight-medium text-grey300 mb-0">
+        <p class="text-h5 font-weight-medium text-onInverseSurfaceSubtle mb-0">
           Sell Report
         </p>
         <p class="text-h4 font-weight-bold text-white mb-0">

@@ -25,14 +25,15 @@
       </v-chip>
     </div>
 
-    <div class="w-100 d-flex flex-wrap ga-2 mt-4">
-      <v-card
-        class="flex-grow-1 pa-3 d-flex align-center ga-3"
-        color="grey100"
-        flat
-        rounded="lg"
-        border
-        min-width="180"
+    <v-row
+      no-gutters
+      class="w-100 flex-grow-0 mt-4 bg-grey100 rounded-lg border-grey300 border-sm border-opacity-100"
+    >
+      <v-col
+        cols="12"
+        sm="4"
+        md
+        class="pa-3 d-flex align-center ga-3 min-w-0"
       >
         <v-avatar
           size="64"
@@ -52,30 +53,30 @@
           </v-icon>
         </v-avatar>
 
-        <div class="min-w-0">
-          <div class="text-grey800 text-h5 font-weight-bold text-truncate">
+        <div class="min-w-0 d-flex flex-column">
+          <span class="text-grey800 text-h5 font-weight-bold text-truncate">
             {{ participantName }}
-          </div>
-          <div class="text-grey500 text-h6 mt-1">
+          </span>
+          <span class="text-grey500 text-h6 mt-1">
             Code: {{ contentData?.exam.code }}
-          </div>
+          </span>
         </div>
-      </v-card>
+      </v-col>
 
-      <v-card
+      <v-col
         v-for="item in overviewItems"
         :key="item.label"
-        class="pa-3 d-flex flex-column ga-1 flex-grow-1"
-        color="grey100"
-        flat
-        rounded="lg"
-        border
-        min-width="180"
+        cols="12"
+        sm="4"
+        md
+        class="pa-3 d-flex flex-column align-start justify-center ga-1"
       >
-        <span class="text-grey500 text-h6 font-weight-medium">{{ item.label }}</span>
-        <span class="text-grey800 text-h5 font-weight-bold">{{ item.value }}</span>
-      </v-card>
-    </div>
+        <span class="text-grey500 text-h6 font-weight-medium">
+          <v-icon class="mr-2">{{ item.icon }}</v-icon>
+          {{ item.label }}</span>
+        <span class="text-grey800 text-h5 font-weight-bold pl-8">{{ item.value }}</span>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -98,12 +99,10 @@ const overviewItems = computed(() => {
   if (!data) return []
 
   return [
-    { label: 'Started at', value: data.userData.subdate_jalali || data.userData.subdate },
-    { label: 'Test duration', value: `${data.exam.azmoon_time} min` },
-    { label: 'Response time', value: formatResponseTime(data.userData.submit_time, data.exam.azmoon_time) },
-    { label: 'Score', value: data.userData.result_score },
-    { label: 'Questions', value: data.exam.tests_num },
-    { label: 'Result ID', value: data.userData.id },
+    { label: 'Started at', value: data.userData.subdate_jalali || data.userData.subdate, icon: 'md:calendar_month_outlined' },
+    { label: 'Duration', value: `${data.exam.azmoon_time} min`, icon: 'md:schedule_outlined' },
+    { label: 'Response time', value: formatResponseTime(data.userData.submit_time, data.exam.azmoon_time), icon: 'md:electric_bolt' },
+    { label: 'Result ID', value: data.userData.id, icon: 'md:article_outlined' },
   ]
 })
 

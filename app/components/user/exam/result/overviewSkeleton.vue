@@ -25,51 +25,58 @@
       />
     </div>
 
-    <div class="w-100 d-flex flex-wrap ga-2 mt-4">
-      <v-card
-        class="flex-grow-1 pa-3 d-flex align-center ga-3"
-        color="grey100"
-        flat
-        rounded="lg"
-        border
-        min-width="180"
+    <v-row
+      no-gutters
+      class="w-100 flex-grow-0 mt-4 bg-grey100 rounded-lg border-grey300 border-sm border-opacity-100"
+    >
+      <v-col
+        cols="12"
+        sm="4"
+        md
+        class="pa-3 d-flex align-center ga-3 min-w-0"
       >
         <v-skeleton-loader
           height="64"
-          width="64"
+          min-width="64"
           class="rounded-circle"
         />
-        <div class="d-flex flex-column ga-2">
+        <div class="min-w-0 d-flex flex-column ga-2">
+          <v-skeleton-loader
+            height="18"
+            width="80"
+          />
           <v-skeleton-loader
             height="24"
-            width="160"
+            width="110"
+          />
+        </div>
+      </v-col>
+
+      <v-col
+        v-for="item in 4"
+        :key="item"
+        cols="12"
+        sm="4"
+        md
+        class="pa-3 d-flex flex-column align-start justify-center ga-1"
+      >
+        <div class="d-flex align-center ga-2">
+          <v-skeleton-loader
+            height="24"
+            width="24"
+            class="rounded-lg"
           />
           <v-skeleton-loader
             height="18"
-            width="120"
+            width="80"
           />
         </div>
-      </v-card>
-
-      <v-card
-        v-for="item in 6"
-        :key="item"
-        class="pa-3 d-flex flex-column ga-2 flex-grow-1"
-        color="grey100"
-        flat
-        rounded="lg"
-        border
-        min-width="180"
-      >
-        <v-skeleton-loader
-          height="18"
-          width="90"
-        />
         <v-skeleton-loader
           height="24"
-          width="130"
+          width="110"
+          class="ml-8"
         />
-      </v-card>
-    </div>
+      </v-col>
+    </v-row>
   </v-card>
 </template>

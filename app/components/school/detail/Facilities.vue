@@ -1,52 +1,48 @@
 <template>
-  <div>
-    <div class="d-flex">
-      <div class="gtext-h5 primary-gray-600">
-        <div class="mb-4">
-          Facilities
-        </div>
-        <div v-if="!initialLoading">
-          <v-btn
-            v-for="(facility, index) in tags"
-            :key="index"
-            :class="[
-              'mr-2 mb-1',
-              facility.selected
-                ? 'bg-primary-gray-800 text-white'
-                : 'bg-primary-gray-200 text-gray',
-            ]"
-            height="56"
-            width="56"
-            flat
-          >
-            <v-icon
-              size="28"
-              :color="facility.selected ? `white` : `#98A2B3`"
-            >
-              md:{{ facility?.icon }}
-            </v-icon>
-          </v-btn>
-        </div>
-        <div
-          v-else
-          class="d-flex flex-wrap ga-2"
-        >
-          <v-skeleton-loader
-            v-for="index in 5"
-            :key="index"
-            height="56"
-            width="56"
-          />
-        </div>
-      </div>
-      <v-spacer />
-      <div
-        class="gtext-t4 primary-blue-500 align-self-center pointer"
+  <section
+    class="detail-section"
+    aria-labelledby="facilities-title"
+  >
+    <div class="section-head">
+      <h2
+        id="facilities-title"
+        class="section-title"
+      >
+        Facilities
+      </h2>
+      <v-btn
+        variant="text"
+        color="info"
+        size="small"
+        class="text-none gtext-t5 px-2 section-action"
         @click="openModal"
       >
-        Contribute
-      </div>
+        {{ selected.length ? 'Edit' : 'Add facilities' }}
+      </v-btn>
     </div>
+    <div
+      v-if="selected.length"
+      class="d-flex flex-wrap ga-2"
+    >
+      <v-chip
+        v-for="facility in selected"
+        :key="facility.id"
+        :prepend-icon="`mdfull:${facility.icon}`"
+        color="grey800"
+        variant="flat"
+        label
+        size="large"
+        class="bg-grey50 font-weight-medium gtext-t5"
+      >
+        {{ facility.name }}
+      </v-chip>
+    </div>
+    <p
+      v-else
+      class="section-empty"
+    >
+      No facilities listed yet.
+    </p>
 
     <v-dialog
       v-model="facilitiesDialog"
@@ -57,58 +53,64 @@
     >
       <v-card class="rounded-lg">
         <v-card-text class="py-6 py-md-8 px-6 px-md-8">
-          <div class="d-flex">
-            <div class="text-h3 font-weight-bold priamry-gray-700">
-              Facilities
+          <div class="d-flex align-center">
+            <div class="text-h3 font-weight-bold">
+              Which facilities does this school have?
             </div>
             <v-spacer />
             <v-btn
               variant="text"
               icon
+              aria-label="Close"
               @click="closeModal"
             >
               <v-icon
                 size="26"
-                color="#475467"
+                color="grey600"
               >
                 md:close
               </v-icon>
             </v-btn>
           </div>
-          <v-row class="mt-6">
-            <v-col
-              v-for="(tag, index) in modalTags"
+          <div
+            v-if="catalogLoading"
+            class="d-flex flex-wrap ga-2 mt-6"
+          >
+            <v-skeleton-loader
+              v-for="index in 8"
               :key="index"
+              height="56"
+              width="200"
+            />
+          </div>
+          <v-row
+            v-else
+            class="mt-6"
+          >
+            <v-col
+              v-for="tag in modalTags"
+              :key="tag.id"
               cols="12"
               md="6"
             >
               <v-btn
-                :class="[
-                  tag.selected
-                    ? 'bg-primary-gray-800 text-white'
-                    : 'bg-primary-gray-200 text-gray',
-                ]"
+                block
                 height="56"
-                width="56"
-                flat
-                @click="toggleTag(tag)"
+                :variant="tag.selected ? 'flat' : 'tonal'"
+                :color="tag.selected ? 'grey800' : 'grey500'"
+                :prepend-icon="tag.selected ? 'mdi-check' : `mdfull:${tag.icon}`"
+                :aria-pressed="tag.selected"
+                class="justify-start text-none font-weight-medium gtext-t4"
+                @click="tag.selected = !tag.selected"
               >
-                <v-icon
-                  size="28"
-                  :color="tag.selected ? `white` : `#98A2B3`"
-                >
-                  md:{{ tag?.icon }}
-                </v-icon>
+                {{ tag.name }}
               </v-btn>
-              <span class="gtext-t4 ml-4 font-weight-medium">{{
-                tag?.name
-              }}</span>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="justify-center pb-6 mt-10">
+        <v-card-actions class="justify-center pb-6 mt-4">
           <v-btn
-            class="black--text text-transform-none gtext-t4 font-weight-medium"
+            class="text-none gtext-t4 font-weight-medium"
             rounded
             color="primary"
             width="100%"
@@ -116,6 +118,7 @@
             size="x-large"
             variant="flat"
             :loading="loader"
+            :disabled="catalogLoading"
             @click="saveFacilities"
           >
             Save
@@ -123,11 +126,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </section>
 </template>
 
 <script setup>
-import { useNuxtApp } from '#app'
 import { useDisplay } from 'vuetify/lib/composables/display'
 
 const props = defineProps({
@@ -136,91 +138,78 @@ const props = defineProps({
     default: () => [],
   },
 })
-const emit = defineEmits(['facilities-updated', 'open-auth-dialog'])
+const emit = defineEmits(['facilities-updated'])
 
-const tags = ref([])
-const facilitiesDialog = ref(false)
-const selectedTags = ref([])
-const modalTags = ref([])
-const loader = ref(false)
-const initialLoading = ref(true)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 const display = useDisplay()
+const { requireSignIn } = useContributeGate()
 
-async function getTags() {
-  initialLoading.value = true
+// What the school has comes with the school itself (id, name, icon), so it renders on the server.
+const selected = ref([...(props.facilities || [])])
+const catalog = ref([])
+const modalTags = ref([])
+const catalogLoading = ref(false)
+const facilitiesDialog = ref(false)
+const loader = ref(false)
+
+watch(() => props.facilities, (val) => {
+  selected.value = [...(val || [])]
+})
+
+async function loadCatalog() {
+  if (catalog.value.length) return true
+  catalogLoading.value = true
   try {
     const res = await useApiService.get('/api/v2/tags/School', undefined, { public: true })
-    tags.value = res.data.map((tag) => {
-      const isSelected
-        = props.facilities
-          && props.facilities.some(facility => facility.id === tag.id)
-      return {
-        ...tag,
-        selected: isSelected,
-      }
-    })
-    selectedTags.value = tags.value
-      .filter(tag => tag.selected)
-      .map(tag => tag.id)
+    catalog.value = res.data || []
+    return true
   }
   catch (err) {
     console.error('Error fetching school tags:', err)
     nuxtApp.$toast?.error('Failed to load facilities')
+    return false
   }
   finally {
-    initialLoading.value = false
+    catalogLoading.value = false
   }
 }
 
-const openModal = () => {
-  modalTags.value = tags.value.map(tag => ({ ...tag }))
+async function openModal() {
+  if (!requireSignIn()) return
   facilitiesDialog.value = true
+  if (!(await loadCatalog())) {
+    facilitiesDialog.value = false
+    return
+  }
+  const selectedIds = new Set(selected.value.map(item => item.id))
+  modalTags.value = catalog.value.map(tag => ({ ...tag, selected: selectedIds.has(tag.id) }))
 }
 
-const closeModal = () => {
+function closeModal() {
   facilitiesDialog.value = false
-  modalTags.value = []
-}
-
-function toggleTag(tag) {
-  tag.selected = !tag.selected
-  if (tag.selected) {
-    selectedTags.value.push(tag.id)
-  }
-  else {
-    selectedTags.value = selectedTags.value.filter(id => id !== tag.id)
-  }
 }
 
 async function saveFacilities() {
+  const chosen = modalTags.value.filter(tag => tag.selected)
   loader.value = true
   try {
     const response = await useApiService.post(
       `/api/v2/schools/${route.params.id}/contributions`,
-      { tags: selectedTags.value },
+      { tags: chosen.map(tag => tag.id) },
     )
     if (response.succeeded) {
-      tags.value = modalTags.value
-      modalTags.value = []
-      nuxtApp.$toast?.success(
-        'Your contribution has been successfully submitted',
-      )
+      selected.value = chosen
+      nuxtApp.$toast?.success('Thank you! Your contribution has been submitted and is pending review.')
       facilitiesDialog.value = false
       emit('facilities-updated')
     }
     else {
-      nuxtApp.$toast?.error(
-        response?.errors?.[0]?.message || 'Failed to update facilities',
-      )
+      nuxtApp.$toast?.error(response?.errors?.[0]?.message || 'Failed to update facilities')
     }
   }
   catch (err) {
-    if (
-      err.response
-      && (err.response.status === 401 || err.response.status === 403)
-    ) {
+    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
       nuxtApp.$toast?.error('Please login to update facilities')
     }
     else {
@@ -232,5 +221,11 @@ async function saveFacilities() {
   }
 }
 
-onMounted(getTags)
+defineExpose({ openModal })
 </script>
+
+<style scoped>
+.v-btn {
+  letter-spacing: normal;
+}
+</style>

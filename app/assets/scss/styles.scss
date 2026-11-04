@@ -20,39 +20,39 @@ html {
 }
 
 .primary-gray-100 {
-  color: var(--primary-grey-100, #f2f4f7);
+  color: rgb(var(--v-theme-grey100));
 }
 
 .primary-gray-200 {
-  color: #e4e7ec;
+  color: rgb(var(--v-theme-grey200));
 }
 
 .primary-gray-300 {
-  color: var(--primary-grey-300, #d0d5dd) !important;
+  color: rgb(var(--v-theme-grey300)) !important;
 }
 
 .primary-gray-400 {
-  color: var(--Primary-Grey-400, #98a2b3) !important;
+  color: rgb(var(--v-theme-grey400)) !important;
 }
 
 .primary-gray-500 {
-  color: var(--primary-grey-500, #667085);
+  color: rgb(var(--v-theme-grey500));
 }
 
 .primary-gray-600 {
-  color: var(--primary-grey-600, #475467);
+  color: rgb(var(--v-theme-grey600));
 }
 
 .primary-gray-800 {
-  color: var(--primary-grey-800, #1d2939) !important;
+  color: rgb(var(--v-theme-grey800)) !important;
 }
 
 .primary-gray-700 {
-  color: var(--primary-grey-700, #344054) !important;
+  color: rgb(var(--v-theme-grey700)) !important;
 }
 
 .primary-gray-900 {
-  color: var(--primary-grey-900, #101828) !important;
+  color: rgb(var(--v-theme-grey900)) !important;
 }
 
 .primary-blue-500 {
@@ -67,11 +67,11 @@ html {
 }
 
 .bg-primary-gray-100 {
-  background: #f2f4f7 !important;
+  background: rgb(var(--v-theme-grey100)) !important;
 }
 
 .bg-primary-gray-200 {
-  background: #e4e7ec !important;
+  background: rgb(var(--v-theme-grey200)) !important;
 }
 
 .bg-primary-gray-700 {
@@ -134,7 +134,7 @@ html {
 
 .v-btn:not(.v-btn--round).v-size--large.gama-btn {
   .v-btn__content {
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
     font-size: 2rem !important;
     font-style: normal;
@@ -145,7 +145,7 @@ html {
 
 .v-btn:not(.v-btn--round).v-size--default.gama-btn {
   .v-btn__content {
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
     font-size: 1.8rem;
     font-style: normal;
@@ -157,7 +157,7 @@ html {
 
 .v-btn:not(.v-btn--round).v-size--small.gama-btn {
   .v-btn__content {
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
     font-size: 1.6rem;
     font-style: normal;
@@ -169,7 +169,7 @@ html {
 
 .v-btn:not(.v-btn--round).v-size--x-small.gama-btn {
   .v-btn__content {
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
     font-size: 1.2rem;
     font-style: normal;
@@ -266,7 +266,7 @@ html {
 
 .gama-text-h1 {
   font-family: Inter, sans-serif;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 3.4rem;
   font-style: normal;
   font-weight: 800;
@@ -275,7 +275,7 @@ html {
 
 .gama-text-h2 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 3rem !important;
   font-style: normal !important;
   font-weight: 700 !important;
@@ -284,7 +284,7 @@ html {
 
 .gama-text-h3 {
   font-family: Inter, sans-serif;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 2.8rem;
   font-style: normal;
   font-weight: 500;
@@ -293,7 +293,7 @@ html {
 
 .gama-text-h4 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 2.4rem !important;
   font-style: normal !important;
   font-weight: 800 !important;
@@ -302,7 +302,7 @@ html {
 
 .gama-text-h5 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 2rem !important;
   font-style: normal;
   font-weight: 400;
@@ -311,7 +311,7 @@ html {
 
 .gama-text-h6 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.6rem !important;
   font-style: normal !important;
   font-weight: 500 !important;
@@ -320,7 +320,7 @@ html {
 
 .gama-text-subtitle1 {
   font-family: Inter, sans-serif;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.4rem !important;
   font-style: normal;
   font-weight: 400;
@@ -329,7 +329,7 @@ html {
 
 .gama-text-subtitle2 {
   font-family: Inter, sans-serif;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.2rem;
   font-style: normal;
   font-weight: 500;
@@ -338,7 +338,7 @@ html {
 
 .gama-text-body1 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.4rem !important;
   font-style: normal;
   font-weight: 400;
@@ -347,7 +347,7 @@ html {
 
 .gama-text-body2 {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.2rem !important;
   font-style: normal !important;
   font-weight: 400 !important;
@@ -356,7 +356,7 @@ html {
 
 .gama-text-button {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.4rem !important;
   font-style: normal !important;
   font-weight: 600 !important;
@@ -365,7 +365,7 @@ html {
 
 .gama-text-caption {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1.2rem;
   font-style: normal;
   font-weight: 300;
@@ -374,7 +374,7 @@ html {
 
 .gama-text-overline {
   font-family: Inter, sans-serif !important;
-  color: #000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 1rem;
   font-style: normal;
   font-weight: 500;
@@ -391,8 +391,8 @@ html {
   justify-content: center;
   align-items: center;
   border-radius: 3rem;
-  background: #ffb600;
-  color: #24292f;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
   font-family: Inter, sans-serif !important;
   font-size: 1.4rem;
   font-style: normal;
@@ -407,8 +407,8 @@ html {
   justify-content: center;
   align-items: center;
   border-radius: 3rem;
-  background: #ffb600;
-  color: #24292f;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
   font-family: Inter, sans-serif !important;
   font-size: 1.4rem;
   font-style: normal;
@@ -425,18 +425,18 @@ html {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgb(var(--v-theme-grey100));
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   border-radius: 0.8rem;
-  background: #cacdd3;
+  background: rgb(var(--v-theme-grey300));
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgb(var(--v-theme-grey500));
 }
 
 body {
@@ -2324,7 +2324,7 @@ body {
   //sm size
   .gama-text-h1 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 4.6rem;
     font-style: normal;
     font-weight: 800;
@@ -2333,7 +2333,7 @@ body {
 
   .gama-text-h2 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 4rem !important;
     font-style: normal !important;
     font-weight: 700 !important;
@@ -2342,7 +2342,7 @@ body {
 
   .gama-text-h3 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 3.2rem;
     font-style: normal;
     font-weight: 500;
@@ -2350,7 +2350,7 @@ body {
   }
 
   .gama-text-h4 {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 2.6rem !important;
     font-style: normal !important;
@@ -2360,7 +2360,7 @@ body {
 
   .gama-text-h5 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 2.2rem;
     font-style: normal;
     font-weight: 500;
@@ -2369,7 +2369,7 @@ body {
 
   .gama-text-h6 {
     font-family: "Inter", sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.8rem !important;
     font-style: normal;
     font-weight: 500 !important;
@@ -2378,7 +2378,7 @@ body {
 
   .gama-text-subtitle1 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.6rem !important;
     font-style: normal;
     font-weight: 400;
@@ -2387,7 +2387,7 @@ body {
 
   .gama-text-subtitle2 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.4rem;
     font-style: normal;
     font-weight: 500;
@@ -2396,7 +2396,7 @@ body {
 
   .gama-text-body1 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.6rem !important;
     font-style: normal;
     font-weight: 400;
@@ -2405,7 +2405,7 @@ body {
 
   .gama-text-body2 {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.4rem !important;
     font-style: normal !important;
     font-weight: 400 !important;
@@ -2414,7 +2414,7 @@ body {
 
   .gama-text-button {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.4rem;
     font-style: normal;
     font-weight: 600;
@@ -2423,7 +2423,7 @@ body {
 
   .gama-text-caption {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.4rem;
     font-style: normal;
     font-weight: 300;
@@ -2432,7 +2432,7 @@ body {
 
   .gama-text-overline {
     font-family: Inter, sans-serif !important;
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-size: 1.2rem;
     font-style: normal;
     font-weight: 500;
@@ -2447,8 +2447,8 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 3rem;
-    background: #ffb600;
-    color: #24292f;
+    background: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
     font-size: 1.4rem;
     font-style: normal;
@@ -2464,7 +2464,7 @@ body {
     align-items: center;
     border-radius: 3rem;
     background: #ffffff;
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
     font-size: 1.4rem;
     font-style: normal;
@@ -2546,7 +2546,7 @@ body {
   }
   // md size
   .gama-text-h1 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 5rem !important;
     font-style: normal !important;
@@ -2555,7 +2555,7 @@ body {
   }
 
   .gama-text-h2 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 4.4rem !important;
     font-style: normal !important;
@@ -2564,7 +2564,7 @@ body {
   }
 
   .gama-text-h3 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 3.6rem;
     font-style: normal;
@@ -2573,7 +2573,7 @@ body {
   }
 
   .gama-text-h4 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 3rem !important;
     font-style: normal !important;
@@ -2582,7 +2582,7 @@ body {
   }
 
   .gama-text-h5 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 2.4rem;
     font-style: normal;
@@ -2591,7 +2591,7 @@ body {
   }
 
   .gama-text-h6 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: "Inter", sans-serif !important;
     font-size: 2rem !important;
     font-style: normal;
@@ -2600,7 +2600,7 @@ body {
   }
 
   .gama-text-subtitle1 {
-    color: #354053;
+    color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
     font-size: 1.8rem !important;
     font-style: normal;
@@ -2609,7 +2609,7 @@ body {
   }
 
   .gama-text-subtitle2 {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 1.4rem;
     font-style: normal;
@@ -2618,7 +2618,7 @@ body {
   }
 
   .gama-text-body1 {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 2rem !important;
     font-style: normal;
@@ -2627,7 +2627,7 @@ body {
   }
 
   .gama-text-body2 {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 1.6rem !important;
     font-style: normal;
@@ -2636,7 +2636,7 @@ body {
   }
 
   .gama-text-button {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 1.8rem !important;
     font-style: normal !important;
@@ -2645,7 +2645,7 @@ body {
   }
 
   .gama-text-caption {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 1.4rem;
     font-style: normal;
@@ -2654,7 +2654,7 @@ body {
   }
 
   .gama-text-overline {
-    color: #000;
+    color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
     font-size: 1.2rem;
     font-style: normal;
@@ -2672,8 +2672,8 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 3rem;
-    background: #ffb600;
-    color: #24292f;
+    background: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
     font-size: 1.8rem;
     font-style: normal;
@@ -2689,7 +2689,7 @@ body {
     align-items: center;
     border-radius: 3rem;
     background: #ffffff;
-    color: #24292f;
+    color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
     font-size: 1.8rem;
     font-style: normal;
@@ -4693,7 +4693,7 @@ body {
     border-radius: 3rem;
 
     .v-btn__content {
-      color: #24292f;
+      color: rgb(var(--v-theme-on-primary));
       font-size: 1.4rem;
       font-style: normal;
       font-weight: 600;

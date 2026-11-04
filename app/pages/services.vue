@@ -325,7 +325,7 @@
             href="mailto:contact@gamatrain.com"
             width="200"
             rounded="pill"
-            color="black"
+            color="inverseSurfaceStrong"
             flat
             class="text-h5 mt-4 font-weight-bold text-primary"
           >
@@ -415,7 +415,7 @@ useHead({
     text-align: center;
 
     > h1 {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       text-align: center;
     }
   }
@@ -430,7 +430,7 @@ useHead({
 }
 
 #service-ai-learning {
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   padding: 2rem;
 
   .gama-text-h4 {
@@ -455,7 +455,7 @@ useHead({
 }
 
 #service-online-tests {
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 2rem;
 
   .gama-text-h4 {
@@ -472,7 +472,7 @@ useHead({
 }
 
 #service-school-finder {
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 2rem;
 
   .gama-text-h4 {
@@ -489,7 +489,7 @@ useHead({
 }
 
 #service-content-monetization {
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 2rem;
 
   .gama-text-h4 {
@@ -498,12 +498,12 @@ useHead({
 }
 
 #service-education-future {
-  background: #ffb600;
+  background: rgb(var(--v-theme-primary));
   text-align: center;
   padding: 2.4rem 0;
 
   .v-btn {
-    color: #ffb600 !important;
+    color: rgb(var(--v-theme-primary)) !important;
   }
 }
 

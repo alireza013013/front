@@ -180,7 +180,7 @@
                 :loading="submit_loading"
                 size="large"
                 color="primary"
-                class="text-h5 text-grey800"
+                class="text-h5"
                 block
                 flat
                 @click="endExam()"

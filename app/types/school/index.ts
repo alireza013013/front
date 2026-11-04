@@ -279,3 +279,70 @@ export interface GetAdminSchoolContributionParams {
   status: string
   sort: string[]
 }
+
+/** A school's facility tag, as the school details endpoint returns it. */
+export interface SchoolTagDTO {
+  id: number
+  name?: string | null
+  icon?: string | null
+}
+
+/** An education board the school follows, as the school details endpoint returns it. */
+export interface SchoolBoardDTO {
+  id?: number | null
+  code?: number | null
+  title?: string | null
+  icon?: string | null
+}
+
+/** GET /schools/{id} (SchoolResponseViewModel). */
+export interface SchoolDetailDTO {
+  id: number
+  name?: string | null
+  localName?: string | null
+  slug?: string | null
+  schoolType?: { name?: string | null } | null
+  countryId?: number | null
+  countryTitle?: string | null
+  stateId?: number | null
+  stateTitle?: string | null
+  cityId?: number | null
+  cityTitle?: string | null
+  address?: string | null
+  zipCode?: string | null
+  webSite?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  tags?: SchoolTagDTO[] | null
+  boards?: SchoolBoardDTO[] | null
+  defaultImageUri?: string | null
+  tuition?: number | null
+  description?: string | null
+  countryRank?: number | null
+  stateRank?: number | null
+  cityRank?: number | null
+  rating?: number | null
+}
+
+/** GET /schools/{id}/rate (SchoolRateResponseViewModel). */
+export interface SchoolRatingDTO {
+  averageRate?: number | null
+  classesQualityRate?: number | null
+  educationRate?: number | null
+  itTrainingRate?: number | null
+  safetyAndHappinessRate?: number | null
+  behaviorRate?: number | null
+  tuitionRatioRate?: number | null
+  facilitiesRate?: number | null
+  artisticActivitiesRate?: number | null
+  totalCount: number
+}
+
+/** One photo from GET /schools/{id}/images/SimpleImage. */
+export interface SchoolImageDTO {
+  id?: number
+  fileUri?: string | null
+  isDefault?: boolean
+}

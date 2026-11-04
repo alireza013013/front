@@ -143,7 +143,7 @@
               color="primary"
               rounded="pill"
               height="52"
-              class="text-h5 text-grey900 font-weight-bold mt-6"
+              class="text-h5 font-weight-bold mt-6"
               flat
               append-icon="md:arrow_forward"
               :loading="loadingRedeemOffer"
@@ -263,7 +263,7 @@
               color="primary"
               rounded="pill"
               height="48"
-              class="text-h5 text-grey900 font-weight-bold mt-2"
+              class="text-h5 font-weight-bold mt-2"
               flat
               prepend-icon="md:login"
               @click="openSignIn"
@@ -276,7 +276,7 @@
               color="primary"
               rounded="pill"
               height="48"
-              class="text-h5 text-grey900 font-weight-bold mt-2"
+              class="text-h5 font-weight-bold mt-2"
               flat
               :to="state.actionTo"
             >

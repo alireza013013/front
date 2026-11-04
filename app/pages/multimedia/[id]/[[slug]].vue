@@ -4,7 +4,7 @@
     class="d-flex flex-column mt-16"
   >
     <lazy-widgets-breadcrumb
-      background-color="white"
+      background-color="transparent"
       :breads="breads"
     />
     <div
@@ -59,8 +59,11 @@
       </div>
     </div>
 
-    <lazy-common-box-random-question
+    <lazy-common-practice-question
+      class="mt-10"
       :lesson="contentData.lesson"
+      :topic="contentData.topic"
+      :subject="contentData.lesson_title?.trim()"
     />
 
     <lazy-common-related-content

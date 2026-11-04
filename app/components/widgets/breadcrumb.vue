@@ -1,9 +1,8 @@
 <template>
-  <div
+  <v-sheet
     class="breadcrumbs-container"
-    :style="{
-      backgroundColor: backgroundColor,
-    }"
+    :class="{ 'breadcrumbs-container--flush': flush }"
+    :color="backgroundColor"
   >
     <v-breadcrumbs
       v-if="breadItems.length"
@@ -14,7 +13,7 @@
         <v-icon>mdi-chevron-right</v-icon>
       </template>
     </v-breadcrumbs>
-  </div>
+  </v-sheet>
 </template>
 
 <script setup>
@@ -24,9 +23,15 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // A theme colour name (e.g. 'surface', 'grey100') or 'transparent', so it follows light/dark mode.
+  // No left/right padding, so the first crumb lines up with the page title under it.
+  flush: {
+    type: Boolean,
+    default: false,
+  },
   backgroundColor: {
     type: String,
-    default: '#f5f5f5',
+    default: 'grey100',
   },
 })
 
@@ -50,6 +55,20 @@ const breadItems = computed(() => {
   border-radius: 8px;
   padding: 8px;
   overflow-x: auto;
+}
+
+.breadcrumbs-container--flush,
+.breadcrumbs-container--flush :deep(.v-breadcrumbs) {
+  padding-inline: 0;
+}
+/* Long trails still scroll sideways on a phone, without a scrollbar drawn under them. */
+.breadcrumbs-container,
+.breadcrumbs-container :deep(.v-breadcrumbs) {
+  scrollbar-width: none;
+}
+.breadcrumbs-container::-webkit-scrollbar,
+.breadcrumbs-container :deep(.v-breadcrumbs)::-webkit-scrollbar {
+  display: none;
 }
 
 .disabled {

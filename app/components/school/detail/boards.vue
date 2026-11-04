@@ -1,116 +1,122 @@
 <template>
-  <div class="w-100 d-flex flex-column align-start justify-start mt-6">
-    <div class="w-100 d-flex align-center justify-space-between">
-      <span class="text-grey600 text-h4">Boards</span>
-      <span
-        class="text-h5 text-info pointer"
+  <section
+    class="detail-section"
+    aria-labelledby="boards-title"
+  >
+    <div class="section-head">
+      <h2
+        id="boards-title"
+        class="section-title"
+      >
+        Education board
+      </h2>
+      <v-btn
+        variant="text"
+        color="info"
+        size="small"
+        class="text-none gtext-t5 px-2 section-action"
         @click="openModalContribute"
       >
-        Contribute
-      </span>
+        {{ schoolBoards.length ? 'Edit' : 'Add board' }}
+      </v-btn>
     </div>
     <div
-      v-if="isLoadingBoard"
-      class="w-100 d-flex flex-wrap align-center my-6 ga-2"
+      v-if="schoolBoards.length"
+      class="d-flex flex-wrap ga-2"
     >
-      <v-skeleton-loader
-        v-for="size in sizeSkeletonBoard"
-        :key="size"
-        :width="size"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-    </div>
-    <div
-      v-else
-      class="w-100 d-flex flex-wrap align-center my-6 ga-2"
-    >
-      <template
-        v-for="(board, index) in schoolBoards"
-        :key="index"
+      <v-chip
+        v-for="board in schoolBoards"
+        :key="board.id"
+        color="grey800"
+        variant="flat"
+        label
+        size="large"
+        class="bg-grey50 font-weight-bold gtext-t5"
       >
-        <v-btn
-          v-if="schoolBoards.some(s => s.id === Number(board.id))"
-          flat
-          :color="schoolBoards.some(s => s.id === Number(board.id)) ? `grey700` : `grey300`"
-          height="48"
-          rounded="lg"
+        <!-- Board logos are content images, not interface icons. -->
+        <template
+          v-if="board.icon"
+          #prepend
         >
           <img
-            v-if="board.icon"
-            :src="`/images/boards/${board?.icon}.svg`"
-            :alt="board.title"
-            width="26"
-            height="26"
-            class="mr-1"
+            :src="`/images/boards/${board.icon}.svg`"
+            alt=""
+            width="22"
+            height="22"
+            loading="lazy"
+            class="mr-2"
           >
-          <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.id === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
-            board.title
-          }}</span>
-        </v-btn>
-      </template>
-
-      <span
-
-        class="ml-2 text-h5 text-grey700 font-weight-bold"
-      >
-        Education board information hasn’t been added for this school yet. Know it? Contribute and help keep our data accurate.
-      </span>
+        </template>
+        {{ board.title }}
+      </v-chip>
     </div>
+    <p
+      v-else
+      class="section-empty"
+    >
+      The education board hasn't been added yet.
+    </p>
 
     <v-dialog
       v-model="dialogModel"
       max-width="500"
       :fullscreen="!mdAndUp"
-      persistent
-      @click="clickOnOverlay"
     >
-      <div
-        class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
-        @click="clickOnModal"
-      >
-        <v-row class="d-flex align-center">
-          <v-col cols="10">
-            <span class="text-h4">Boards</span>
-          </v-col>
-          <v-col
-            cols="2"
-            class="d-flex align-center justify-end ga-2"
+      <div class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 rounded-xl mobile-style">
+        <div class="d-flex align-center">
+          <span class="text-h4 font-weight-bold">Which boards does this school follow?</span>
+          <v-spacer />
+          <v-btn
+            variant="text"
+            icon
+            aria-label="Close"
+            @click="closeModal"
           >
             <v-icon
               size="x-large"
               color="grey400"
-              @click="closeModal"
             >
               md:close
             </v-icon>
-          </v-col>
-        </v-row>
-        <v-row
+          </v-btn>
+        </div>
+        <div
+          v-if="isLoadingBoard"
+          class="w-100 d-flex flex-wrap align-center my-6 ga-2"
+        >
+          <v-skeleton-loader
+            v-for="size in sizeSkeletonBoard"
+            :key="size"
+            :width="size"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+        </div>
+        <div
+          v-else
           class="w-100 d-flex flex-wrap align-center justify-center my-6 ga-2"
         >
           <v-btn
-            v-for="(board, index) in boards"
-            :key="index"
+            v-for="board in boards"
+            :key="board.id"
             flat
-            :color="selectedBoards.includes(Number(board.id)) ? `grey700` : `grey300`"
+            :color="selectedBoards.includes(Number(board.id)) ? `grey700` : `grey200`"
             height="48"
             rounded="lg"
+            :aria-pressed="selectedBoards.includes(Number(board.id))"
             @click="chooseBoard(board)"
           >
             <img
               v-if="board.icon"
-              :src="`/images/boards/${board?.icon}.svg`"
-              :alt="board.title"
+              :src="`/images/boards/${board.icon}.svg`"
+              alt=""
               width="26"
               height="26"
               class="mr-1"
             >
-            <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
-              board.title
-            }} {{ board.icon }}</span>
+            <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(Number(board.id)) ? `text-white` : `text-grey900`}`">{{ board.title }}</span>
           </v-btn>
-        </v-row>
+        </div>
         <v-btn
           class="w-100 text-black font-weight-bold text-h5 ma-auto"
           rounded="pill"
@@ -124,7 +130,7 @@
         </v-btn>
       </div>
     </v-dialog>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -138,56 +144,36 @@ const props = defineProps({
 })
 
 const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoard()
-const auth = useAuth()
 const { $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
-const router = useRouter()
+const { requireSignIn } = useContributeGate()
 
 const selectedBoards = ref([])
 const loadingContribute = ref(false)
 const sizeSkeletonBoard = [100, 110, 90, 120, 90, 84]
-
-onMounted(async () => {
-  await getBoards()
-})
-
 const dialogModel = ref(false)
 
-const closeModal = () => {
+function closeModal() {
   dialogModel.value = false
-  selectedBoards.value = []
 }
 
-const clickOnOverlay = () => {
-  dialogModel.value = false
-  selectedBoards.value = []
+// The board list is only needed once the editor opens.
+async function openModalContribute() {
+  if (!requireSignIn()) return
+  selectedBoards.value = props.schoolBoards.map(item => Number(item.id))
+  dialogModel.value = true
+  if (!boards.value?.length) await getBoards()
 }
 
-const clickOnModal = (event) => {
-  event.stopPropagation()
+function chooseBoard(board) {
+  const id = Number(board.id)
+  selectedBoards.value = selectedBoards.value.includes(id)
+    ? selectedBoards.value.filter(item => item !== id)
+    : [...selectedBoards.value, id]
 }
 
-const openModalContribute = () => {
-  if (!auth?.isAuthenticated?.value) {
-    router.push({ query: { auth_form: 'login', auth_noredirect: true } })
-  }
-  else {
-    dialogModel.value = true
-    selectedBoards.value = props.schoolBoards.map(item => item.id)
-  }
-}
-
-const chooseBoard = (board) => {
-  if (selectedBoards.value.includes(Number(board.id))) {
-    selectedBoards.value = selectedBoards.value.filter(id => id !== Number(board.id))
-  }
-  else {
-    selectedBoards.value.push(Number(board.id))
-  }
-}
-
-const saveBoards = async () => {
+async function saveBoards() {
   loadingContribute.value = true
   try {
     const response = await useApiService.post(
@@ -195,24 +181,16 @@ const saveBoards = async () => {
       { boards: selectedBoards.value },
     )
     if (response.succeeded) {
-      $toast?.success(
-        'Your contribution has been successfully submitted',
-      )
+      $toast?.success('Thank you! Your contribution has been submitted and is pending review.')
       dialogModel.value = false
-      selectedBoards.value = []
     }
     else {
-      $toast?.error(
-        response?.errors?.[0]?.message || 'Failed to update Boards',
-      )
+      $toast?.error(response?.errors?.[0]?.message || 'Failed to update Boards')
     }
   }
   catch (err) {
-    if (
-      err.response
-      && (err.response.status === 401 || err.response.status === 403)
-    ) {
-      $toast?.error('Please login to update facilities')
+    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+      $toast?.error('Please login to update the education board')
     }
     else {
       $toast?.error('Failed to update Boards')
@@ -222,6 +200,8 @@ const saveBoards = async () => {
     loadingContribute.value = false
   }
 }
+
+defineExpose({ openModal: openModalContribute })
 </script>
 
 <style scoped>

@@ -1,3 +1,5 @@
+import type { DownloadResponseDTO } from '@/types'
+
 export interface ExamDetaiDTO {
   id: string
   clone_id: string
@@ -286,6 +288,18 @@ export interface ExamResultDetailDTO {
   insightService: boolean
 }
 
+export interface ExamResultAnalyzeResponseDTO {
+  result: string
+  id: number
+  points: number
+  purchased: boolean
+}
+
+export interface ExamResultResponseDTO {
+  result: ExamResultDetailDTO
+  analysis: ExamResultAnalyzeResponseDTO | null
+}
+
 export interface ExamResultDownloadDTO {
   url: string
   name: string
@@ -328,4 +342,11 @@ export interface ParticipationExamDetaiDTO {
 export interface PdfExamDetaiDTO {
   price: number
   paid: boolean
+}
+
+export interface ExamAnalyzeDetailResponseDTO extends DownloadResponseDTO {
+  id: number
+  examId: number
+  result: string
+  points: number
 }

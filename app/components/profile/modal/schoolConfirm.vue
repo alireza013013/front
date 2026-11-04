@@ -26,7 +26,7 @@
         rounded="pill"
         height="38"
         width="120"
-        class="text-h5 text-grey700 font-weight-medium"
+        class="text-h5 font-weight-medium"
         flat
         @click="emit('confirm')"
       >

@@ -1,61 +1,58 @@
 <template>
-  <h1 class="gtext-h4 gtext-sm-h4 gtext-lg-h4">
-    <div class="d-flex align-center flex-wrap">
-      <div v-show="!generalDataEditMode.name">
+  <div class="school-title">
+    <template v-if="!isEditing">
+      <h1 class="name">
         {{ contentData.name }}
-      </div>
+      </h1>
       <v-btn
-        v-if="!generalDataEditMode.name"
-        class="ml-4"
         icon
-        color="blue-grey"
+        size="small"
         variant="text"
-        @click="handleEdit"
+        color="grey500"
+        aria-label="Suggest a correction to the school name"
+        @click="startEdit"
       >
-        <v-icon size="large">
-          mdi-pencil
+        <v-icon size="20">
+          mdi-pencil-outline
         </v-icon>
       </v-btn>
-      <div class="w-70 w-md-100">
-        <v-text-field
-          v-if="generalDataEditMode.name"
-          v-model="form.name"
-          placeholder="Name"
-          :rules="[(v) => !!v || 'Name is required']"
-          variant="underlined"
-        >
-          <template #append-inner>
-            <v-btn
-              :loading="nameSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
-              icon
-              @click="handleUpdate"
-            >
-              <v-icon size="large">
-                mdi-check
-              </v-icon>
-            </v-btn>
-          </template>
-        </v-text-field>
-      </div>
-    </div>
-    <span v-show="contentData.school_type_title">
-      ,
-      {{ contentData.school_type_title }}
-    </span>
-    <span v-show="contentData.section_title">
-      , {{ contentData.section_title }}
-    </span>
-    <span v-show="contentData.area_title">
-      , {{ contentData.area_title }}
-    </span>
-  </h1>
+    </template>
+    <form
+      v-else
+      class="name-form"
+      @submit.prevent="handleUpdate"
+    >
+      <v-text-field
+        v-model="form.name"
+        label="School name"
+        :rules="[(v) => !!v?.trim() || 'Name is required']"
+        variant="outlined"
+        density="comfortable"
+        autofocus
+        hide-details="auto"
+      />
+      <v-btn
+        type="submit"
+        :loading="nameSubmitLoader"
+        color="primary"
+        variant="flat"
+        class="text-none gtext-t5"
+      >
+        Submit
+      </v-btn>
+      <v-btn
+        variant="text"
+        class="text-none gtext-t5"
+        @click="isEditing = false"
+      >
+        Cancel
+      </v-btn>
+    </form>
+  </div>
 </template>
 
 <script setup>
-const emit = defineEmits(['edit', 'update'])
+const emit = defineEmits(['update'])
 const props = defineProps({
   content: {
     type: Object,
@@ -66,42 +63,35 @@ const nuxtApp = useNuxtApp()
 const route = useRoute()
 const contentData = ref(props.content)
 const nameSubmitLoader = ref(false)
-const generalDataEditMode = reactive({
-  name: false,
-})
+const isEditing = ref(false)
 const form = reactive({
   name: '',
 })
-function handleEdit() {
+
+const { requireSignIn } = useContributeGate()
+
+function startEdit() {
+  if (!requireSignIn()) return
   form.name = contentData.value.name || ''
-  generalDataEditMode.name = true
+  isEditing.value = true
 }
-function isRequired(value) {
-  try {
-    return !!value.trim()
-  }
-  catch {
-    return false
-  }
-}
+
 function handleUpdate() {
-  let formData = {}
-  if (!isRequired(form.name)) {
+  const name = form.name?.trim()
+  if (!name) {
     nuxtApp.$toast?.error('Please enter a valid Name')
     return
   }
-  generalDataEditMode.name = false
-  formData = { name: form.name ?? null }
   nameSubmitLoader.value = true
   useApiService
-    .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
-    .then(async (response) => {
+    .post(`/api/v2/schools/${route.params.id}/contributions`, { name })
+    .then((response) => {
       if (response.succeeded) {
         nuxtApp.$toast?.success(
-          'Your contribution has been successfully submitted',
+          'Thank you! Your contribution has been submitted and is pending review.',
         )
-        contentData.value.name = form.name
-        emit('update', form.value)
+        isEditing.value = false
+        emit('update', name)
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)
@@ -114,8 +104,50 @@ function handleUpdate() {
       else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      form.name = null
       nameSubmitLoader.value = false
     })
 }
+
+defineExpose({ startEdit })
 </script>
+
+<style scoped>
+.school-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.name {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: rgb(var(--v-theme-grey900));
+  text-wrap: balance;
+}
+
+@media (min-width: 960px) {
+  .name {
+    font-size: 32px;
+  }
+}
+
+.name-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.name-form .v-text-field {
+  flex: 1 1 260px;
+}
+
+.name-form .v-btn {
+  height: 48px;
+}
+</style>

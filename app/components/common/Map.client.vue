@@ -1,11 +1,11 @@
 <template>
   <div
     ref="mapElement"
+    class="gama-map bg-grey100"
     :style="{
       height: '100%',
       width: '100%',
       borderRadius: borderRadius + 'px',
-      backgroundColor: '#f2f4f7',
     }"
   />
 </template>
@@ -428,12 +428,29 @@ defineExpose({
 
 <style scoped>
 .custom-tooltip {
-  background-color: white;
-  color: black;
-  border: 1px solid #333;
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-grey900));
+  border: 1px solid rgb(var(--v-theme-borderStrong));
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 18px;
   font-weight: bold;
+}
+
+/* Dark theme: OSM has no dark tiles, so invert the light ones (hue-rotate keeps water blue, parks green) */
+.v-theme--dark .gama-map :deep(.leaflet-tile-pane) {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+.v-theme--dark .gama-map :deep(.leaflet-bar a) {
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-grey900));
+  border-bottom-color: rgb(var(--v-theme-borderSubtle));
+}
+.v-theme--dark .gama-map :deep(.leaflet-control-attribution) {
+  background-color: rgba(var(--v-theme-surface), 0.8);
+  color: rgb(var(--v-theme-grey700));
+}
+.v-theme--dark .gama-map :deep(.leaflet-control-attribution a) {
+  color: rgb(var(--v-theme-info));
 }
 </style>

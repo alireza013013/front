@@ -9,7 +9,7 @@
         prepend-icon="md:edit_square"
         @click="showComposeMailModal = true"
       >
-        <span class="text-grey900 font-weight-bold text-h5">Compose Mail</span>
+        <span class="font-weight-bold text-h5">Compose Mail</span>
       </v-btn>
       <v-btn
         rounded="pill"

@@ -1,11 +1,12 @@
 <template>
   <v-container id="content-stats-container">
     <div>
-      <div
-        v-show="showBoardHint"
-        class="board-hint-row"
-      >
-        <div class="board-hint">
+      <!-- The row always keeps its height, so the hint appearing after load doesn't push the selector down. -->
+      <div class="board-hint-row">
+        <div
+          v-show="showBoardHint"
+          class="board-hint"
+        >
           <div class="hint-container">
             <div class="hint">
               <div class="pt-14">
@@ -39,10 +40,22 @@
             @update:model-value="fetchGradeList"
             @update:focused="handleBoardFocused"
           >
+            <template
+              v-if="!selectedBoard"
+              #prepend-inner
+            >
+              <span
+                class="select-shimmer"
+                aria-hidden="true"
+              />
+            </template>
             <template #selection>
               <div class="d-flex align-center ex-select-board-label pr-5">
-                <div>
-                  <v-avatar size="small">
+                <div v-if="selectedBoard?.icon">
+                  <v-avatar
+                    size="small"
+                    variant="text"
+                  >
                     <v-img :src="`/images/boards/${selectedBoard?.icon}.svg`" />
                   </v-avatar>
                 </div>
@@ -67,7 +80,17 @@
             item-title="title"
             item-value="id"
             hide-details
-          />
+          >
+            <template
+              v-if="!gradeList.length"
+              #prepend-inner
+            >
+              <span
+                class="select-shimmer"
+                aria-hidden="true"
+              />
+            </template>
+          </v-select>
         </div>
       </div>
       <div class="mt-4 w-100 d-none d-sm-flex">
@@ -85,7 +108,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"
@@ -104,7 +127,7 @@
               flat
               size="30"
               class="slider-arrow-button"
-              color="white"
+              color="surface"
             >
               <v-icon
                 size="24"
@@ -116,17 +139,37 @@
           </template>
 
           <v-slide-group-item
-            v-for="category in categories"
+            v-for="(category, index) in categories"
             :key="category.key"
           >
             <nuxt-link
               :to="categoryLink(category)"
-              class="mx-1 mx-sm-2 mt-2"
+              class="category-item mx-1 mx-sm-2 mt-2"
             >
-              <div class="ex-category__card">
+              <div
+                class="ex-category__card"
+                :class="category.accent"
+              >
                 <div class="d-flex align-center">
-                  <div class="ex-category__card--title mb-4">
-                    {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
+                  <div
+                    class="ex-category__card--title mb-4"
+                  >
+                    <template v-if="category.stat === null">
+                      <span
+                        class="stat-reel"
+                        aria-hidden="true"
+                      >
+                        <span
+                          v-for="reel in 3"
+                          :key="reel"
+                          class="stat-reel__strip"
+                        >01234567890</span>
+                      </span>
+                      <span class="d-sr-only">Loading</span>
+                    </template>
+                    <template v-else>
+                      {{ formatStat(displayStats[index]) }}
+                    </template>
                   </div>
                 </div>
 
@@ -143,8 +186,9 @@
                     </span>
                     <span class="pl-1 d-block">
                       <v-icon
+                        class="card-chevron"
                         size="x-large"
-                        color="#D0D5DD"
+                        color="grey400"
                       >mdi-chevron-right</v-icon>
                     </span>
                   </div>
@@ -157,8 +201,9 @@
       <div class="mt-10 d-flex d-sm-none">
         <v-row justify="center">
           <v-col
-            v-for="category in categories"
+            v-for="(category, index) in categories"
             :key="category.key"
+            class="category-item"
             cols="12"
             sm="4"
             md="3"
@@ -166,16 +211,38 @@
           >
             <nuxt-link
               :to="categoryLink(category)"
+              class="d-block"
             >
-              <div class="ex-category__card">
+              <div
+                class="ex-category__card"
+                :class="category.accent"
+              >
                 <div class="d-flex align-center">
-                  <div class="ex-category__card--title mb-sm-4 pr-6 pr-md-0">
-                    {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
+                  <div
+                    class="ex-category__card--title mb-sm-4 pr-6 pr-md-0"
+                  >
+                    <template v-if="category.stat === null">
+                      <span
+                        class="stat-reel"
+                        aria-hidden="true"
+                      >
+                        <span
+                          v-for="reel in 3"
+                          :key="reel"
+                          class="stat-reel__strip"
+                        >01234567890</span>
+                      </span>
+                      <span class="d-sr-only">Loading</span>
+                    </template>
+                    <template v-else>
+                      {{ formatStat(displayStats[index]) }}
+                    </template>
                   </div>
                   <span class="d-sm-none">
                     <v-icon
+                      class="card-chevron"
                       size="x-large"
-                      color="#D0D5DD"
+                      color="grey400"
                     >mdi-chevron-right</v-icon>
                   </span>
                 </div>
@@ -193,8 +260,9 @@
                     </span>
                     <span class="pl-1 d-none d-sm-block">
                       <v-icon
+                        class="card-chevron"
                         size="x-large"
-                        color="#D0D5DD"
+                        color="grey400"
                       >mdi-chevron-right</v-icon>
                     </span>
                   </div>
@@ -209,55 +277,74 @@
 </template>
 
 <script setup>
+import { useSearchApi } from '@/composables/api/search/useSearch.api'
+import { useCountUp } from '@/composables/useCountUp'
+
 const { data: boardList, getData: getBoards } = useBoard()
-const { getTypesStats } = useSearchApi()
+const { getHomeStats } = useSearchApi()
 
 const categorySlider = ref(null)
 
 const categories = ref([
   {
     type: 'paper',
+    statKey: 'paper',
+    accent: 'accent-paper',
     key: 'papers',
-    stat: '--',
+    stat: null,
     title: 'Past Paper',
     icon: 'icon-paper',
   },
   {
     type: 'study-materials',
+    statKey: 'studyMaterials',
+    accent: 'accent-study-materials',
     key: 'study-materials',
-    stat: '--',
+    stat: null,
     title: 'Study Materials',
     icon: 'icon-study-materials',
   },
   {
     type: 'quizhub',
+    statKey: 'exam',
+    accent: 'accent-quizhub',
     key: 'exams',
-    stat: '--',
+    stat: null,
     title: 'Exam Hub',
     icon: 'icon-exam',
   },
   {
     type: 'tutorial',
+    statKey: 'tutorial',
+    accent: 'accent-tutorial',
     key: 'tutorial',
-    stat: '--',
+    stat: null,
     title: 'Tutorial',
     icon: 'icon-tutorial',
   },
   {
     type: 'teacher',
+    statKey: 'teacher',
+    accent: 'accent-teacher',
     key: 'teachers',
-    stat: '--',
+    stat: null,
     title: 'Teacher',
     icon: 'icon-teacher',
   },
   {
     type: 'school',
+    statKey: 'school',
+    accent: 'accent-school',
     key: 'schools',
-    stat: '+600K',
+    stat: null,
     title: 'Schools',
     icon: 'icon-school',
   },
 ])
+const { $numberFormat } = useNuxtApp()
+const displayStats = useCountUp(() => categories.value.map(category => category.stat))
+const formatStat = stat => (typeof stat === 'number' ? $numberFormat(stat) : stat)
+
 const _selectLoader = ref(true)
 const gradeList = ref([])
 const gradeLoader = ref(false)
@@ -267,7 +354,7 @@ const showBoardHint = ref(false)
 let categoryCountRequestId = 0
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}${selectedGrade.value ? `&base=${selectedGrade.value}` : ``}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
   await getBoards()
@@ -317,79 +404,32 @@ const fetchGradeList = async () => {
     gradeLoader.value = false
   }
 }
+// One cached request for every card (search/homestats). A count the backend couldn't fetch shows a dash.
+const stopSpinning = () => categories.value.forEach((category) => {
+  if (category.stat === null) category.stat = '—'
+})
+
 const fetchCategoryCounts = async () => {
+  if (!selectedBoard.value) return
+
+  const requestId = ++categoryCountRequestId
   try {
-    if (!selectedBoard.value) {
-      return
-    }
-
-    const requestId = ++categoryCountRequestId
-    const params = {
+    const { data } = await getHomeStats({
       section: selectedBoard.value.code,
-      base: selectedGrade.value || undefined,
-    }
+      base: selectedGrade.value ?? undefined,
+    })
+    if (requestId !== categoryCountRequestId || !data) return
 
-    const [paperResult, studyMaterialsResult] = await Promise.allSettled([
-      getTypesStats({ ...params, is_paper: 1 }),
-      getTypesStats({ ...params, is_paper: 0 }),
-    ])
-
-    if (requestId !== categoryCountRequestId) return
-
-    const paperStats = getTypesStatsData(paperResult)
-    const studyMaterialsStats = getTypesStatsData(studyMaterialsResult)
-    const sharedStats = paperStats || studyMaterialsStats
-
-    setCategoryStat('papers', getStatCount(paperStats, 'papers'))
-    setCategoryStat('study-materials', getStatCount(studyMaterialsStats, 'papers'))
-    setCategoryStat('exams', getStatCount(sharedStats, 'exams', 'azmoon'))
-    setCategoryStat('questions', getStatCount(sharedStats, 'question', 'questions'))
-    setCategoryStat('tutorial', getStatCount(sharedStats, 'tutorials', 'dars'))
+    categories.value.forEach((category) => {
+      const count = data[category.statKey]
+      if (typeof count === 'number') category.stat = count
+    })
   }
   catch (error) {
     console.error('Error fetching category counts:', error)
   }
-}
-
-const getTypesStatsData = (result) => {
-  if (result.status !== 'fulfilled' || !result.value.data) return null
-
-  return 'types_stats' in result.value.data
-    ? result.value.data.types_stats
-    : result.value.data
-}
-
-const getStatCount = (stats, ...keys) => {
-  if (!stats) return 0
-
-  const value = keys
-    .map(key => stats[key])
-    .find(candidate => candidate !== undefined && candidate !== null)
-  const count = Number.parseInt(String(value), 10)
-
-  return Number.isFinite(count) ? count : 0
-}
-
-const setCategoryStat = (key, value) => {
-  const category = categories.value.find(category => category.key === key)
-  if (category) category.stat = value
-}
-
-const fetchTeachers = async () => {
-  try {
-    const query = {
-      'PagingDto.PageFilter.Size': 1,
-      'PagingDto.PageFilter.Skip': 0,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    }
-    const response = await useApiService.get('/api/v2/identities/profiles/list', query, { public: true })
-    const totalDataFind = response.data.totalRecordsCount || 0
-
-    categories.value.find((cat, _i) => cat.key == 'teachers').stat
-      = parseInt(totalDataFind)
-  }
-  catch (error) {
-    console.error('Error fetching teacher count:', error)
+  finally {
+    if (requestId === categoryCountRequestId) stopSpinning()
   }
 }
 
@@ -418,7 +458,6 @@ watch(
 
 onMounted(() => {
   fetchInitialData()
-  fetchTeachers()
   if (localStorage.getItem('boardHintShown') === 'true') {
     showBoardHint.value = false
   }
@@ -428,7 +467,10 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
 .board-hint {
   position: absolute;
   left: 0;
@@ -512,67 +554,266 @@ onMounted(() => {
   text-align: center;
 }
 
+// Each card glows in its own subject colour.
+.accent-paper,
+.accent-tutorial {
+  --accent: var(--v-theme-blue500);
+}
+.accent-study-materials {
+  --accent: var(--v-theme-greenLight700);
+}
+.accent-quizhub {
+  --accent: var(--v-theme-generalSearchQuiz);
+}
+.accent-teacher {
+  --accent: var(--v-theme-generalSearchTeacher);
+}
+.accent-school {
+  --accent: var(--v-theme-generalSearchSchool);
+}
+// Icon sits on a soft chip of its colour that fills in on hover.
+.ex-category__card--icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 14px;
+  background: rgba(var(--accent), 0.1);
+  transition: background-color 0.3s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 .stat-icon {
-  font-size: 2.3rem;
-}
-.icon-multimedia {
-  color: #02b719;
-}
-.icon-teacher{
-  color : #7f56d9
-}
-.icon-paper {
-  color: #2e90fa;
-}
-.icon-exam {
-  color: #7c4dff;
-}
-.icon-q-a {
-  color: #fdb022;
-}
-.icon-tutorial {
-  color: #2e90fa;
-}
-.icon-school {
-  color: #a5673f;
-}
-.icon-study-materials {
-  color: rgb(var(--v-theme-greenLight700));
+  display: inline-block;
+  font-size: 2.4rem;
+  color: rgb(var(--accent));
 }
 .ex-category__card--title {
-  color: #344054;
+  color: rgb(var(--v-theme-grey700));
   font-size: 20px;
   font-weight: 700;
 }
 .ex-category__card--subtitle {
-  color: #667085;
+  color: rgb(var(--v-theme-grey500));
   font-size: 16px;
   font-weight: 500;
 }
 .ex-category__card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 1),
-    rgba(249, 250, 251, 1)
+    rgb(var(--v-theme-surface)),
+    rgb(var(--v-theme-grey50))
   );
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgba(242, 244, 247, 1);
+  border: 1px solid rgb(var(--v-theme-grey200));
   padding: 2rem 1.5rem;
   border-radius: 24px;
-  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s,
-    background 0.2s;
+  transition:
+    transform 0.35s var(--card-ease),
+    box-shadow 0.35s var(--card-ease),
+    border-color 0.25s ease;
+  --card-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  // Tinted wash that fades in on hover (gradients can't transition directly).
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(var(--accent), 0.16),
+      rgba(var(--accent), 0.03) 70%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  // A light sheen that sweeps across once on hover.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      rgba(var(--v-theme-surface), 0.7) 50%,
+      transparent 70%
+    );
+    transform: translateX(-120%) skewX(-20deg);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
 }
-.ex-category__card:hover {
-  box-shadow: 0 8px 24px 0 rgba(76, 74, 255, 0.1),
-    0 1.5px 6px 0 rgba(0, 0, 0, 0.04);
-  transform: translateY(-6px) scale(1.03);
-  border-color: #ffb600;
-  background: #f8faff;
-  cursor: pointer;
+
+@keyframes icon-hop {
+  40% {
+    transform: translateY(-4px) scale(1.12);
+  }
+  70% {
+    transform: translateY(1px) scale(0.96);
+  }
 }
+
+.ex-category__card--title {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-chevron {
+  transition: transform 0.3s var(--card-ease), color 0.3s ease;
+}
+
+.category-item:hover .ex-category__card,
+.category-item:focus-visible .ex-category__card {
+  transform: translateY(-6px);
+  border-color: rgba(var(--accent), 0.6);
+  box-shadow:
+    0 14px 28px -10px rgba(var(--accent), 0.35),
+    0 2px 6px rgba(var(--v-theme-grey700), 0.06);
+
+  &::before {
+    opacity: 1;
+  }
+
+  &::after {
+    transform: translateX(120%) skewX(-20deg);
+  }
+
+  .ex-category__card--icon {
+    background: rgba(var(--accent), 0.2);
+    transform: scale(1.08) rotate(-6deg);
+  }
+
+  .stat-icon {
+    animation: icon-hop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card-chevron {
+    transform: translateX(4px);
+    color: rgb(var(--accent)) !important;
+  }
+}
+
+.category-item:active .ex-category__card {
+  transform: translateY(-2px) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+.category-item:focus-visible {
+  outline: none;
+
+  .ex-category__card {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+  }
+}
+
+// Staggered fade-up when the cards first appear.
+.category-item {
+  animation: card-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 70}ms;
+    }
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+// Slot-machine reels while a count loads. Pure CSS, so they spin from the first paint, before any JavaScript runs,
+// for as long as the API takes. Each strip is one digit wide, so its digits wrap one per line.
+.stat-reel {
+  display: inline-flex;
+  gap: 0.08em;
+  height: 1.2em;
+  overflow: hidden;
+  line-height: 1.2;
+  vertical-align: middle;
+  color: rgba(var(--accent), 0.6);
+  mask-image: linear-gradient(transparent, black 30%, black 70%, transparent);
+}
+
+.stat-reel__strip {
+  width: 1ch;
+  word-break: break-all;
+  filter: blur(0.5px);
+  // 10 digits, then the first again, so the loop is seamless.
+  animation: reel-spin 0.8s linear infinite;
+
+  &:nth-child(2) {
+    animation-duration: 0.65s;
+    animation-delay: -0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-duration: 0.95s;
+    animation-delay: -0.45s;
+  }
+}
+
+@keyframes reel-spin {
+  to {
+    transform: translateY(-12em);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-item {
+    animation: none;
+  }
+
+  // Still reels show '000', which reads as a real count, so show a dash instead.
+  .stat-reel {
+    width: 1ch;
+
+    > * {
+      display: none;
+    }
+
+    &::after {
+      content: '—';
+    }
+  }
+
+  .ex-category__card,
+  .ex-category__card::before,
+  .ex-category__card::after,
+  .ex-category__card--icon,
+  .card-chevron {
+    transition: none;
+  }
+
+  .category-item:hover .ex-category__card::after {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+
+  .category-item:hover .ex-category__card,
+  .category-item:focus-visible .ex-category__card,
+  .category-item:active .ex-category__card {
+    transform: none;
+  }
+
+  .category-item:hover .ex-category__card--icon,
+  .category-item:hover .card-chevron {
+    transform: none;
+  }
+
+  .category-item:hover .stat-icon {
+    animation: none;
+  }
+}
+
 .ex-select-board-label {
   display: inline-flex;
   align-items: center;
@@ -604,6 +845,33 @@ onMounted(() => {
   padding: 1rem 0.5rem;
   border-radius: 16px;
 }
+// Shimmering bar inside a selector until its options arrive (the boards and grades load after the page).
+.select-shimmer {
+  display: block;
+  width: 80px;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--v-theme-white), 0.18) 25%,
+    rgba(var(--v-theme-white), 0.45) 50%,
+    rgba(var(--v-theme-white), 0.18) 75%
+  ) 0 0 / 200% 100%;
+  animation: select-shimmer 1.4s linear infinite;
+}
+
+@keyframes select-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select-shimmer {
+    animation: none;
+  }
+}
+
 .ex-board-select {
   width: fit-content;
   min-width: 130px;
@@ -626,18 +894,18 @@ onMounted(() => {
   flex-grow: 1;
 }
 
-@media (min-width: 600px) {
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .ex-category__card {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 1),
-      rgba(249, 250, 251, 1)
+      rgb(var(--v-theme-surface)),
+      rgb(var(--v-theme-grey50))
     );
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(242, 244, 247, 1);
+    border: 1px solid rgb(var(--v-theme-grey200));
     padding: 3rem 1rem;
     border-radius: 24px;
     min-width : 230px;
@@ -662,7 +930,7 @@ onMounted(() => {
     width: 450px;
   }
 }
-@media (min-width: 960px) {
+@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
   .ex-category__card--title {
     font-size: 30px;
     font-weight: 700;
@@ -675,6 +943,8 @@ onMounted(() => {
 
 :deep(.v-slide-group__content){
   align-items: flex-end;
+  // Room for the hover shadow, which the slider would otherwise clip.
+  padding-bottom: 12px;
 }
 
 :deep(.category-slider > .v-slide-group__prev),

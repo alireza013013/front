@@ -33,7 +33,7 @@
                 v-model="searchQuery"
                 rounded="s-pill"
                 variant="outlined"
-                color="#ffb600"
+                color="primary"
                 icon-color=""
                 label="Search"
               />
@@ -41,8 +41,8 @@
                 <v-btn
                   height="100%"
                   dense
-                  color="#FFB300"
-                  class="text-white search"
+                  color="primary"
+                  class="search"
                 >
                   <v-icon>mdi-magnify</v-icon>
                 </v-btn>
@@ -393,7 +393,7 @@ export default {
 
 #terms-page-header {
   height: 20rem;
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
   #main-title-holder {
@@ -405,12 +405,12 @@ export default {
     text-align: center;
 
     .gama-text-h1 {
-      color: #ffb600;
+      color: rgb(var(--v-theme-primary));
       margin-bottom: 0.8rem;
     }
 
     .gama-text-subtitle2 {
-      color: #ffb600 !important;
+      color: rgb(var(--v-theme-primary)) !important;
     }
   }
 }
@@ -431,12 +431,12 @@ export default {
   }
 
   :deep(.v-list-item):hover {
-    background-color: #bdbdbd86;
+    background-color: rgba(var(--v-theme-grey300), 0.5);
   }
 
   :deep(.v-list),
   :deep(.v-list-item__overlay) {
-    background-color: #f4f4f4 !important;
+    background-color: rgb(var(--v-theme-grey100)) !important;
   }
 
   :deep(.search) {
@@ -483,7 +483,7 @@ export default {
         border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
 
         .v-icon {
-          color: #000;
+          color: rgb(var(--v-theme-on-primary));
           font-size: 2.2rem;
         }
       }
@@ -503,13 +503,13 @@ export default {
       overflow-y: hidden !important;
 
       .v-navigation-drawer {
-        background: rgba(36, 41, 47, 0.05);
+        background: rgba(var(--v-theme-grey900), 0.05);
 
         .v-list-item {
           padding: 1.6rem;
 
           .v-list-item__title {
-            color: #24292f;
+            color: rgb(var(--v-theme-grey900));
             font-family: Inter;
             font-size: 2rem;
             font-style: normal;
@@ -525,7 +525,7 @@ export default {
         width: 0.4rem;
         height: 100%;
         border-radius: 0.4rem;
-        background: #ffb600;
+        background: rgb(var(--v-theme-primary));
         opacity: 1;
       }
     }
@@ -573,7 +573,7 @@ export default {
           border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
 
           .v-icon {
-            color: #000;
+            color: rgb(var(--v-theme-on-primary));
             font-size: 2.2rem;
           }
         }
@@ -596,7 +596,7 @@ export default {
             padding: 1.6rem;
 
             .v-list-item__title {
-              color: #24292f;
+              color: rgb(var(--v-theme-grey900));
               font-family: Inter;
               font-size: 2.4rem;
               font-style: normal;
@@ -611,7 +611,7 @@ export default {
             width: 0.4rem;
             height: 100%;
             border-radius: 0.4rem;
-            background: #ffb600;
+            background: rgb(var(--v-theme-primary));
             opacity: 1;
           }
         }
@@ -623,7 +623,7 @@ export default {
 @media only screen and (min-width: 960px) {
   #terms-page-header {
     height: 34rem;
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     position: relative;
 
     #main-title-holder {
@@ -635,12 +635,12 @@ export default {
       text-align: center;
 
       .gama-text-h1 {
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
         margin-bottom: 1.6rem;
       }
 
       .gama-text-subtitle2 {
-        color: #ffb600 !important;
+        color: rgb(var(--v-theme-primary)) !important;
       }
     }
   }
@@ -674,7 +674,7 @@ export default {
           border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
 
           .v-icon {
-            color: #000;
+            color: rgb(var(--v-theme-on-primary));
             font-size: 2.2rem;
           }
         }
@@ -699,7 +699,7 @@ export default {
             padding: 2.4rem;
 
             .v-list-item__title {
-              color: #24292f;
+              color: rgb(var(--v-theme-grey900));
               font-family: Inter;
               font-size: 2.4rem;
               font-style: normal;
@@ -714,7 +714,7 @@ export default {
             width: 0.8rem;
             height: 100%;
             border-radius: 0.4rem;
-            background: #ffb600;
+            background: rgb(var(--v-theme-primary));
             opacity: 1;
           }
         }

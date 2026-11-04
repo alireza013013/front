@@ -83,12 +83,12 @@
         height="34"
       >
         <v-icon
-          color="grey800"
+          color="on-primary"
           size="20"
         >
           md:add
         </v-icon>
-        <span class="text-grey800 font-weight-bold text-h6">New Forum</span>
+        <span class="font-weight-bold text-h6">New Forum</span>
       </v-btn>
     </div>
 

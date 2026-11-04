@@ -5,21 +5,13 @@
       status-code="disconnect"
     />
     <template v-else>
-      <div
-        v-if="isLoading"
-        class="w-100 h-100 position-fixed left-0 top-0 d-flex justify-center align-center custom-ovarlay"
-      >
-        <v-progress-circular
-          :model-value="progress"
-          color="#ffb300"
-          :size="80"
-          :width="8"
-          class="text-h4 font-weight-black"
-        >
-          {{ progress }}%
-        </v-progress-circular>
-      </div>
-      <common-header />
+      <!-- variant: "logo" (the Gama G fills up) or "bot" (the exam-analysis bot materialises from the feet up) -->
+      <common-page-loader
+        :active="isLoading"
+        :progress="progress"
+        variant="bot"
+      />
+      <common-header :fixed="!isSearchExperience" />
       <main>
         <div>
           <slot />
@@ -50,8 +42,12 @@ const { isOnline } = useNetwork()
 const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher', '/search']
 const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher', 'search']
 
+// A page can also opt out with definePageMeta({ hidePostSlider: true }), e.g. pages with dynamic paths.
 const showPostSlider = computed(() => {
-  return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+  return route.meta.hidePostSlider !== true
+    && !isSearchExperience.value
+    && !excludedPaths.includes(route.path)
+    && !excludedNames.includes(route.name)
 })
 
 const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']
@@ -116,10 +112,3 @@ const easeOutQuad = (t) => {
   return t * (2 - t)
 }
 </script>
-
-<style scoped>
-.custom-ovarlay {
-  background-color: #00000069;
-  z-index: 10001;
-}
-</style>

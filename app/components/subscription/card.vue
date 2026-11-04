@@ -1,5 +1,10 @@
 <template>
-  <div :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${card.highlight ? `hightlight-card`:`simple-card`} ${card.action.disabled ? `disabled-card`:``}`">
+  <!-- A tap anywhere on the card does what its button does: people tapped the feature lines expecting that (Clarity
+       dead clicks). The button stays the control for keyboard and screen readers. -->
+  <div
+    :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${card.highlight ? `hightlight-card`:`simple-card`} ${card.action.disabled ? `disabled-card`:`selectable-card`}`"
+    @click="onCardClick"
+  >
     <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
       <div class="d-flex align-center justify-space-between mb-2">
         <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
@@ -391,6 +396,13 @@ const confirmUpgrade = async () => {
   }
 }
 
+const onCardClick = (event: MouseEvent) => {
+  // The button and links handle their own clicks; the open confirm dialog is teleported, but guard anyway.
+  if ((event.target as HTMLElement | null)?.closest('button, a, .v-overlay')) return
+  if (showConfirmUpgradeModal.value) return
+  selectPlan()
+}
+
 const selectPlan = async () => {
   if (card.value.action.disabled) return
 
@@ -453,6 +465,9 @@ const confirmResumeSubscription = async () => {
 .plan-card:hover{
   background-color : rgb(var(--v-theme-grey100));
 }
+.selectable-card {
+  cursor: pointer;
+}
 .disabled-card{
   opacity: 0.6;
   cursor: not-allowed;
@@ -468,16 +483,16 @@ const confirmResumeSubscription = async () => {
 }
 
 .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, rgb(var(--v-theme-grey100)) 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-grey100)) 100%);
 }
 .plan-card:nth-of-type(3n+1) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #e7eefb 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintBlue)) 100%);
 }
 .plan-card:nth-of-type(3n+2) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f1e6f6 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintPurple)) 100%);
 }
 .plan-card:nth-of-type(3n+3) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f7f1e1 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintGold)) 100%);
 }
 
 @media screen and (max-width: 600px) {

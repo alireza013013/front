@@ -35,10 +35,9 @@
             <template #append>
               <v-btn
                 dense
-                color="#FFB300"
-                class="text-white"
+                color="primary"
               >
-                <v-icon color="black">
+                <v-icon color="on-primary">
                   mdi-magnify
                 </v-icon>
               </v-btn>
@@ -279,7 +278,7 @@ export default {
 <style>
 #faq-page-header {
   height: 20rem;
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
   #main-title-holder {
@@ -291,12 +290,12 @@ export default {
     text-align: center;
 
     .gama-text-h1 {
-      color: #ffb600;
+      color: rgb(var(--v-theme-primary));
       margin-bottom: 0.8rem;
     }
 
     .gama-text-subtitle2 {
-      color: #ffb600 !important;
+      color: rgb(var(--v-theme-primary)) !important;
     }
   }
 }
@@ -330,7 +329,7 @@ export default {
         border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
 
         .v-icon {
-          color: #000;
+          color: rgb(var(--v-theme-on-primary));
           font-size: 2.2rem;
         }
       }
@@ -339,8 +338,8 @@ export default {
 
   #list-rows {
     .v-expansion-panel-title {
-      padding: 1.55rem 0 1.55rem 0;
-      border-bottom: 1px solid rgba(36, 41, 47, 0.1);
+      padding: 1.55rem 1.6rem;
+      border-bottom: 1px solid rgba(var(--v-theme-grey900), 0.1);
 
       .gama-text-button {
         font-weight: 600;
@@ -349,7 +348,7 @@ export default {
     }
 
     .v-expansion-panel-text__wrap {
-      padding: 2.4rem 0 0 0;
+      padding: 2.4rem 1.6rem 1.6rem;
 
       .gama-text-body2 {
         line-height: 2.2rem;
@@ -390,12 +389,12 @@ export default {
       margin: 1.6rem auto 1.6rem auto;
 
       .v-input__control > .v-input__slot:before {
-        border-color: #ffb600;
+        border-color: rgb(var(--v-theme-primary));
         height: 0.1rem;
       }
 
       .v-icon {
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
       }
     }
 
@@ -404,8 +403,8 @@ export default {
       margin: auto;
 
       .v-expansion-panel-title {
-        padding: 1.9rem 0 1.9rem 0;
-        border-bottom: 1px solid rgba(36, 41, 47, 0.1);
+        padding: 1.9rem 2rem;
+        border-bottom: 1px solid rgba(var(--v-theme-grey900), 0.1);
 
         .gama-text-button {
           font-weight: 600;
@@ -414,7 +413,7 @@ export default {
       }
 
       .v-expansion-panel-text__wrap {
-        padding: 2.4rem 0 0 0;
+        padding: 2.4rem 1.6rem 1.6rem;
 
         .gama-text-body2 {
           line-height: 2.2rem;
@@ -439,7 +438,7 @@ export default {
 @media only screen and (min-width: 960px) {
   #faq-page-header {
     height: 34rem;
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     position: relative;
 
     #main-title-holder {
@@ -451,12 +450,12 @@ export default {
       text-align: center;
 
       .gama-text-h1 {
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
         margin-bottom: 1.6rem;
       }
 
       .gama-text-subtitle2 {
-        color: #ffb600 !important;
+        color: rgb(var(--v-theme-primary)) !important;
       }
     }
   }
@@ -469,22 +468,22 @@ export default {
       margin: 2.4rem auto 8.1rem auto;
 
       .v-input__control > .v-input__slot:before {
-        border-color: #ffb600;
+        border-color: rgb(var(--v-theme-primary));
         height: 0.1rem;
       }
 
       .v-icon {
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
       }
     }
 
     #list-rows {
       .v-expansion-panel-title {
-        padding: 2.5rem 0 2.5rem 0;
+        padding: 2.5rem 2.4rem;
       }
 
       .v-expansion-panel-text__wrap {
-        padding: 2.4rem 0 0 0;
+        padding: 2.4rem 1.6rem 1.6rem;
       }
     }
   }

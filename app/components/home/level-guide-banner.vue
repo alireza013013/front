@@ -25,7 +25,7 @@
           <p class="gama-text-body1">
             {{ slideArr[slideIndex].describe }}
           </p>
-          <div class="img-holder">
+          <div class="img-holder illustration-stage">
             <v-slide-x-transition>
               <img
                 v-if="expand"
@@ -109,22 +109,22 @@ export default {
   padding-top: 2.4rem;
   padding-bottom: 2.4rem;
   height: 54rem;
-  background: #f6f8fa;
+  background: rgb(var(--v-theme-grey50));
 
   .black--text {
-    color: #24292f !important;
+    color: rgb(var(--v-theme-grey900)) !important;
     margin-bottom: 0.4rem;
   }
 
   .gama-text-h4 {
-    color: #ffb600;
+    color: rgb(var(--v-theme-primaryStrong));
     text-align: center;
     margin-bottom: 0.4rem;
   }
 
   .gama-text-body1 {
     text-align: center;
-    color: #6e7781;
+    color: rgb(var(--v-theme-grey600));
     margin-bottom: 0.4rem;
   }
 
@@ -145,7 +145,7 @@ export default {
     width: 22.7rem;
     height: 5.1rem;
     border-radius: 3rem;
-    background: #eaeef2;
+    background: rgb(var(--v-theme-grey200));
     padding: 0 0.4rem 0 0.4rem;
     margin: 0 auto 0 auto;
 
@@ -153,15 +153,15 @@ export default {
       width: 4.4rem;
       height: 4.4rem;
       justify-content: center;
-      background-color: #ffffff;
-      color: #000000;
+      background-color: rgb(var(--v-theme-surface));
+      color: rgb(var(--v-theme-grey900));
       font-weight: bold;
       margin: auto 0;
     }
 
     .v-item--active {
-      color: #ffffff;
-      background-color: #ffb300;
+      color: rgb(var(--v-theme-on-primary));
+      background-color: rgb(var(--v-theme-primary));
     }
   }
 }
@@ -171,16 +171,16 @@ export default {
     padding-top: 3.6rem;
     padding-bottom: 2.4rem;
     height: 51.8rem;
-    background: #f6f8fa;
+    background: rgb(var(--v-theme-grey50));
 
     .gama-text-h4 {
-      color: #ffb600;
+      color: rgb(var(--v-theme-primaryStrong));
       text-align: center;
     }
 
     .gama-text-body1 {
       text-align: center;
-      color: #6e7781;
+      color: rgb(var(--v-theme-grey600));
     }
 
     .img-holder {
@@ -199,7 +199,7 @@ export default {
       width: 22.7rem;
       height: 5.1rem;
       border-radius: 3rem;
-      background: #eaeef2;
+      background: rgb(var(--v-theme-grey200));
       padding: 0 0.4rem 0 0.4rem;
       margin: 0 auto 0 auto;
 
@@ -207,15 +207,15 @@ export default {
         width: 4.4rem;
         height: 4.4rem;
         justify-content: center;
-        background-color: #ffffff;
-        color: #000000;
+        background-color: rgb(var(--v-theme-surface));
+        color: rgb(var(--v-theme-grey900));
         font-weight: bold;
         margin: auto 0;
       }
 
       .v-item--active {
-        color: #ffffff;
-        background-color: #ffb300;
+        color: rgb(var(--v-theme-on-primary));
+        background-color: rgb(var(--v-theme-primary));
       }
     }
   }
@@ -255,7 +255,7 @@ export default {
       width: 22.7rem;
       height: 5.1rem;
       border-radius: 3rem;
-      background: #eaeef2;
+      background: rgb(var(--v-theme-grey200));
       padding: 0 0.4rem 0 0.4rem;
       margin: 0 auto 0 auto;
 
@@ -263,15 +263,15 @@ export default {
         width: 4.4rem;
         height: 4.4rem;
         justify-content: center;
-        background-color: #ffffff;
-        color: #000000;
+        background-color: rgb(var(--v-theme-surface));
+        color: rgb(var(--v-theme-grey900));
         font-weight: bold;
         margin: auto 0;
       }
 
       .v-item--active {
-        color: #ffffff;
-        background-color: #ffb300;
+        color: rgb(var(--v-theme-on-primary));
+        background-color: rgb(var(--v-theme-primary));
       }
     }
   }

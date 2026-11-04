@@ -427,7 +427,7 @@ export default {
     text-align: center;
 
     > h1 {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       text-align: center;
     }
   }
@@ -441,7 +441,7 @@ export default {
 }
 
 #service-comprehensive-curriculum {
-  background: #24292f;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   min-height: 60rem;
   padding: 4rem 1rem;
   display: flex;
@@ -465,7 +465,7 @@ export default {
 
 #service-progress-tracking {
   min-height: 50rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 4rem 1rem;
   display: flex;
   align-items: center;
@@ -488,7 +488,7 @@ export default {
 
 #service-content-sharing {
   min-height: 50rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 4rem 1rem;
   display: flex;
   align-items: center;
@@ -511,7 +511,7 @@ export default {
 
 #service-content-review {
   min-height: 50rem;
-  background: #f4f4f4;
+  background: rgb(var(--v-theme-grey100));
   padding: 4rem 1rem;
   display: flex;
   align-items: center;
@@ -523,7 +523,7 @@ export default {
 
 #service-education-future {
   min-height: 8rem;
-  background: #ffb600;
+  background: rgb(var(--v-theme-primary));
   text-align: center;
   padding: 0;
 
@@ -568,7 +568,7 @@ export default {
   }
 
   #service-comprehensive-curriculum {
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     min-height: 45rem;
     padding: 3rem 2rem;
 
@@ -629,7 +629,7 @@ export default {
 
   #service-education-future {
     min-height: 8rem;
-    background: #ffb600;
+    background: rgb(var(--v-theme-primary));
     text-align: center;
     padding: 0;
 
@@ -676,7 +676,7 @@ export default {
       padding: 2.5rem 4.8rem;
 
       > h1 {
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         text-align: center;
       }
     }
@@ -688,7 +688,7 @@ export default {
   }
 
   #service-comprehensive-curriculum {
-    background: #24292f;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
     min-height: 50rem;
     padding: 8rem 3rem;
 
@@ -697,7 +697,7 @@ export default {
     }
 
     .describe {
-      color: #fff;
+      color: rgb(var(--v-theme-white));
       font-size: 1.8rem;
       font-style: normal;
       font-weight: 500;
@@ -712,7 +712,7 @@ export default {
 
   #service-progress-tracking {
     min-height: 50rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding: 8rem 3rem;
   }
 
@@ -723,7 +723,7 @@ export default {
 
   #service-content-sharing {
     min-height: 50rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding: 8rem 3rem;
   }
 
@@ -734,13 +734,13 @@ export default {
 
   #service-content-review {
     min-height: 50rem;
-    background: #f4f4f4;
+    background: rgb(var(--v-theme-grey100));
     padding: 8rem 3rem;
   }
 
   #service-education-future {
     min-height: 10rem;
-    background: #ffb600;
+    background: rgb(var(--v-theme-primary));
     text-align: center;
 
     .col-12 {

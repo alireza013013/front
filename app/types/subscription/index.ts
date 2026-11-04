@@ -65,6 +65,13 @@ export interface EditAdminSubscriptionPlanFeaturesDTO {
   }[]
 }
 
+/** POST admin/subscriptions/plans/{id}/sync-features: what syncing the plan's features to its active subscribers changed. */
+export interface SyncAdminSubscriptionPlanFeaturesDTO {
+  subscriptionCount: number
+  featureCount: number
+  quotaCount: number
+}
+
 export interface AdminSubscriptionFeatureDTO {
   id: number
   code: string
@@ -411,3 +418,34 @@ export interface CheckoutRecoveryOfferDTO {
   currency: SubscriptionCurrency
   expirationDate: string
 }
+
+// GET subscriptions/me/usage (gamatrain-back, 2026-10-27): the caller's own quota usage log, newest first.
+// A negative amount is a refund (the download failed after the charge). identifierId is the content item's id.
+export interface UserSubscriptionUsageDTO {
+  id: number
+  userSubscriptionId: number
+  planTitle: string | null
+  featureCode: string
+  featureName: string | null
+  amount: number
+  identifierId: number | null
+  creationDate: string
+}
+
+export interface GetUserSubscriptionUsageParams {
+  page: number
+  pageSize: number
+  featureCode?: string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
+
+// GET subscriptions/me/usage/summary: per-feature totals for a date range, refunds netted out.
+export interface UserSubscriptionUsageSummaryDTO {
+  featureCode: string
+  featureName: string | null
+  totalAmount: number
+  useCount: number
+}
+
+export type UserSubscriptionUsagePeriod = 'billingPeriod' | 'last30Days' | 'allTime'

@@ -5,6 +5,7 @@ import type {
   EditAdminSubscriptionPlanFeaturesDTO,
   GetAdminSubscriptionPlanParams,
   ResponseListDTO,
+  SyncAdminSubscriptionPlanFeaturesDTO,
 } from '@/types'
 
 const NAME = 'Subscription plan'
@@ -25,6 +26,7 @@ export const useSubscriptionPlanAdmin = () => {
   const loadingEditItem = ref(false)
   const loadingGetFeatures = ref(false)
   const loadingEditFeatures = ref(false)
+  const loadingSyncFeatures = ref(false)
 
   const getData = async (params: GetAdminSubscriptionPlanParams) => {
     loadingGetData.value = true
@@ -239,6 +241,32 @@ export const useSubscriptionPlanAdmin = () => {
     }
   }
 
+  // Gives the plan's saved features to its current active subscribers. Needs the admin's authenticator code.
+  const syncFeatures = async (id: string | number, twoFactorCode: string) => {
+    loadingSyncFeatures.value = true
+
+    try {
+      const response = await useApiService.post<ApiResult<SyncAdminSubscriptionPlanFeaturesDTO>>(
+        `${BASE_URL}/${id}/sync-features`,
+        { twoFactorCode },
+      )
+
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<SyncAdminSubscriptionPlanFeaturesDTO>(err)
+    }
+    finally {
+      loadingSyncFeatures.value = false
+    }
+  }
+
   return {
     loadingGetData,
     data,
@@ -258,5 +286,7 @@ export const useSubscriptionPlanAdmin = () => {
     loadingGetFeatures,
     editFeatures,
     loadingEditFeatures,
+    syncFeatures,
+    loadingSyncFeatures,
   }
 }

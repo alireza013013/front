@@ -70,7 +70,7 @@
             height="30"
             @click="openPreviewModal(field)"
           >
-            <v-icon color="grey700">
+            <v-icon color="on-primary">
               md:preview
             </v-icon>
           </v-btn>

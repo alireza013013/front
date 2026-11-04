@@ -3,6 +3,7 @@
     v-model="isFormValid"
     class="w-100 d-flex flex-column"
     @submit.prevent="submitTicket"
+    @focusin="initCaptcha"
   >
     <div
       v-if="!hasAccountEmail"
@@ -19,10 +20,10 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         density="compact"
         :rules="[required, emailStrict]"
@@ -41,10 +42,10 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         density="compact"
         :rules="[required]"
@@ -60,10 +61,10 @@
         rounded="lg"
         placeholder="Write your message..."
         variant="outlined"
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         no-resize
         rows="5"
@@ -82,10 +83,10 @@
         height="48"
         placeholder="Choose a file"
         variant="outlined"
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         clearable
         :accept="allowedFileTypes.join(',')"
@@ -118,7 +119,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 text-grey800 font-weight-medium"
+        class="text-h5 font-weight-medium"
         flat
         type="submit"
         :disabled="!isFormValid || loading"
@@ -144,7 +145,7 @@ const emit = defineEmits<{
 const { $toast } = useNuxtApp()
 const { required, emailStrict, fileSize, fileType } = useValidationRules()
 const { createTicket } = useTicket()
-const { getToken, initCaptcha, isLoaded } = useRecaptcha()
+const { getToken, initCaptcha } = useRecaptcha()
 const { user } = useUser()
 
 // The backend uses the account email for signed-in users, so only ask for one when the account has none.
@@ -186,10 +187,6 @@ const submitTicket = async () => {
   if (!isFormValid.value || loading.value) return
 
   try {
-    if (!isLoaded()) {
-      throw new Error('reCAPTCHA not loaded yet. Please try again.')
-    }
-
     loading.value = true
     const captcha = await getToken('submit')
     const response = await createTicket({
@@ -216,8 +213,4 @@ const submitTicket = async () => {
     loading.value = false
   }
 }
-
-onMounted(() => {
-  initCaptcha()
-})
 </script>

@@ -147,20 +147,20 @@
               label="Enter your email"
               prepend-inner-icon="md:mail_outlined"
               glow
-              color="#FFB600"
-              icon-color="#FFB600"
+              color="primary"
+              icon-color="primary"
               density="compact"
               rounded="xl"
               max-width="400"
               variant="solo"
               single-line
-              bg-color="white"
+              bg-color="surface"
               class="w-100"
             >
               <template #append-inner>
                 <v-btn
                   class="mr-n3"
-                  color="#FFB600"
+                  color="primary"
                   width="70"
                   height="30"
                   rounded="xl"
@@ -473,7 +473,7 @@ if (initialData.value && initialData.value.succeeded) {
 <style scoped>
 #leader-board-page-header {
   height: 36rem;
-  background-color: #24292f;
+  background-color: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
   #main-title-holder {
@@ -497,7 +497,7 @@ if (initialData.value && initialData.value.succeeded) {
     }
 
     .gama-text-subtitle2 {
-      color: #ffb600 !important;
+      color: rgb(var(--v-theme-primary)) !important;
     }
   }
 }
@@ -555,7 +555,7 @@ if (initialData.value && initialData.value.succeeded) {
 }
 
 :deep(.v-data-table__td) {
-  color: #344054 !important;
+  color: rgb(var(--v-theme-grey700)) !important;
   font-family: Inter, sans-serif !important;
   font-size: 1.4rem !important;
   line-height: 2.4rem !important;
@@ -564,7 +564,7 @@ if (initialData.value && initialData.value.succeeded) {
 }
 
 :deep(.v-table__wrapper > table > thead > tr > th) {
-  background-color: #f2f4f7 !important;
+  background-color: rgb(var(--v-theme-grey100)) !important;
 }
 
 .user-avatar {
@@ -574,7 +574,7 @@ if (initialData.value && initialData.value.succeeded) {
 }
 
 .stay-update {
-  background-color: #24292f;
+  background-color: rgb(var(--v-theme-inverseSurfaceStrong));
   min-height: 300px;
   display: flex;
   flex-direction: column;
@@ -582,7 +582,7 @@ if (initialData.value && initialData.value.succeeded) {
 }
 
 .privacy-policy-link {
-  color: #2e90fa !important;
+  color: rgb(var(--v-theme-blue500)) !important;
   text-decoration: underline;
 }
 </style>

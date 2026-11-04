@@ -18,7 +18,7 @@
             <img
               id="logo"
               alt="gamatrain"
-              src="/images/gamatrain-logo-black.svg"
+              :src="isDark ? '/images/gamatrain-logo.svg' : '/images/gamatrain-logo-black.svg'"
             >
           </nuxt-link>
           <span
@@ -167,6 +167,7 @@ import discordIcon from '@/assets/images/discord-icon.svg'
 import tlgIcon from '@/assets/images/telegram-icon.svg'
 
 const { $dayjs } = useNuxtApp()
+const { isDark } = useThemeMode()
 
 const socialMedias = [
   {

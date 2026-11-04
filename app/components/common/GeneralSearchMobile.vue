@@ -43,7 +43,7 @@
                 <span :class="`icon-category ${item.iconName}`" />
               </div>
             </div>
-            <div class="primary-gray-600">
+            <div class="text-grey600">
               {{ item.title }}
             </div>
           </div>
@@ -86,8 +86,8 @@
                 @scroll="checkSearchScroll"
               >
                 <div class="result-stat">
-                  <span class="gama-text-overline-search"> Search result </span>
-                  <span class="gama-text-button-search">
+                  <span class="gama-text-overline-search text-grey400"> Search result </span>
+                  <span class="gama-text-button-search text-success font-weight-bold">
                     {{
                       searchCount != "..."
                         ? $numberFormat(searchCount)
@@ -122,7 +122,7 @@
                   v-else-if="searchCount == 0 && searchLoading == false"
                   class="text-center"
                 >
-                  <span class="gama-text-button-search">
+                  <span class="gama-text-button-search text-grey400">
                     Opps! no data found
                   </span>
                 </div>
@@ -362,15 +362,13 @@ watch(
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: #f6f8fa;
+  background-color: rgb(var(--v-theme-surface));
 }
 .gama-text-button-search {
-  color: #57b947;
   text-align: right;
 }
 
 .gama-text-overline-search {
-  color: rgba(36, 41, 47, 0.3);
   margin-right: 0.22rem;
 }
 
@@ -379,7 +377,7 @@ watch(
   border-radius: 3rem 3rem 0 0 !important;
   justify-content: center;
   align-items: center;
-  background: #f6f8fa;
+  background: rgb(var(--v-theme-surface));
   position: relative;
   padding: 20px 0;
 }
@@ -431,7 +429,7 @@ watch(
   background-color: transparent;
 }
 .background-odd {
-  background-color: #ebebeb;
+   background-color: rgb(var(--v-theme-grey200));
 }
 @media (min-width: 600px) {
   .mobile-search-sheet {

@@ -16,10 +16,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100"
           @click="showBoxSearchSchool = false"
           @update:model-value="handleSearch"
@@ -128,8 +128,9 @@
               })"
               rounded="pill"
               height="48"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
+              bg-color="transparent"
               :defalut-lable="false"
             />
           </div>
@@ -146,8 +147,9 @@
               })"
               rounded="pill"
               height="48"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
+              bg-color="transparent"
               :defalut-lable="false"
             />
           </div>
@@ -169,8 +171,9 @@
               })"
               rounded="pill"
               height="48"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
+              bg-color="transparent"
               :defalut-lable="false"
             />
           </div>
@@ -187,8 +190,9 @@
               })"
               rounded="pill"
               height="48"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
+              bg-color="transparent"
               :defalut-lable="false"
             />
           </div>
@@ -205,10 +209,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100"
           @keydown.enter.prevent="addKeywords"
         >
@@ -224,7 +228,7 @@
               <v-icon
                 size="x-large"
                 icon="md:subdirectory_arrow_left"
-                color="grey800"
+                color="on-primary"
               />
             </v-btn>
           </template>
@@ -261,7 +265,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 text-grey800 font-weight-medium"
+        class="text-h5 font-weight-medium"
         flat
         :disabled="!isFormValid"
         :loading="loadingEditItem || loadingAddItem"

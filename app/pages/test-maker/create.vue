@@ -1551,7 +1551,7 @@ const LazyDraggable = defineAsyncComponent({
     const module = await import('vuedraggable')
 
     await nextTick()
-    if (typeof window !== 'undefined' && window.MathJax) {
+    if (import.meta.client) {
       await typesetMathInSpecificContainer(mathJaxPrintDialogContainerRef)
       await typesetMathInSpecificContainer(mathJaxStep3ReviewContainerRef)
     }
@@ -2981,7 +2981,7 @@ const handleTestRefresh = async () => {
 }
 
 const typesetMathInSpecificContainer = async (containerRef) => {
-  if (import.meta.client && containerRef.value && window.MathJax) {
+  if (import.meta.client && containerRef.value) {
     let elementToProcess = null
 
     if (

@@ -1,11 +1,11 @@
 <template>
   <div
     v-if="isLoading || schools.length != 0"
-    class="w-100 d-flex flex-column mt-4"
+    class="w-100 d-flex flex-column"
   >
-    <span class="text-h3 font-weight-bold text-grey700">
-      Nearest School
-    </span>
+    <h2 class="section-title">
+      Nearby schools
+    </h2>
 
     <v-slide-group
       v-if="isLoading"
@@ -24,14 +24,14 @@
     <v-slide-group
       v-else
       show-arrows
-      class="related-content position-relative mt-8"
+      class="related-content position-relative mt-2"
     >
       <template #prev>
         <v-btn
           icon
           size="sm"
         >
-          <v-icon color="#000000">
+          <v-icon color="grey900">
             md:chevron_backward
           </v-icon>
         </v-btn>
@@ -42,7 +42,7 @@
           icon
           size="sm"
         >
-          <v-icon color="#000000">
+          <v-icon color="grey900">
             md:chevron_forward
           </v-icon>
         </v-btn>

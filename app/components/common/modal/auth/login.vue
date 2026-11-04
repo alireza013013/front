@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
   >
     <v-form
       v-model="isFormValid"
@@ -21,10 +21,10 @@
           autocomplete="email"
           hide-details="auto"
           persistent-clear
-          base-color="grey200"
+          base-color="grey300"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="[email, required]"
         />
@@ -43,10 +43,10 @@
           autocomplete="current-password"
           hide-details="auto"
           persistent-clear
-          base-color="grey200"
+          base-color="grey300"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="[required]"
           :append-inner-icon="
@@ -61,7 +61,7 @@
         <v-btn
           type="button"
           variant="text"
-          color="primary"
+          color="primaryStrong"
           density="compact"
           class="px-0 text-h6 font-weight-bold"
           @click="emit('openForgetPassword')"
@@ -76,7 +76,7 @@
         color="primary"
         rounded="pill"
         height="44"
-        class="mt-2 text-h5 text-grey800 font-weight-bold"
+        class="mt-2 text-h5 font-weight-bold"
         flat
         :disabled="!isFormValid"
         :loading="loadingLogin"
@@ -100,7 +100,7 @@
       @click="emit('openRegister')"
     >
       New to GamaTrain?
-      <span class="ml-1 text-primary font-weight-bold">Create account</span>
+      <span class="ml-1 text-primaryStrong font-weight-bold">Create account</span>
     </v-btn>
   </div>
 </template>

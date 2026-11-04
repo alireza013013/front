@@ -13,11 +13,30 @@ import type {
  * - 'cooking': the server is generating the file (everything before the response headers arrive);
  * - 'downloading': the file is streaming in, with real progress from Content-Length.
  *
+ * A network or server failure is retried automatically (EXAM_EXPORT_AUTO_RETRY_DELAYS): the row shows
+ * 'waiting' with a countdown, and a click skips the wait. Once those retries are used up, or the server
+ * refused the export outright, the row shows 'failed' until the user clicks it to start again.
+ *
  * The backend charges on the first export of each exam + format (ExamDownload quota, then points) and
  * answers a refused charge with the same JSON as `POST downloads`, so the page's existing
  * insufficient-balance/upgrade modals are reused through the same callbacks.
  */
-export type ExamExportPhase = 'cooking' | 'downloading'
+export type ExamExportPhase = 'cooking' | 'downloading' | 'waiting' | 'failed'
+
+/** Seconds to wait before each automatic retry; its length is the number of automatic retries. */
+export const EXAM_EXPORT_AUTO_RETRY_DELAYS = [3, 5, 8]
+
+export interface ExamExportRetry {
+  /** Which automatic retry this is (1-based). */
+  attempt: number
+  /** Seconds until it starts, while the row is 'waiting'. */
+  secondsLeft: number
+  /** The full wait for this retry, for the countdown ring. */
+  delay: number
+}
+
+/** Network errors, timeouts and server errors may pass on a second try; other refusals will not. */
+const isRetryableStatus = (status: number) => status >= 500 || status === 408 || status === 429
 
 interface UseExamExportDownloadOptions {
   examId: string | number
@@ -77,10 +96,28 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
   const getPhase = (fileType: ExamExportFileType) => phases.value[fileType]
   const getProgress = (fileType: ExamExportFileType) => progress.value[fileType] ?? 0
 
+  const retries = ref<Partial<Record<ExamExportFileType, ExamExportRetry>>>({})
+  const getRetry = (fileType: ExamExportFileType) => retries.value[fileType]
+
+  // Countdown timers for the automatic retries.
+  const countdowns = new Map<ExamExportFileType, ReturnType<typeof setInterval>>()
+
+  const stopCountdown = (fileType: ExamExportFileType) => {
+    clearInterval(countdowns.get(fileType))
+    countdowns.delete(fileType)
+  }
+
   const clear = (fileType: ExamExportFileType) => {
+    stopCountdown(fileType)
     Reflect.deleteProperty(phases.value, fileType)
     Reflect.deleteProperty(progress.value, fileType)
+    Reflect.deleteProperty(retries.value, fileType)
   }
+
+  onScopeDispose(() => {
+    countdowns.forEach(timer => clearInterval(timer))
+    countdowns.clear()
+  })
 
   // Open to guests (prices only); with a signed-in user it also says which formats they already bought.
   const fetchPrices = async () => {
@@ -128,39 +165,64 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
   }
 
   /** A refused charge (or any other error) comes back as JSON instead of the file. */
-  const handleJsonResponse = async (response: Response) => {
+  const handleJsonResponse = async (response: Response, fileType: ExamExportFileType) => {
     const result = await response.json() as ApiResult<DownloadResponseDTO>
     if (result.data?.upgradeSuggestions && result.data.upgradeSuggestions.length > 0) {
+      clear(fileType)
       options.onUpgradeSuggestions?.(result.data)
       return
     }
 
     const message = result.errors?.[0]?.message
     if (message === 'InsufficientBalance') {
+      clear(fileType)
       options.onInsufficientBalance?.()
       return
     }
 
-    $toast.error(message || 'Download failed. Please try again.')
+    fail(fileType, { retryable: false, message })
   }
 
-  const startExport = async (fileType: ExamExportFileType) => {
-    if (phases.value[fileType]) {
+  /** Waits and retries on its own while automatic retries are left; otherwise stops and tells the user. */
+  const fail = (fileType: ExamExportFileType, { retryable, message }: { retryable: boolean, message?: string }) => {
+    stopCountdown(fileType)
+    progress.value[fileType] = 0
+    const attempt = (retries.value[fileType]?.attempt ?? 0) + 1
+    const delay = EXAM_EXPORT_AUTO_RETRY_DELAYS[attempt - 1]
+
+    if (!retryable || delay === undefined) {
+      phases.value[fileType] = 'failed'
+      Reflect.deleteProperty(retries.value, fileType)
+      $toast.error(message || 'Download failed. Please try again.')
       return
     }
 
-    if (!auth.isAuthenticated.value) {
-      redirectToLogin()
-      return
-    }
+    phases.value[fileType] = 'waiting'
+    retries.value[fileType] = { attempt, secondsLeft: delay, delay }
+    countdowns.set(fileType, setInterval(() => {
+      const retry = retries.value[fileType]
+      if (!retry) {
+        stopCountdown(fileType)
+        return
+      }
+      retry.secondsLeft -= 1
+      if (retry.secondsLeft <= 0) {
+        stopCountdown(fileType)
+        runExport(fileType)
+      }
+    }, 1000))
+  }
 
-    trackFileDownload({ file_type: 'exam', file_name: options.title, file_url: options.titleUrl })
+  /** One request for the file; on failure `fail` decides whether to try again. */
+  const runExport = async (fileType: ExamExportFileType) => {
     phases.value[fileType] = 'cooking'
     progress.value[fileType] = 0
 
+    let response: Response
+    let blob: Blob
     try {
       const query = new URLSearchParams({ id: String(options.examId), fileType })
-      const response = await fetch(`${config.public.apiV2BaseUrl}/exams/export?${query}`, {
+      response = await fetch(`${config.public.apiV2BaseUrl}/exams/export?${query}`, {
         headers: { Authorization: `Bearer ${auth.getUserToken()}` },
         credentials: 'include',
       })
@@ -172,31 +234,55 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
       }
 
       if (!response.ok) {
-        clear(fileType)
-        $toast.error('Download failed. Please try again.')
+        fail(fileType, { retryable: isRetryableStatus(response.status) })
         return
       }
 
       if (response.headers.get('Content-Type')?.includes('application/json')) {
-        clear(fileType)
-        await handleJsonResponse(response)
+        await handleJsonResponse(response, fileType)
         return
       }
 
       phases.value[fileType] = 'downloading'
-      const blob = await readWithProgress(response, fileType)
-      progress.value[fileType] = 100
-      saveBlob(blob, fileNameFromDisposition(response.headers.get('Content-Disposition'))
-      ?? `${options.title || 'exam'}.${extensions[fileType]}`)
-
-      options.onDownloaded?.(Number(response.headers.get('X-Export-Points')) || 0, blob)
-      await fetchPrices()
-      setTimeout(() => clear(fileType), 800)
+      blob = await readWithProgress(response, fileType)
     }
     catch {
-      clear(fileType)
-      $toast.error('Download failed. Please try again.')
+      // The connection dropped before or while the file came in.
+      fail(fileType, { retryable: true })
+      return
     }
+
+    progress.value[fileType] = 100
+    saveBlob(blob, fileNameFromDisposition(response.headers.get('Content-Disposition'))
+    ?? `${options.title || 'exam'}.${extensions[fileType]}`)
+
+    options.onDownloaded?.(Number(response.headers.get('X-Export-Points')) || 0, blob)
+    await fetchPrices()
+    setTimeout(() => clear(fileType), 800)
+  }
+
+  const startExport = (fileType: ExamExportFileType) => {
+    const phase = phases.value[fileType]
+    if (phase === 'cooking' || phase === 'downloading') {
+      return
+    }
+
+    // A click during the countdown retries now, and keeps counting the automatic retries.
+    if (phase === 'waiting') {
+      stopCountdown(fileType)
+      runExport(fileType)
+      return
+    }
+
+    if (!auth.isAuthenticated.value) {
+      redirectToLogin()
+      return
+    }
+
+    // A fresh click (or one after giving up) starts over with the full set of automatic retries.
+    clear(fileType)
+    trackFileDownload({ file_type: 'exam', file_name: options.title, file_url: options.titleUrl })
+    runExport(fileType)
   }
 
   return {
@@ -205,6 +291,7 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
     getPrice,
     getPhase,
     getProgress,
+    getRetry,
     startExport,
   }
 }

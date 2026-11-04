@@ -32,6 +32,7 @@ Please follow these coding standards to keep the project consistent and maintain
 - Use the project's Vuetify theme colors instead of hard-coded colors.
 - All required colors should be defined in the Vuetify plugin configuration.
 - Prefer existing project components and design patterns before creating new UI patterns.
+- Write icon names in full (`'mdi-eye'`, `'md:school'`), never built from parts (`` `mdi-${name}` ``). Production builds only ship the icons the code names (`modules/iconSubset.ts`), so a built-up name shows up blank (`mdi-`) or as plain text (`md:`). For an icon name that comes from data at run time (for example a school facility tag), use the `mdfull:` icon set, which keeps the full Material Symbols font.
 
 ### UX Writing
 

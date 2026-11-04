@@ -16,7 +16,7 @@
       class="w-100 d-flex flex-column justify-start align-center pt-12"
     >
       <div class="w-100 d-flex flex-column justify-start align-center">
-        <h1 class="text-black text-h3 text-sm-h3 font-weight-black">
+        <h1 class="text-grey900 text-h3 text-sm-h3 font-weight-black">
           GamaTrain
         </h1>
         <h2 class="primary-gray-500 text-h4 set-z-index text-start px-2 mt-4">
@@ -49,7 +49,7 @@
         ref="ourVisionSectionRef"
         class="w-100 d-flex flex-column justify-start align-center"
       >
-        <h1 class="text-black text-h3 text-sm-h3 font-weight-black">
+        <h1 class="text-grey900 text-h3 text-sm-h3 font-weight-black">
           Our Vision
         </h1>
         <h2 class="primary-gray-500 text-h4 set-z-index text-start px-2 mt-4">
@@ -106,7 +106,7 @@
                 showFirst ? `show-card` : ``
               }`"
             >
-              <span class="text-black font-weight-bold text-h4">Customized Learning Paths Using AI</span>
+              <span class="text-grey900 font-weight-bold text-h4">Customized Learning Paths Using AI</span>
               <span class="primary-gray-600 text-h6">We understand that every student has their own unique learning
                 style and preferences. That's why we're working on integrating
                 AI into our platform to offer personalized learning paths that
@@ -119,7 +119,7 @@
                 showSecond ? `show-card` : ``
               }`"
             >
-              <span class="text-black font-weight-bold text-h4">Moving Towards Green Economy</span>
+              <span class="text-grey900 font-weight-bold text-h4">Moving Towards Green Economy</span>
               <span class="primary-gray-600 text-h6">We recognize the importance of environmental sustainability and
                 the role education plays in creating a better future. We are
                 committed to promoting a green economy by offering courses that
@@ -133,7 +133,7 @@
                 showThird ? `show-card` : ``
               }`"
             >
-              <span class="text-black font-weight-bold text-h4">Decentralized Content Quality Moderation</span>
+              <span class="text-grey900 font-weight-bold text-h4">Decentralized Content Quality Moderation</span>
               <span class="primary-gray-600 text-h6">We believe that quality education is paramount, and that's why
                 we are developing a decentralized content quality moderation
                 system. This system will allow our users to participate in
@@ -209,7 +209,7 @@
             >
               <v-icon
                 size="40"
-                :color="isSelected ? '#24292f' : 'primary'"
+                :color="isSelected ? 'inverseSurfaceStrong' : 'primary'"
               >
                 {{
                   item.icon
@@ -229,7 +229,7 @@
           cols="12"
           class="d-flex justify-center mb-8"
         >
-          <h2 class="text-black text-h3 font-weight-black">
+          <h2 class="text-grey900 text-h3 font-weight-black">
             Our Services
           </h2>
         </v-col>
@@ -242,7 +242,7 @@
         >
           <nuxt-link
             :to="`${item.link}`"
-            class="text-black text-h4 font-weight-black"
+            class="text-grey900 text-h4 font-weight-black"
           >
             <span :class="`text-primary ${item.icon}`" />
             {{ item.title }}
@@ -274,7 +274,7 @@
       </v-row>
 
       <v-row class="mt-12">
-        <h2 class="text-black text-h3 font-weight-black w-100 text-center">
+        <h2 class="text-grey900 text-h3 font-weight-black w-100 text-center">
           Join Us
         </h2>
         <p class="primary-gray-600 text-h4 mt-4">
@@ -288,11 +288,11 @@
     <div
       class="w-100 mt-8 bg-primary py-16 px-2 d-flex flex-column align-center justify-center"
     >
-      <h1 class="text-black text-center text-h4 font-weight-black mb-4">
+      <h1 class="text-grey900 text-center text-h4 font-weight-black mb-4">
         Check out our current job openings and apply today!
       </h1>
       <v-btn
-        color="black"
+        color="inverseSurfaceStrong"
         rounded="pill"
         width="250"
         flat
@@ -507,7 +507,7 @@ const services = [
 }
 .blur-div {
   backdrop-filter: blur(7.5px);
-  background: #24292f66;
+  background: rgba(var(--v-theme-inverseSurfaceStrong), 0.4);
 }
 .set-z-index {
   z-index: 2;
@@ -527,12 +527,12 @@ const services = [
 .line-div {
   width: 3px;
   height: 0;
-  background-color: #999;
+  background-color: rgb(var(--v-theme-grey400));
   transition: width 2s linear, height 2s linear, background-color 1s ease;
   height: calc(100% - (var(--extra, 820px)));
 }
 .animate-line {
-  background-color: #ffb600;
+  background-color: rgb(var(--v-theme-primary));
 }
 .card-step {
   width: 100%;
@@ -567,13 +567,13 @@ const services = [
 
 .slider-div {
   height: 440px;
-  background-color: #24292f;
+  background-color: rgb(var(--v-theme-inverseSurfaceStrong));
 }
 .max-width-slider {
   max-width: 500px;
 }
 .text-btn {
-  color: #ffb600 !important;
+  color: rgb(var(--v-theme-primary)) !important;
 }
 
 @media (min-width: 960px) {
@@ -599,12 +599,12 @@ const services = [
   .line-div {
     width: 0%;
     height: 6px;
-    background-color: #999;
+    background-color: rgb(var(--v-theme-grey400));
     transition: width 2s linear, height 2s linear, background-color 1s ease;
     width: var(--progress, 0%);
   }
   .animate-line {
-    background-color: #ffb600;
+    background-color: rgb(var(--v-theme-primary));
   }
   .first-target {
     left: -50px;

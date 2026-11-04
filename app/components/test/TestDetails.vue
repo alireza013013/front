@@ -104,7 +104,7 @@
           flat
           :to="nextTestPath"
         >
-          <span class="text-h5 font-weight-medium text-grey800">
+          <span class="text-h5 font-weight-medium">
             {{ buttonNextText }}
           </span>
         </v-btn>

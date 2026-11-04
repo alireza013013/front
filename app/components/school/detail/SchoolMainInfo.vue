@@ -1,570 +1,337 @@
 <template>
-  <div>
-    <div class="d-flex info-itm ml-md-6">
-      <div class="info-sign">
-        <v-icon color="primary">
-          mdi-web
-        </v-icon>
-      </div>
-      <div class="info-data overflow-hidden">
-        <a
-          v-show="contentData.webSite && !generalDataEditMode.website"
-          :href="normalizeURL(contentData.webSite)"
-          target="_blank"
-          class="blue--text overflow-hidden text-ellipsis flex-grow-1"
-        >
-          {{ contentData.webSite }}
-        </a>
-        <template v-if="contentData.webSite">
-          <v-btn
-            v-if="!generalDataEditMode.website"
-            class="ml-2"
-            icon
-            color="blue-grey"
-            variant="text"
-            width="30"
-            height="30"
-            @click="handleEdit('website')"
-          >
-            <v-icon size="large">
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </template>
-        <template v-else>
-          <span
-            v-show="!(contentData.webSite || generalDataEditMode.website)"
-            class="gtext-t4 primary-blue-500 align-self-center pointer"
-            @click="handleEdit('website')"
-          >
-            Contribute
-          </span>
-        </template>
-        <v-text-field
-          v-if="generalDataEditMode.website"
-          v-model="form.web"
-          placeholder="Website"
-          :rules="webUrlRule"
-          variant="underlined"
-        >
-          <template #append-inner>
-            <v-btn
-              :loading="webSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
-              icon
-              @click="handleUpdate('website')"
-            >
-              <v-icon size="large">
-                mdi-check
-              </v-icon>
-            </v-btn>
-          </template>
-        </v-text-field>
-      </div>
-    </div>
-    <div class="d-flex info-itm ml-md-6">
-      <div class="info-sign">
-        <v-icon color="primary">
-          mdi-email
-        </v-icon>
-      </div>
-      <div class="info-data">
-        <a
-          v-show="contentData.email && !generalDataEditMode.email"
-          class="flex-grow-1"
-          :href="`mailto:${contentData.email}`"
-        >
-          {{ contentData.email }}
-        </a>
-        <template v-if="contentData.email">
-          <v-btn
-            v-if="!generalDataEditMode.email"
-            class="ml-2"
-            icon
-            color="blue-grey"
-            variant="text"
-            width="30"
-            height="30"
-            @click="handleEdit('email')"
-          >
-            <v-icon size="large">
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </template>
-        <template v-else>
-          <span
-            v-show="!(contentData.email || generalDataEditMode.email)"
-            class="gtext-t4 primary-blue-500 align-self-center pointer"
-            @click="handleEdit('email')"
-          >
-            Contribute
-          </span>
-        </template>
-        <v-text-field
-          v-if="generalDataEditMode.email"
-          v-model="form.email"
-          :rules="emailRule"
-          placeholder="Email"
-          variant="underlined"
-        >
-          <template #append-inner>
-            <v-btn
-              :loading="emailSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
-              icon
-              @click="handleUpdate('email')"
-            >
-              <v-icon size="large">
-                mdi-check
-              </v-icon>
-            </v-btn>
-          </template>
-        </v-text-field>
-      </div>
-    </div>
-    <div
-      v-for="(phone, index) in form.phone"
-      :key="index"
-      class="d-flex info-itm ml-md-6"
+  <v-sheet
+    tag="section"
+    border
+    rounded="lg"
+    class="contact-card d-flex flex-column ga-1 pa-4"
+    aria-labelledby="contact-title"
+  >
+    <h2
+      id="contact-title"
+      class="section-title"
     >
-      <div class="info-sign">
-        <v-icon color="primary">
-          mdi-phone
-        </v-icon>
-      </div>
+      Contact
+    </h2>
 
-      <div class="info-data w-100">
-        <div class="d-flex w-100 align-center">
-          <template v-if="!editingPhones[index]">
-            <a
-              v-if="contentData.phoneNumber?.split('/')[index]?.length > 0"
-              :href="`tel:${contentData.phoneNumber?.split('/')[index]}`"
-            >
-              {{ contentData.phoneNumber.split("/")[index] }}
-            </a>
-
-            <span
-              v-else
-              class="gtext-t4 primary-blue-500 align-self-center pointer"
-              @click="startEditPhone(index)"
-            >
-              Contribute
-            </span>
-          </template>
-
-          <template v-else>
-            <v-text-field
-              v-model="form.phone[index]"
-              placeholder="Phone"
-              variant="underlined"
-              class="w-100 flex-grow-1"
-            >
-              <template #append-inner>
+    <dl class="rows">
+      <div
+        v-for="row in rows"
+        :key="row.key"
+        class="row"
+      >
+        <dt>
+          <v-icon
+            size="20"
+            aria-hidden="true"
+          >
+            {{ row.icon }}
+          </v-icon>
+          <span>{{ row.label }}</span>
+        </dt>
+        <dd>
+          <form
+            v-if="editing === row.key"
+            class="edit-form"
+            @submit.prevent="submit"
+          >
+            <template v-if="row.key === 'phone'">
+              <div
+                v-for="(_, index) in form.phones"
+                :key="index"
+                class="phone-input"
+              >
+                <v-text-field
+                  v-model="form.phones[index]"
+                  :label="`Phone ${form.phones.length > 1 ? index + 1 : ''}`"
+                  variant="outlined"
+                  density="compact"
+                  type="tel"
+                  :autofocus="index === 0"
+                  hide-details
+                />
                 <v-btn
-                  :loading="phoneSubmitLoader"
-                  color="success"
-                  variant="flat"
-                  size="x-small"
+                  v-if="form.phones.length > 1"
                   icon
-                  @click="saveEditPhone"
+                  size="small"
+                  variant="text"
+                  :aria-label="`Remove phone ${index + 1}`"
+                  @click="form.phones.splice(index, 1)"
                 >
-                  <v-icon size="large">
-                    mdi-check
-                  </v-icon>
+                  <v-icon>mdi-close</v-icon>
                 </v-btn>
+              </div>
+              <v-btn
+                v-if="form.phones.length < maxPhoneCount"
+                variant="text"
+                color="info"
+                size="small"
+                prepend-icon="mdi-plus"
+                class="text-none gtext-t5 align-self-start px-1"
+                @click="form.phones.push('')"
+              >
+                Add another number
+              </v-btn>
+            </template>
+            <v-text-field
+              v-else
+              v-model="form[row.key]"
+              :label="row.label"
+              :type="row.key === 'email' ? 'email' : 'text'"
+              variant="outlined"
+              density="compact"
+              autofocus
+              hide-details
+            />
+            <div class="form-buttons">
+              <v-btn
+                type="submit"
+                :loading="saving"
+                color="primary"
+                variant="flat"
+                size="small"
+                class="text-none gtext-t5"
+              >
+                Submit
+              </v-btn>
+              <v-btn
+                variant="text"
+                size="small"
+                class="text-none gtext-t5"
+                @click="editing = null"
+              >
+                Cancel
+              </v-btn>
+            </div>
+          </form>
+          <template v-else-if="row.values.length">
+            <div class="values">
+              <template
+                v-for="value in row.values"
+                :key="value"
+              >
+                <a
+                  v-if="row.href"
+                  :href="row.href(value)"
+                  :target="row.key === 'website' ? '_blank' : undefined"
+                  :rel="row.key === 'website' ? 'noopener nofollow' : undefined"
+                >{{ value }}</a>
+                <span v-else>{{ value }}</span>
               </template>
-            </v-text-field>
-          </template>
-        </div>
-
-        <v-btn
-          v-if="!editingPhones[index] && phone.length > 0"
-          class="ml-2"
-          icon
-          color="blue-grey"
-          variant="text"
-          width="30"
-          height="30"
-          @click="startEditPhone(index)"
-        >
-          <v-icon size="large">
-            mdi-pencil
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-if="index > 0 && !editingPhones[index]"
-          icon
-          color="red"
-          class="ml-1"
-          variant="text"
-          width="30"
-          height="30"
-          @click="removePhoneField(index)"
-        >
-          <v-icon size="x-large">
-            mdi-close
-          </v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="
-            index + 1 == form.phone.length
-              && index + 1 != maxPhoneCount
-              && !editingPhones[index]
-              && form.phone[form.phone.length - 1].length > 0
-          "
-          icon
-          color="success"
-          variant="text"
-          class="ml-1"
-          width="30"
-          height="30"
-          @click="addPhoneField"
-        >
-          <v-icon size="x-large">
-            mdi-plus
-          </v-icon>
-        </v-btn>
-      </div>
-    </div>
-    <div class="d-flex info-itm ml-md-6">
-      <div class="info-sign">
-        <v-icon
-          size="20"
-          color="primary"
-        >
-          mdi-map-marker
-        </v-icon>
-      </div>
-      <div class="info-data info-data-address">
-        <span
-          v-show="contentData.address && !generalDataEditMode.address"
-          class="flex-grow-1"
-        >{{ contentData.address }}</span>
-        <template v-if="contentData.address">
-          <v-btn
-            v-if="!generalDataEditMode.address"
-            class="ml-2"
-            icon
-            color="blue-grey"
-            variant="text"
-            width="30"
-            height="30"
-            @click="handleEdit('address')"
-          >
-            <v-icon size="large">
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </template>
-        <template v-else>
-          <span
-            v-show="!(contentData.address || generalDataEditMode.address)"
-            class="gtext-t4 primary-blue-500 align-self-center pointer"
-            @click="handleEdit('address')"
-          >
-            Contribute
-          </span>
-        </template>
-        <v-text-field
-          v-if="generalDataEditMode.address"
-          v-model="form.address"
-          placeholder="Enter address"
-          variant="underlined"
-        >
-          <template #append-inner>
+            </div>
             <v-btn
-              :loading="addressSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
               icon
-              @click="handleUpdate('address')"
+              size="x-small"
+              variant="text"
+              color="grey500"
+              :aria-label="`Edit ${row.label.toLowerCase()}`"
+              @click="startEdit(row.key)"
             >
-              <v-icon size="large">
-                mdi-check
+              <v-icon size="18">
+                mdi-pencil-outline
               </v-icon>
             </v-btn>
           </template>
-        </v-text-field>
+          <v-btn
+            v-else
+            variant="text"
+            color="info"
+            size="small"
+            class="text-none gtext-t5 px-1"
+            @click="startEdit(row.key)"
+          >
+            Add {{ row.label.toLowerCase() }}
+          </v-btn>
+        </dd>
       </div>
-    </div>
-  </div>
+    </dl>
+
+    <v-btn
+      variant="text"
+      color="grey500"
+      size="small"
+      prepend-icon="mdi-flag-outline"
+      class="text-none gtext-t5 align-self-start px-1 mt-1"
+      @click="emit('report')"
+    >
+      Report a problem with this page
+    </v-btn>
+  </v-sheet>
 </template>
 
 <script setup>
 const props = defineProps({
   content: { type: Object, required: true },
 })
-const contentData = ref(props.content)
-const emit = defineEmits(['edit', 'update'])
+const emit = defineEmits(['update', 'report'])
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const generalDataEditMode = reactive({
-  website: false,
-  email: false,
-  address: false,
-})
-const form = reactive({
-  web: '',
-  email: '',
-  phone: [],
-  address: '',
-})
+const { requireSignIn } = useContributeGate()
 
 const maxPhoneCount = 3
-const editingPhones = ref([])
-const phoneSubmitLoader = ref(false)
+const editing = ref(null)
+const saving = ref(false)
+const form = reactive({ website: '', email: '', address: '', phones: [''] })
 
-function initPhoneFields() {
-  const phoneStr = contentData.value.phoneNumber || ''
-  form.phone = phoneStr.split('/')
-  editingPhones.value = form.phone.map(() => false)
-}
+const phones = computed(() =>
+  (props.content.phoneNumber || '').split('/').map(p => p.trim()).filter(Boolean))
 
-initPhoneFields()
-
-function startEditPhone(index) {
-  const indexPhoneEditingNotFinish = editingPhones.value.findIndex(
-    item => item,
-  )
-  if (indexPhoneEditingNotFinish != -1) {
-    nuxtApp.$toast?.info(
-      'Please first confirm the previous phone number that is being edited.',
-    )
-  }
-  else {
-    const phones = contentData.value.phoneNumber?.split('/') || []
-    form.phone[index] = phones[index] || ''
-    editingPhones.value[index] = true
-  }
-}
-
-function saveEditPhone() {
-  handleUpdate('phone')
-}
-
-function addPhoneField() {
-  const currentPhones = contentData.value.phoneNumber?.split('/') || []
-
-  if (
-    currentPhones.length < maxPhoneCount
-    && currentPhones[currentPhones.length - 1]?.length > 0
-  ) {
-    currentPhones.push('')
-    contentData.value.phoneNumber = currentPhones.join('/')
-    form.phone.push('')
-    editingPhones.value.push(false)
-  }
-}
-
-function removePhoneField(index) {
-  const indexPhoneEditingNotFinish = editingPhones.value.findIndex(
-    item => item,
-  )
-  if (indexPhoneEditingNotFinish != -1) {
-    nuxtApp.$toast?.info(
-      'Please first confirm the previous phone number that is being edited.',
-    )
-  }
-  else {
-    const backupPhoneNumber = contentData.value.phoneNumber
-
-    const currentPhones = contentData.value.phoneNumber?.split('/') || []
-    currentPhones.splice(index, 1)
-    contentData.value.phoneNumber = currentPhones.join('/')
-    form.phone.splice(index, 1)
-    editingPhones.value.splice(index, 1)
-    handleUpdate('phone', backupPhoneNumber)
-  }
-}
-
-const webSubmitLoader = ref(false)
-const emailSubmitLoader = ref(false)
-const addressSubmitLoader = ref(false)
-const rules = useValidationRules()
-const webUrlRule = [rules.urlStrict, rules.maxLength(255)]
-const emailRule = [rules.email]
+const rows = computed(() => [
+  { key: 'phone', label: 'Phone', icon: 'mdi-phone-outline', values: phones.value, href: v => `tel:${v}` },
+  { key: 'website', label: 'Website', icon: 'mdi-web', values: props.content.webSite ? [props.content.webSite] : [], href: normalizeURL },
+  { key: 'email', label: 'Email', icon: 'mdi-email-outline', values: props.content.email ? [props.content.email] : [], href: v => `mailto:${v}` },
+  { key: 'address', label: 'Address', icon: 'mdi-map-marker-outline', values: props.content.address ? [props.content.address] : [] },
+])
 
 function normalizeURL(url) {
   if (!url) return ''
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    return 'http://' + url
-  }
-  return url
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`
 }
-function handleEdit(field) {
+
+function startEdit(field) {
+  if (!requireSignIn()) return
+  form.website = props.content.webSite || ''
+  form.email = props.content.email || ''
+  form.address = props.content.address || ''
+  form.phones = phones.value.length ? [...phones.value] : ['']
+  editing.value = field
+}
+
+const urlPattern = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Builds the contribution body and the matching field on the school, or returns an error message.
+function buildPayload(field) {
   if (field === 'website') {
-    form.web = contentData.value.webSite || ''
-    generalDataEditMode.website = true
+    const value = form.website.trim()
+    if (value && !urlPattern.test(value)) return { error: 'Please enter a valid website URL' }
+    return { body: { webSite: value || null }, update: { webSite: value } }
   }
-  else if (field === 'email') {
-    form.email = contentData.value.email || ''
-    generalDataEditMode.email = true
+  if (field === 'email') {
+    const value = form.email.trim()
+    if (value && !emailPattern.test(value)) return { error: 'Please enter a valid Email' }
+    return { body: { email: value || null }, update: { email: value } }
   }
-  else if (field === 'phone') {
-    form.phone = contentData.value.phoneNumber || ''
+  if (field === 'phone') {
+    const value = form.phones.map(p => p.trim()).filter(Boolean).join('/')
+    return { body: { phoneNumber: value || null }, update: { phoneNumber: value } }
   }
-  else if (field === 'address') {
-    form.address = contentData.value.address || ''
-    generalDataEditMode.address = true
-  }
-  emit('edit', field)
-}
-function isValidUrl(url) {
-  try {
-    const urlRegex
-      = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/
-    return urlRegex.test(url)
-  }
-  catch {
-    return false
-  }
-}
-function isValidEmail(email) {
-  try {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
-  catch {
-    return false
-  }
+  const value = form.address.trim()
+  return { body: { address: value || null }, update: { address: value } }
 }
 
-function handleUpdate(value, backupData = '') {
-  let formData = {}
-  if (value == 'website') {
-    if (!isValidUrl(form.web) && form.web != '') {
-      nuxtApp.$toast?.error('Please enter a valid website URL')
-      return
-    }
-    formData = { webSite: form.web ?? null }
+function submit() {
+  const { body, update, error } = buildPayload(editing.value)
+  if (error) {
+    nuxtApp.$toast?.error(error)
+    return
   }
-  if (value == 'email') {
-    if (!isValidEmail(form.email) && form.email != '') {
-      nuxtApp.$toast?.error('Please enter a valid Email')
-      return
-    }
-    formData = { email: form.email ?? null }
-  }
-  if (value == 'phone') {
-    const joinPhoneNumber = form.phone.filter(p => p.trim()).join('/')
-    formData = { phoneNumber: joinPhoneNumber ?? null }
-  }
-  if (value == 'address') {
-    formData = { address: form.address ?? null }
-  }
-
-  const loaderRef = {
-    website: webSubmitLoader,
-    email: emailSubmitLoader,
-    phone: phoneSubmitLoader,
-    address: addressSubmitLoader,
-  }[value]
-  if (loaderRef) loaderRef.value = true
+  saving.value = true
   useApiService
-    .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
-    .then(async (response) => {
+    .post(`/api/v2/schools/${route.params.id}/contributions`, body)
+    .then((response) => {
       if (response.succeeded) {
-        nuxtApp.$toast?.success(
-          'Your contribution has been successfully submitted',
-        )
-        switch (value) {
-          case 'name':
-            contentData.value.name = form.name
-            break
-          case 'website':
-            contentData.value.webSite = form.web
-            break
-          case 'phone':
-            contentData.value.phoneNumber = form.phone
-              .filter(p => p.trim())
-              .join('/')
-            break
-          case 'address':
-            contentData.value.address = form.address
-            break
-          case 'email':
-            contentData.value.email = form.email
-            break
-          default:
-            break
-        }
-
-        emit('update', form.value)
+        nuxtApp.$toast?.success('Thank you! Your contribution has been submitted and is pending review.')
+        emit('update', update)
+        editing.value = null
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)
       }
     })
     .catch((err) => {
-      console.log('err', err)
-      if (value == 'phone' && backupData.length > 0) {
-        contentData.value.phoneNumber = backupData
-      }
-
       if (err?.response?.status == 401 || err?.response?.status == 403) {
         nuxtApp.$toast?.error('Please login to contribute')
       }
       else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      form.web = null
-      form.email = null
-      form.address = null
-      webSubmitLoader.value = false
-      emailSubmitLoader.value = false
-      phoneSubmitLoader.value = false
-      addressSubmitLoader.value = false
-
-      generalDataEditMode.website = false
-      generalDataEditMode.email = false
-      generalDataEditMode.address = false
-
-      initPhoneFields()
+      saving.value = false
     })
 }
+
+defineExpose({ startEdit })
 </script>
 
 <style scoped>
-.info-itm {
-  margin-bottom: 0.8rem;
+.contact-card {
+  border-color: rgb(var(--v-theme-grey200)) !important;
+}
 
-  .info-sign {
-    width: 5.6rem;
-    min-width: 5.6rem;
-    height: 5.6rem;
-    border-radius: 0.6rem;
-    border: 1px solid var(--Primary-Yellow-Gama-50, #fff8ed);
-    background: #fff;
-    box-shadow: 2px 6px 24px 0px rgba(16, 24, 40, 0.05);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.rows {
+  margin: 0;
+}
 
-  .info-data {
-    width: 100%;
-    min-height: 5.6rem;
-    max-height: 5.6rem;
-    border-radius: 0.6rem;
-    border: 1px solid var(--Primary-Yellow-Gama-50, #fff8ed);
-    background: var(--White, #fff);
-    box-shadow: 2px 6px 24px 0px rgba(16, 24, 40, 0.05);
-    display: flex;
-    justify-content: left;
-    padding: 1.5rem 1.6rem 1.5rem 1.6rem;
-    align-items: center;
-    margin-left: 0.4rem;
-  }
+.row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgb(var(--v-theme-grey100));
+}
 
-  .info-data-address {
-    max-height: 12rem;
-  }
+.row:last-child {
+  border-bottom: 0;
+}
+
+dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  font-size: 14px;
+  color: rgb(var(--v-theme-grey500));
+}
+
+dt :deep(.v-icon) {
+  color: rgb(var(--v-theme-grey400));
+}
+
+dd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 28px;
+  margin: 0;
+  font-size: 14px;
+  color: rgb(var(--v-theme-grey800));
+}
+
+.values {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.values a {
+  color: rgb(var(--v-theme-info));
+  text-decoration: none;
+}
+
+.values a:hover,
+.values a:focus-visible {
+  text-decoration: underline;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.phone-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 4px;
 }
 </style>

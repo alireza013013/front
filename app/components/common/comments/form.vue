@@ -4,6 +4,7 @@
     variant="solo"
     hide-details
     placeholder="Got something to say?"
+    @focus="initCaptcha"
   >
     <template #prepend-inner>
       <v-avatar
@@ -50,11 +51,10 @@ interface IFormComment {
 const props = defineProps<IFormComment>()
 const emit = defineEmits(['sendCommentSuccessfull'])
 
-const { $toast } = useNuxtApp()
 const router = useRouter()
 const { user } = useUser()
 const auth = useAuth()
-const { getToken, isLoaded } = useRecaptcha()
+const { getToken, initCaptcha } = useRecaptcha()
 const loadingToken = ref(false)
 const { addItem, loadingAddItem } = usePostComment()
 
@@ -62,10 +62,6 @@ const commentText = ref('')
 
 const sendComment = async () => {
   if (auth.isAuthenticated.value) {
-    if (!isLoaded()) {
-      $toast.error('reCAPTCHA not loaded yet. Please try again.')
-    }
-
     loadingToken.value = true
     const token = await getToken('submit')
 

@@ -9,7 +9,7 @@
         height="50"
         elevation="4"
         prepend-icon="mdi-menu"
-        color="#ffffff"
+        color="surface"
         rounded="xl"
         @click="changeStatusExpandMap"
       >
@@ -44,7 +44,7 @@
       class="map-loading-overlay"
     >
       <v-progress-circular
-        color="amber"
+        color="primary"
         indeterminate
       />
     </div>
@@ -59,7 +59,7 @@
     <!-- Desktop view -->
     <div
       v-if="!isExpandMapInDesktop"
-      class="d-none d-lg-flex flex-column align-center justify-start w-100 h-100 bg-white"
+      class="d-none d-lg-flex flex-column align-center justify-start w-100 h-100 bg-surface"
     >
       <schoolFilter
         :sort-list="sortList"
@@ -184,14 +184,14 @@ onMounted(() => {
   setDefaultSortToRoute()
   const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = 'none'
+    footer.style.setProperty('display', 'none', 'important')
   }
 })
 
 onUnmounted(() => {
   const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = 'unset'
+    footer.style.removeProperty('display')
   }
 })
 
@@ -347,6 +347,8 @@ const debouncedGetSchoolList = async () => {
   }, 800)
 }
 
+// Read once in setup: setMetaData also runs later, after a client-side filter change.
+const schoolListHost = useRequestURL().host
 const metaTitle = ref(
   'School Finder: Your Path to Ideal Education - Find Schools Near You',
 )
@@ -398,6 +400,12 @@ const setMetaData = (informationResponse) => {
 
   useHead({
     title: metaTitle.value,
+    // One canonical per location and stage: sort, page, map position and the other filters all
+    // render a variant of the same list.
+    link: [{
+      rel: 'canonical',
+      href: canonicalListUrl(schoolListHost, '/school', route.query, ['country', 'state', 'city', 'stage']),
+    }],
 
     meta: [
       {

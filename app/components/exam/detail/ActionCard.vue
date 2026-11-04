@@ -6,13 +6,13 @@
     elevation="0"
   >
     <template v-if="participation">
-      <div class="bg-generalSearchQuiz px-6 py-5">
-        <p class="text-h6 text-white opacity-80">
+      <div class="bg-quizFill px-6 py-5">
+        <p class="text-h6 text-white opacity-90">
           Take it online
         </p>
         <p class="gama-text-h4 text-white">
           {{ participation.price ? `${participation.price} Gems` : 'Free' }}
-          <span class="text-h6 font-weight-semibold opacity-80">· instant score</span>
+          <span class="text-h6 font-weight-semibold opacity-90">· instant score</span>
         </p>
       </div>
 
@@ -23,7 +23,7 @@
           size="x-large"
           rounded="lg"
           flat
-          class="text-h5 font-weight-heavy text-none text-brandNavy"
+          class="text-h5 font-weight-heavy text-none"
           prepend-icon="md:play_arrow"
           @click="startExam"
         >
@@ -63,83 +63,19 @@
         Ready-to-use files with all {{ questionCount }} questions
       </p>
 
-      <v-card
+      <exam-export-format-row
         v-for="format in examExportFormats"
         :key="format.fileType"
-        class="format-row d-flex align-center ga-3 pa-3 mb-2"
-        :class="{ 'format-row--owned': getPrice(format.fileType)?.purchased }"
-        rounded="lg"
-        elevation="0"
-        :aria-label="`Download ${format.label}`"
+        class="mb-2"
+        :format="format"
+        :price="getPrice(format.fileType)"
+        :phase="getPhase(format.fileType)"
+        :progress="getProgress(format.fileType)"
+        :retry="getRetry(format.fileType)"
         @click="handleExportClick(format.fileType)"
-      >
-        <span
-          class="file-icon d-flex align-end justify-center pb-1 text-white font-weight-heavy rounded"
-          :class="`bg-${format.color}`"
-          aria-hidden="true"
-        >{{ format.badge }}</span>
+      />
 
-        <span class="flex-grow-1 d-flex flex-column overflow-hidden">
-          <span class="text-h5 font-weight-heavy text-brandNavy">{{ format.label }}</span>
-          <!-- The server is building the file (before any byte arrives). -->
-          <span
-            v-if="getPhase(format.fileType) === 'cooking'"
-            class="text-h6 text-grey600"
-          >
-            Cooking for you
-            <v-icon
-              class="heart-blink"
-              color="lightError"
-              size="14"
-            >md:favorite</v-icon>
-          </span>
-          <span
-            v-else-if="getPhase(format.fileType) === 'downloading'"
-            class="text-h6 text-grey600"
-          >Downloading {{ getProgress(format.fileType) }}%</span>
-          <span
-            v-else
-            class="text-h6 text-grey500"
-          >{{ format.summary }}</span>
-        </span>
-
-        <span
-          v-if="getPrice(format.fileType)?.purchased"
-          class="text-h6 font-weight-heavy text-success500"
-        >Owned</span>
-        <span
-          v-else-if="getPrice(format.fileType)"
-          class="d-flex align-center ga-1 text-h5 font-weight-heavy text-brandNavy text-no-wrap"
-        >
-          <v-icon
-            size="16"
-            color="generalSearchQuiz"
-            aria-hidden="true"
-          >md:diamond_outlined</v-icon>
-          {{ getPrice(format.fileType)?.points }} Gems
-        </span>
-
-        <span
-          class="go-button d-flex align-center justify-center rounded-lg"
-          :class="getPrice(format.fileType)?.purchased ? 'bg-success500' : 'bg-primary'"
-          aria-hidden="true"
-        >
-          <v-progress-circular
-            v-if="getPhase(format.fileType)"
-            :indeterminate="getPhase(format.fileType) === 'cooking'"
-            :model-value="getProgress(format.fileType)"
-            size="18"
-            width="2"
-          />
-          <v-icon
-            v-else
-            size="18"
-          >md:download</v-icon>
-        </span>
-      </v-card>
-
-      <div class="d-flex justify-space-between ga-2 text-h6 text-grey600 py-2">
-        <span>Your plan's limit is used first, then Gems.</span>
+      <div class="d-flex justify-end ga-2 text-h6 text-grey600 py-2">
         <nuxt-link
           to="/user/subscription"
           class="font-weight-bold text-generalSearchQuiz text-no-wrap"
@@ -209,11 +145,11 @@ import type {
   BillingInterval,
   DownloadResponseDTO,
   ExamExportFileType,
-  ExamExportPriceDTO,
   ExamUserDataExamDetaiDTO,
   ParticipationExamDetaiDTO,
   UpgradeSuggestionsDTO,
 } from '@/types'
+import { examExportFormats } from '@/utils/examExportFormats'
 
 interface IActionCard {
   id: string
@@ -230,8 +166,6 @@ const props = defineProps<IActionCard>()
 const emit = defineEmits<{
   share: []
   report: []
-  /** The export prices, for the comparison table and the FAQ, which show the same numbers. */
-  prices: [prices: ExamExportPriceDTO[]]
 }>()
 
 // Finished attempts still go through the start page, which sends them on to their result.
@@ -252,11 +186,11 @@ const currentPlanTitle = ref<string | null>(null)
 const currentPlanId = ref<number | null>(null)
 
 const {
-  prices,
   fetchPrices,
   getPrice,
   getPhase,
   getProgress,
+  getRetry,
   startExport,
 } = useExamExportDownload({
   examId: props.id,
@@ -280,8 +214,6 @@ const {
     showCoinPaymentModal.value = true
   },
 })
-
-watch(prices, value => emit('prices', value), { immediate: true })
 
 const handleExportClick = (fileType: ExamExportFileType) => {
   pendingExport.value = fileType
@@ -321,52 +253,5 @@ watch(user, () => {
 }
 .downloads {
   border-top: 2px solid rgb(var(--v-theme-primary));
-}
-.format-row {
-  border: 1.5px solid rgb(var(--v-theme-primary50));
-  cursor: pointer;
-}
-.format-row--owned {
-  border-color: rgb(var(--v-theme-success300));
-}
-.file-icon {
-  position: relative;
-  flex: none;
-  width: 36px;
-  height: 42px;
-  font-size: 0.95rem;
-}
-.file-icon::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  border-bottom-left-radius: 5px;
-  background: rgba(var(--v-theme-white), 0.45);
-}
-.go-button {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  color: rgb(var(--v-theme-brandNavy));
-}
-.format-row--owned .go-button {
-  color: rgb(var(--v-theme-white));
-}
-/* "Cooking" phase: a blinking (pulsing) heart while the server generates the file. */
-.heart-blink {
-  animation: heart-blink 1s ease-in-out infinite;
-}
-@keyframes heart-blink {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.25;
-    transform: scale(0.8);
-  }
 }
 </style>

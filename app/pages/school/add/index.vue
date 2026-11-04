@@ -1,6 +1,8 @@
 <template>
   <div
     class="w-100 d-flex align-center justify-start flex-column margin-top-handle"
+    @focusin="initCaptcha"
+    @pointerdown.once="initCaptcha"
   >
     <school-add-stepper
       :steps="steps"
@@ -56,7 +58,6 @@
       >
         <school-add-step-score
           :loading="loadingSubmitSchool"
-          :school-ai-data="schoolAiData"
           @next-step="submitSchool"
           @prev-step="backStep"
         />
@@ -68,7 +69,7 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 const router = useRouter()
-const { getToken, initCaptcha, isLoaded } = useRecaptcha()
+const { getToken, initCaptcha } = useRecaptcha()
 
 useHead({
   title: 'Add School',
@@ -138,15 +139,6 @@ const schoolInformation = ref({
     artisticActivitiesRate: 0,
   },
 })
-const schoolAiData = ref({
-  name: '',
-  countryTitle: '',
-  stateTitle: '',
-  cityTitle: '',
-  webSite: '',
-  latitude: null,
-  longitude: null,
-})
 
 // start section step
 const STEP_INDEX = {
@@ -191,19 +183,13 @@ const changeStep = () => {
 }
 // end section step
 
-const schoolFindInSearch = (school, data, aiInfo = null) => {
+const schoolFindInSearch = (school, data) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
   }
   schoolFindedInSearch.value = school
   showModalDetailSchool.value = true
-  if (aiInfo) {
-    schoolAiData.value = {
-      ...schoolAiData.value,
-      ...aiInfo,
-    }
-  }
 }
 
 const startAddNewSchool = () => {
@@ -212,7 +198,7 @@ const startAddNewSchool = () => {
   currentStep.value = STEP_INDEX.Contact
 }
 
-const nextStep = (data, aiInfo = null) => {
+const nextStep = (data) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
@@ -222,12 +208,6 @@ const nextStep = (data, aiInfo = null) => {
     top: 0,
     behavior: 'smooth',
   })
-  if (aiInfo) {
-    schoolAiData.value = {
-      ...schoolAiData.value,
-      ...aiInfo,
-    }
-  }
 }
 const backStep = () => {
   currentStep.value -= 1
@@ -238,11 +218,6 @@ const backStep = () => {
 }
 const submitSchool = async (data) => {
   loadingSubmitSchool.value = true
-  if (!isLoaded()) {
-    loadingSubmitSchool.value = false
-    throw new Error('reCAPTCHA not loaded yet. Please try again.')
-  }
-
   const token = await getToken('submit')
 
   schoolInformation.value = {
@@ -305,17 +280,13 @@ const buildFormDataFromObject = (
 
   return form
 }
-
-onMounted(() => {
-  initCaptcha()
-})
 </script>
 
 <style scoped>
 .margin-top-handle {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
-  background-color: #f8f7f7;
+  background-color: rgb(var(--v-theme-surfaceSecondary));
 }
 .handle-height {
   min-height: calc(100vh - 64px - 90px);

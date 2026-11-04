@@ -1,25 +1,29 @@
 <template>
-  <div
-    v-if="isVisible"
-    class="coin-consumption-overlay"
-  >
-    <div class="coin-consumption-container">
-      <div class="center-coin">
-        <ClientOnly>
-          <DotLottieVue
-            ref="centerLottieRef"
-            src="/static/coins/lose.json"
-            autoplay
-            :loop="false"
-            :style="{
-              width: '500px',
-              height: '500px',
-            }"
-          />
-        </ClientOnly>
+  <!-- Rendered on <body>: inside a v-card (its own stacking context) the overlay's z-index only
+       counts within that card, so later cards on the page painted over the dimmed backdrop. -->
+  <Teleport to="body">
+    <div
+      v-if="isVisible"
+      class="coin-consumption-overlay"
+    >
+      <div class="coin-consumption-container">
+        <div class="center-coin">
+          <ClientOnly>
+            <DotLottieVue
+              ref="centerLottieRef"
+              src="/static/coins/lose.json"
+              autoplay
+              :loop="false"
+              :style="{
+                width: '500px',
+                height: '500px',
+              }"
+            />
+          </ClientOnly>
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>

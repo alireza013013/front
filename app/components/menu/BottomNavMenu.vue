@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="w-100 d-flex d-md-none align-center position-sticky bottom-0 px-1 bottom-nav-menu bg-grey700 rounded-t-xl"
+    class="w-100 d-flex d-md-none align-center position-sticky bottom-0 px-1 bottom-nav-menu bg-inverseSurface rounded-t-xl"
     :class="{ 'bottom-nav-menu--raised': isSearchOptionOpen }"
     aria-label="Main navigation"
   >
@@ -15,7 +15,7 @@
       >
         md:home_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-grey400`}`">Home</span>
+      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Home</span>
     </nuxt-link>
 
     <div
@@ -30,7 +30,7 @@
       >
         md:grid_view_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isSearchOptionOpen ? `text-primary`:`text-grey400`}`">Explore</span>
+      <span :class="`text-subtitle-1 ${isSearchOptionOpen ? `text-primary`:`text-onInverseSurfaceMuted`}`">Explore</span>
     </div>
 
     <div class="flex-1-1-0 h-100 d-flex justify-center">
@@ -42,7 +42,7 @@
       >
         <v-icon
           size="28"
-          color="grey700"
+          color="on-primary"
         >
           md:add
         </v-icon>
@@ -60,11 +60,11 @@
       >
         md:explore_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-grey400`}`">Discover</span>
+      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Discover</span>
     </nuxt-link>
 
     <nuxt-link
-      v-if="isAuthenticated"
+      v-if="isAuthenticatedUi"
       v-slot="{ isActive }"
       to="/user"
       class="nav-item flex-1-1-0 h-100 d-flex align-center justify-center flex-column"
@@ -84,7 +84,7 @@
       >
         md:account_circle
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-grey400`}`">Profile</span>
+      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Profile</span>
     </nuxt-link>
     <div
       v-else
@@ -98,7 +98,7 @@
       >
         md:account_circle
       </v-icon>
-      <span class="text-subtitle-1 text-grey400">Profile</span>
+      <span class="text-subtitle-1 text-onInverseSurfaceMuted">Profile</span>
     </div>
   </nav>
   <menu-search-option-bottom-menu
@@ -121,7 +121,7 @@
 <script setup lang="ts">
 const router = useRouter()
 const route = useRoute()
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, isAuthenticatedUi } = useAuth()
 const user = useUser()
 
 const ICON_SIZE = 26
@@ -192,7 +192,7 @@ const changeModalAddOption = () => {
   border : 2px solid rgb(var(--v-theme-primary))
 }
 .deactive-border {
-    border : 2px solid rgb(var(--v-theme-grey400))
+    border : 2px solid rgb(var(--v-theme-onInverseSurfaceMuted))
 }
 .container-add{
   width: 52px;

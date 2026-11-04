@@ -3,10 +3,11 @@
     v-model="dialogModel"
     max-width="400"
     :fullscreen="!mdAndUp"
+    :scroll-strategy="mdAndUp ? 'block' : 'none'"
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 rounded-xl mobile-style"
       @click="clickOnModal"
     >
       <v-row>

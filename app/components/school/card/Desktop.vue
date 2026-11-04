@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import defaultImage from '@/assets/images/default-school.png'
+import defaultImage from '@/assets/images/default-school.webp'
 
 const { formatLocal } = useDateTime()
 
@@ -171,11 +171,11 @@ const actionButtons = computed(() => {
 
 <style scoped>
 .card-school {
-  background-color: rgba(var(--v-theme-white),0.95);
+  background-color: rgba(var(--v-theme-surface), 0.95);
   border: 1px solid rgb(var(--v-theme-primary50));
   min-height: unset;
   max-width: unset;
-  box-shadow: 2px 6px 24px 0px #1018280D;
+  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.06);
   text-decoration: none;
 }
 
@@ -184,7 +184,7 @@ const actionButtons = computed(() => {
 }
 .name-address-image {
   min-height: 130px;
-  background-color: rgba(var(--v-theme-white),0.95);
+  background-color: rgba(var(--v-theme-surface), 0.95);
   z-index: 2;
 }
 .position-bookmark {
@@ -195,5 +195,13 @@ const actionButtons = computed(() => {
 .bottom-section {
   background-color: unset;
   z-index: 2;
+}
+/* Dark: the list is `surface` too, so lift the card and give it a visible edge */
+.v-theme--dark .card-school,
+.v-theme--dark .name-address-image {
+  background-color: rgb(var(--v-theme-surfaceTertiary));
+}
+.v-theme--dark .card-school {
+  border-color: rgb(var(--v-theme-borderSubtle));
 }
 </style>

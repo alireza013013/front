@@ -80,19 +80,19 @@ const stats = ref([
 #stats-container {
   height: 42rem;
   padding: 2.4rem 0 2.4rem 0;
-  background: #24292f;
-  color: #ffffff;
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
+  color: rgb(var(--v-theme-white));
 
   text-align: center;
 
   .gama-text-h4 {
-    color: #f3f3fb;
+    color: rgb(var(--v-theme-white));
     margin-bottom: 0.3rem;
   }
 
   .describe {
-    color: #f3f3fb;
-    opacity: 0.30000001192092896;
+    color: rgb(var(--v-theme-white));
+    opacity: 0.72;
     margin-top: 1.4rem;
   }
 
@@ -108,19 +108,19 @@ const stats = ref([
 
       .item-icon {
         font-size: 2rem;
-        color: #ffb600;
+        color: rgb(var(--v-theme-primary));
       }
 
       .item-stat {
         position: absolute;
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         top: 2.6rem;
         left: 2.8rem;
       }
 
       .item-title {
         position: absolute;
-        color: #fff;
+        color: rgb(var(--v-theme-white));
         left: 2.8rem;
       }
     }
@@ -152,19 +152,19 @@ const stats = ref([
 
         .item-icon {
           font-size: 2.4rem;
-          color: #ffb600;
+          color: rgb(var(--v-theme-primary));
         }
 
         .item-stat {
           position: absolute;
-          color: #fff;
+          color: rgb(var(--v-theme-white));
           top: 2.4rem;
           left: 2.8rem;
         }
 
         .item-title {
           position: absolute;
-          color: #fff;
+          color: rgb(var(--v-theme-white));
           top: 4.8rem;
           left: 3rem;
         }
@@ -177,18 +177,18 @@ const stats = ref([
   #stats-container {
     height: 31.6rem;
     padding: 3.6rem 0 4.8rem 0;
-    background: #24292f;
-    color: #ffffff;
+    background: rgb(var(--v-theme-inverseSurfaceStrong));
+    color: rgb(var(--v-theme-white));
     text-align: center;
 
     .gama-text-h4 {
-      color: #f3f3fb;
+      color: rgb(var(--v-theme-white));
       margin-bottom: 1.2rem;
     }
 
     .describe {
-      color: #f3f3fb;
-      opacity: 0.30000001192092896;
+      color: rgb(var(--v-theme-white));
+      opacity: 0.72;
       margin-top: 0.15rem;
     }
 
@@ -203,19 +203,19 @@ const stats = ref([
         .item-icon {
           position: static;
           font-size: 4.8rem;
-          color: #ffb600;
+          color: rgb(var(--v-theme-primary));
           margin-bottom: 1.6rem;
         }
 
         .item-stat {
           position: static;
-          color: #fff;
+          color: rgb(var(--v-theme-white));
           margin-bottom: 0.4rem;
         }
 
         .item-title {
           position: static;
-          color: #fff;
+          color: rgb(var(--v-theme-white));
         }
       }
     }

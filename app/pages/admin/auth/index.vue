@@ -63,7 +63,7 @@
           block
           height="42"
           color="primary"
-          class="text-grey800 text-h5 font-weight-semibold"
+          class="text-h5 font-weight-semibold"
           :loading="loading"
           :disabled="!isFormValid"
           type="submit"

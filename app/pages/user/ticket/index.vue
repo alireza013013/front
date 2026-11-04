@@ -12,12 +12,12 @@
       @click="openCreateModal"
     >
       <v-icon
-        color="grey800"
+        color="on-primary"
         size="20"
       >
         md:add
       </v-icon>
-      <span class="text-grey800 font-weight-bold text-h6">New Ticket</span>
+      <span class="font-weight-bold text-h6">New Ticket</span>
     </v-btn>
 
     <common-data-table

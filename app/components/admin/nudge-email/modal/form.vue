@@ -144,7 +144,7 @@
               height="30"
               @click="showModalPreview = true"
             >
-              <v-icon color="grey700">
+              <v-icon color="on-primary">
                 md:preview
               </v-icon>
             </v-btn>

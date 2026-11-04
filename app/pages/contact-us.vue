@@ -12,6 +12,7 @@
               ref="form"
               v-model="isFormValid"
               class="form"
+              @focusin="initCaptcha"
             >
               <!-- Name Input -->
               <div>
@@ -104,7 +105,7 @@
             <div>
               <v-icon
                 size="x-large"
-                color="#97A2B2"
+                color="grey400"
                 class="icon"
                 icon="md:corporate_fare"
               />
@@ -114,7 +115,7 @@
             <div>
               <v-icon
                 size="x-large"
-                color="#97A2B2"
+                color="grey400"
                 class="icon"
                 icon="md:location_on"
               />
@@ -168,17 +169,13 @@ const isFormValid = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
 
 const form = ref<HTMLFormElement | null>(null)
-const { getToken, initCaptcha, isLoaded } = useRecaptcha()
+const { getToken, initCaptcha } = useRecaptcha()
 
 const submitForm = async () => {
   formLoading.value = true
 
   if (isFormValid.value) {
     try {
-      if (!isLoaded()) {
-        throw new Error('reCAPTCHA not loaded yet. Please try again.')
-      }
-
       const token = await getToken('submit')
 
       const formData = new FormData()
@@ -218,10 +215,6 @@ const submitForm = async () => {
     formLoading.value = false
   }
 }
-
-onMounted(() => {
-  initCaptcha()
-})
 </script>
 
 <style scoped>
@@ -245,7 +238,7 @@ onMounted(() => {
 
 .address {
   width: calc(100% - 24px);
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-grey100));
   margin: 0 24px;
   padding: 1rem 2rem;
   position: absolute;
@@ -260,6 +253,6 @@ onMounted(() => {
 .address span {
   font-size: 2rem;
   font-weight: 600;
-  color: #334053;
+  color: rgb(var(--v-theme-grey700));
 }
 </style>

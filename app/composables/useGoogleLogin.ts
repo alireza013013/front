@@ -1,6 +1,8 @@
 import type { GoogleLoginTokenDTO } from '@/types'
 
 export const useGoogleLogin = () => {
+  // Google draws the button itself; match it to the site theme.
+  const { isDark } = useThemeMode()
   const loading = ref(true)
   const error = ref<Error | null>(null)
   let resizeObserver: ResizeObserver | null = null
@@ -90,7 +92,7 @@ export const useGoogleLogin = () => {
           size: 'large',
           shape: 'pill',
           width: nextWidth,
-          theme: 'outline',
+          theme: isDark.value ? 'filled_black' : 'outline',
         })
       }
 

@@ -11,10 +11,10 @@
       variant="outlined"
       autocomplete="off"
       persistent-clear
-      base-color="grey200"
+      base-color="grey400"
       color="primary"
       active-color="primary"
-      bg-color="white"
+      bg-color="transparent"
       class="w-100 mt-2"
       @keydown.enter.prevent="addKeywords"
     >
@@ -30,7 +30,7 @@
           <v-icon
             size="x-large"
             icon="md:subdirectory_arrow_left"
-            color="grey800"
+            color="on-primary"
           />
         </v-btn>
       </template>

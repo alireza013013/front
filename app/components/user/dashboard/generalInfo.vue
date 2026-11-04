@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column pa-4 rounded-lg bg-grey700">
+  <div class="w-100 d-flex flex-column pa-4 rounded-lg bg-inverseSurface">
     <div class="w-100 d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
       <div class="d-flex align-center ga-2">
         <NuxtLink to="/user/profile">
@@ -38,7 +38,7 @@
             </template>
           </p>
           <span
-            class="text-h5 text-sm-h4 font-weight-bold text-grey300 d-flex align-center"
+            class="text-h5 text-sm-h4 font-weight-bold text-onInverseSurfaceSubtle d-flex align-center"
           >
             <template v-if="userData.handle">
               <nuxt-link :to="`profile/${encodeURIComponent(userData.handle)}`">@{{ userData.handle }}</nuxt-link>
@@ -54,7 +54,7 @@
               @click="showUsernameModal = true"
             >
               <v-icon
-                color="grey500"
+                color="inverseSurface"
                 size="16"
               >
                 md:edit
@@ -65,30 +65,32 @@
       </div>
       <div class="d-flex flex-column align-end ga-2">
         <v-chip
-          class="bg-white text-primary text-h6 font-weight-bold"
+          class="text-h6 font-weight-bold"
+          color="primary"
+          variant="flat"
           flat
           prepend-icon="md:trophy_outlined"
         >
           Level {{ level.level }} · {{ level.title }}
         </v-chip>
-        <p class="text-h5 text-grey300">
+        <p class="text-h5 text-onInverseSurfaceSubtle">
           {{ level.xpIntoLevel }} / {{ level.xpPerLevel }} XP to Level {{ level.level + 1 }}
         </p>
       </div>
     </div>
     <v-divider
       class="border-opacity-50 my-4"
-      color="grey300"
+      color="onInverseSurfaceSubtle"
     />
     <div class="d-flex flex-column">
-      <p class="text-h5 text-uppercase font-weight-bold text-grey200 mb-4">
+      <p class="text-h5 text-uppercase font-weight-bold text-onInverseSurfaceSubtle mb-4">
         Next steps
       </p>
       <div class="d-flex flex-wrap ga-2">
         <v-chip
           v-for="step in nextSteps"
           :key="step.label"
-          class="bg-grey200 text-grey700 text-h6 font-weight-bold"
+          class="bg-onInverseSurfaceSubtle text-inverseSurface text-h6 font-weight-bold"
           variant="flat"
           :to="step.to"
           prepend-icon="md:arrow_circle_right_outlined"

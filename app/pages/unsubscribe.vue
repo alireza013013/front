@@ -30,7 +30,7 @@
         <v-btn
           rounded="pill"
           color="primary"
-          class="text-grey900 text-h5 font-weight-bold"
+          class="text-h5 font-weight-bold"
           height="36"
           min-width="160"
           flat

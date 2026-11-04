@@ -18,6 +18,8 @@
       <user-exam-result-summary
         :answer-stats="contentData?.answerStats"
         :rank="contentData?.rank"
+        :result-analyze="analyzeData"
+        @update-result-analyze="updateResultAnalyze"
       />
 
       <user-exam-result-answers
@@ -30,6 +32,8 @@
 <script setup lang="ts">
 import type {
   ExamResultDetailDTO,
+  ExamResultAnalyzeResponseDTO,
+  ExamAnalyzeDetailResponseDTO,
 } from '@/types'
 
 definePageMeta({
@@ -41,7 +45,6 @@ useSeoMeta({
 })
 
 const route = useRoute()
-const { getUserToken } = useAuth()
 
 const {
   getItemById,
@@ -50,30 +53,27 @@ const {
 
 const resultId = computed(() => String(route.params.id))
 const contentData = ref<ExamResultDetailDTO | null>(null)
+const analyzeData = ref<ExamResultAnalyzeResponseDTO | undefined>()
 
 const fetchResult = async () => {
   const response = await getItemById(resultId.value)
-  if (response.status == 1 && response.data) {
-    contentData.value = response.data
-
-    const authToken = getUserToken() ?? ''
-    try {
-      await useApiService.post('/api/v2/games/exams/points',
-        { id: resultId.value },
-        {
-          headers: {
-            SecretKey: authToken,
-          },
-        },
-      )
-    }
-    catch (error) {
-      console.warn('Fetch failed but continuing...', error)
-    }
+  if (response.succeeded && response.data) {
+    contentData.value = response.data.result
+    analyzeData.value = response.data.analysis ?? undefined
   }
 }
 
 onMounted(() => {
   fetchResult()
 })
+
+// The analysis was just bought: keep its text so the next click opens it without charging again.
+const updateResultAnalyze = (analysis: ExamAnalyzeDetailResponseDTO) => {
+  analyzeData.value = {
+    id: analysis.id,
+    result: analysis.result,
+    points: 0,
+    purchased: true,
+  }
+}
 </script>

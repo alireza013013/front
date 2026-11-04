@@ -82,7 +82,7 @@
         >
           <h3 class="gama-text-h6 text-grey800">
             <v-icon
-              :icon="`mdi-${item.icon}`"
+              :icon="item.icon"
               color="primary"
               class="earn-feature__icon me-2 mb-1"
             />{{ item.title }}
@@ -142,27 +142,27 @@ const steps = [
 
 const featureList = [
   {
-    icon: 'eye',
+    icon: 'mdi-eye',
     title: 'Global Distribution',
     describe: 'Your materials reach students studying under Cambridge, Edexcel, OCR, AQA, and other regional curricula.',
   },
   {
-    icon: 'account-circle',
+    icon: 'mdi-account-circle',
     title: 'Your Brand, Your Identity',
     describe: 'Publish under your own name and build your reputation as an educator.',
   },
   {
-    icon: 'security',
+    icon: 'mdi-security',
     title: 'Secure Payments',
     describe: 'Reliable and transparent transaction processing.',
   },
   {
-    icon: 'chart-donut',
+    icon: 'mdi-chart-donut',
     title: 'Performance Analytics',
     describe: 'See which materials resonate and refine your content strategy.',
   },
   {
-    icon: 'headset',
+    icon: 'mdi-headset',
     title: 'Ongoing Support',
     describe: 'Our team helps you throughout the publishing journey.',
   },

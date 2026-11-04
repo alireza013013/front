@@ -4,15 +4,15 @@
     class="exam-details d-flex flex-column mt-16 pb-0"
   >
     <lazy-widgets-breadcrumb
+      flush
       background-color="transparent"
       :breads="breads"
     />
 
-    <v-row class="mt-1">
-      <v-col
-        cols="12"
-        md="8"
-      >
+    <!-- One grid so the side column runs the full height on desktop (no gap under the title), while a phone
+         still reads: title, download card, sample questions, about. -->
+    <div class="exam-layout mt-4">
+      <div class="exam-head">
         <v-chip
           color="generalSearchQuiz"
           variant="tonal"
@@ -23,9 +23,6 @@
         <h1 class="gama-text-h1 text-brandNavy mt-3 mb-3">
           {{ seo.heading }}
         </h1>
-        <p class="lede text-grey600">
-          {{ lede }}
-        </p>
 
         <v-row
           dense
@@ -80,34 +77,25 @@
           </div>
           <common-follow-button :user-id="contentData.user_" />
         </div>
-      </v-col>
+      </div>
 
-      <v-col
-        cols="12"
-        md="4"
-      >
-        <div class="action-column">
-          <exam-detail-action-card
-            :id="contentData.id"
-            :title="contentData.title"
-            :title-url="contentData.title_url"
-            :question-count="Number(contentData.tests_num) || 0"
-            :participation="contentData.price?.participation"
-            :exam-user-data="contentData.examUserData"
-            @share="openShare = true"
-            @report="openCrashReport = true"
-            @prices="exportPrices = $event"
-          />
-        </div>
-      </v-col>
-    </v-row>
+      <div class="exam-side d-md-flex flex-column ga-4">
+        <exam-detail-action-card
+          :id="contentData.id"
+          class="exam-side__action"
+          :title="contentData.title"
+          :title-url="contentData.title_url"
+          :question-count="Number(contentData.tests_num) || 0"
+          :participation="contentData.price?.participation"
+          :exam-user-data="contentData.examUserData"
+          @share="openShare = true"
+          @report="openCrashReport = true"
+        />
+        <exam-detail-about-card :exam="contentData" />
+        <exam-detail-topics-card :exam="contentData" />
+      </div>
 
-    <v-row class="mt-8">
-      <v-col
-        cols="12"
-        md="8"
-        class="d-flex flex-column ga-6"
-      >
+      <div class="exam-main d-flex flex-column ga-6">
         <exam-detail-sample-questions
           :exam-id="contentData.id"
           :questions="contentData.sampleQuestions"
@@ -135,21 +123,8 @@
             {{ contentData.paper.isPastPaper ? '(question paper and mark scheme)' : '' }}
           </span>
         </v-card>
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        class="d-flex flex-column ga-4"
-      >
-        <exam-detail-result-preview
-          v-if="contentData.price?.participation"
-          :question-count="Number(contentData.tests_num) || 0"
-          :participants="Number(contentData.participants_num) || 0"
-        />
-        <exam-detail-about-card :exam="contentData" />
-        <exam-detail-topics-card :topics="contentData.topics" />
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
     <lazy-exam-detail-related-quizzes
       :id="contentData.id"
@@ -157,25 +132,14 @@
       class="mt-10"
     />
 
-    <exam-detail-file-comparison
-      :prices="exportPrices"
-      class="mt-10"
-    />
-
-    <!-- Past Papers, Multimedia and Tutorials; quizzes already have their own row above. -->
+    <!-- Past papers (`test`) and tutorials; quizzes already have their own row above. -->
     <div class="mt-6 mx-n4">
       <lazy-common-related-content
         :id="contentData.id"
         source="exam"
-        :request="[`test`, `file`, `tutorial`]"
+        :request="[`test`, `tutorial`]"
       />
     </div>
-
-    <lazy-exam-detail-quiz-faq
-      :exam="contentData"
-      :prices="exportPrices"
-      class="mt-10"
-    />
 
     <div class="d-flex justify-space-between align-center flex-wrap ga-2 text-h6 text-grey500 mt-10 mb-8">
       <span>
@@ -215,7 +179,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ExamExportPriceDTO, ExamUserDataExamDetaiDTO } from '@/types'
+import type { ExamUserDataExamDetaiDTO } from '@/types'
+
+// The page's own Download / Start quiz bar takes the bottom of the screen on a phone; the site menu under it
+// doubled the bars (about 140px) with links a reader doesn't need here.
+definePageMeta({ hideBottomNav: true })
 
 interface BreadCrumb {
   text: string
@@ -230,8 +198,6 @@ const { fromNowLocal } = useDateTime()
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
 const openCrashReport = ref(false)
-// Filled by the action card once the export prices load, for the comparison table and the FAQ.
-const exportPrices = ref<ExamExportPriceDTO[]>([])
 
 const { data: contentData } = await useAsyncData(
   `exam-${route.params.id}`,
@@ -317,23 +283,6 @@ const kicker = computed(() => {
   return `${type ? `${type} quiz` : 'Quiz'} · online or printable`
 })
 
-// The intro under the title, built from the quiz's own facts so every page has its own description.
-const lede = computed(() => {
-  const exam = contentData.value
-  if (!exam) return ''
-  const questions = Number(exam.tests_num) || 0
-  const minutes = Number(exam.azmoon_time) || 0
-  const subject = [exam.section_title, exam.base_title, exam.lesson_title].map(t => t?.trim()).filter(Boolean).join(' ')
-  const about = [
-    questions ? `${questions} questions` : 'Questions',
-    topicTitles.value.length ? ` on ${topicTitles.value.join(', ')}` : '',
-    subject ? ` for ${subject}` : '',
-  ].join('')
-  if (!exam.price?.participation) return `${about}. Download it as a PDF, Word or PowerPoint file for your class.`
-  return `${about}. Take it online${minutes ? ` with a ${minutes}-minute timer` : ''} and get your score, your rank and `
-    + 'the correct answers as soon as you finish, or download it as a PDF, Word or PowerPoint file for your class.'
-})
-
 const facts = computed(() => {
   const exam = contentData.value
   if (!exam) return []
@@ -402,14 +351,12 @@ useHead(() => ({
 }))
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
 .exam-details {
   max-width: 1232px;
-}
-.lede {
-  font-size: 1.7rem;
-  line-height: 1.6;
-  max-width: 640px;
 }
 .level-bars span {
   flex: 1;
@@ -421,10 +368,46 @@ useHead(() => ({
 .tag-chip {
   background-color: rgb(var(--v-theme-white));
 }
-@media (min-width: 960px) {
-  .action-column {
-    position: sticky;
-    top: 88px;
+.exam-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+/* On a phone the side column's cards slot in around the main content; d-md-flex takes over from md up. */
+.exam-side {
+  display: contents;
+}
+.exam-head {
+  order: 1;
+}
+.exam-side__action {
+  order: 2;
+}
+.exam-main {
+  order: 3;
+}
+.exam-side > :not(.exam-side__action) {
+  order: 4;
+}
+@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+  .exam-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "head side"
+      "main side";
+    column-gap: 24px;
+    row-gap: 32px;
+  }
+  .exam-side {
+    grid-area: side;
+    align-self: start;
+  }
+  .exam-head {
+    grid-area: head;
+  }
+  .exam-main {
+    grid-area: main;
   }
 }
 </style>
